@@ -23,7 +23,12 @@ import java.util.TreeMap;
 public class MyWorldBank {
 
     /**
-     * Gets the data results for Indicator GDP
+     * Gets the data results for Indicator GDP in US Trillion Dollars.
+     *
+     * Make country code 'null' to get for All Countries
+     * Make Start Year 0 to get data for just End year
+     * Make End Year 0 to get data for just Start year
+     * Make Start and End Year both 0 to get All the data from 1961 to present
      *
      * @param countryCode The country you want to find data for (null to get for All countries)
      * @param startYear The start year you want to find data for (0 to get data for just end year)
@@ -37,10 +42,15 @@ public class MyWorldBank {
     }
 
     /**
-     * Gets the data results for Indicator GDP Growth
+     * Gets the data results for Indicator GDP Growth in Percentage.
      *
-     * @param countryCode The country you want to find data for (null to get for All countries)
-     * @param startYear The start year you want to find data for (0 to get data for just end year)
+     * Make country code 'null' to get for All Countries.
+     * Make Start Year 0 to get data for just End year.
+     * Make End Year 0 to get data for just Start year.
+     * Make Start and End Year both 0 to get All the data from 1961 to present.
+     *
+     * @param countryCode The country you want to find data for
+     * @param startYear The start year you want to find data for
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP Growth Percentage(%)
      */
@@ -64,14 +74,11 @@ public class MyWorldBank {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new URL(urlString).openStream());
             //saves result from url to file
-            saveToFile(urlString);
             return doc;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-
-
     }
 
     private static TreeMap<Integer, Double> getYearAndValue(Document document) {
@@ -87,21 +94,14 @@ public class MyWorldBank {
                 String year = data.getElementsByTagName("wb:date").item(0).getTextContent();
                 //obtain the price value in that year
                 String val = data.getElementsByTagName("wb:value").item(0).getTextContent();
+
                 //store year and value into the map
-                yearValueMap.put(Integer.parseInt(year), Double.parseDouble(val));
+                try{ yearValueMap.put(Integer.parseInt(year), Double.parseDouble(val)); }
+                catch(NumberFormatException e) { /*don't add to map if cannot convert number (if cannot find number) */ }
             }
         }
 
         return yearValueMap;
-    }
-
-    private static void saveToFile(String s) throws Exception{
-        URL url = new URL(s);
-        String target = "test.txt";
-        Path path = Paths.get(target);
-
-        InputStream in = url.openStream();
-        Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
     }
 
 }

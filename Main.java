@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         //GDP in Brazil between 2006 and 2015
-        System.out.println("GDP for Brazil" + MyWorldBank.getGDP("br", 2006, 2015));
+        System.out.println("GDP for Brazil" + MyWorldBank.getGDP("br", 0, 0));
 
         //GDP in Brazil between 2006 and 2015
         System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPGrowth("gb", 1990, 2012));
