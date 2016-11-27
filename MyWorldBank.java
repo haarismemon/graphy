@@ -7,12 +7,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.TreeMap;
 
 /**
@@ -36,9 +31,24 @@ public class MyWorldBank {
      * @return Map with year and GDP value in US Dollars (Trillion)
      */
     public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) {
-        Document doc = getQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
-        if(doc != null) return getYearAndValue(doc);
-        else return null;
+        return getQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
+    }
+
+    /**
+     * Gets the data results for Indicator GDP in US Trillion Dollars.
+     *
+     * Make country code 'null' to get for All Countries
+     * Make Start Year 0 to get data for just End year
+     * Make End Year 0 to get data for just Start year
+     * Make Start and End Year both 0 to get All the data from 1961 to present
+     *
+     * @param countryCode The country you want to find data for (null to get for All countries)
+     * @param startYear The start year you want to find data for (0 to get data for just end year)
+     * @param endYear The end year you want to find data for
+     * @return Map with year and GDP value in US Dollars (Trillion)
+     */
+    public static TreeMap<Integer, Double> getGDPPerCapita(String countryCode, int startYear, int endYear) {
+        return getQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
     }
 
     /**
@@ -55,12 +65,10 @@ public class MyWorldBank {
      * @return Map with year and GDP Growth Percentage(%)
      */
     public static TreeMap<Integer, Double> getGDPGrowth(String countryCode, int startYear, int endYear) {
-        Document doc = getQuery("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
-        if(doc != null) return getYearAndValue(doc);
-        else return null;
+        return getQuery("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
     }
 
-    private static Document getQuery(String indicator, String countryCode, int startYear, int endYear) {
+    private static TreeMap<Integer, Double> getQuery(String indicator, String countryCode, int startYear, int endYear) {
         String urlString = "http://api.worldbank.org/countries/";
         if(countryCode != null) urlString += countryCode;
         else urlString += "all";
@@ -74,7 +82,7 @@ public class MyWorldBank {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new URL(urlString).openStream());
             //saves result from url to file
-            return doc;
+            return getYearAndValue(doc);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
