@@ -28,20 +28,35 @@ public class MyWorldBank {
      * @param countryCode The country you want to find data for (null to get for All countries)
      * @param startYear The start year you want to find data for (0 to get data for just end year)
      * @param endYear The end year you want to find data for
-     * @return Map with year and value for GDP
+     * @return Map with year and GDP value in US Dollars (Trillion)
      */
     public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) {
-        Document doc = getQuery(countryCode, startYear, endYear);
+        Document doc = getQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
         if(doc != null) return getYearAndValue(doc);
         else return null;
     }
 
-    private static Document getQuery(String countryCode, int startYear, int endYear) {
+    /**
+     * Gets the data results for Indicator GDP Growth
+     *
+     * @param countryCode The country you want to find data for (null to get for All countries)
+     * @param startYear The start year you want to find data for (0 to get data for just end year)
+     * @param endYear The end year you want to find data for
+     * @return Map with year and GDP Growth Percentage(%)
+     */
+    public static TreeMap<Integer, Double> getGDPGrowth(String countryCode, int startYear, int endYear) {
+        Document doc = getQuery("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
+        if(doc != null) return getYearAndValue(doc);
+        else return null;
+    }
+
+    private static Document getQuery(String indicator, String countryCode, int startYear, int endYear) {
         String urlString = "http://api.worldbank.org/countries/";
         if(countryCode != null) urlString += countryCode;
         else urlString += "all";
-        urlString += "/indicators/NY.GDP.MKTP.CD";
+        urlString += "/indicators/" + indicator;
         if(endYear != 0 && startYear == 0) urlString += "?date=YTD:" + endYear;
+        else if(endYear == 0 && startYear != 0 ) urlString += "?date=YTD:" + startYear;
         else if(endYear != 0 && startYear != 0) urlString += "?date=" + startYear + ":" + endYear;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
