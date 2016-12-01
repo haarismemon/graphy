@@ -9,13 +9,21 @@ import javafx.scene.chart.XYChart;
 
 public class Graph {
     String name;
-
+    LineChart lineChart;
     ArrayList<XYChart.Series> series;
 
 
     public Graph(String graphName){
         name = graphName;
         series = new ArrayList<XYChart.Series>();
+        NumberAxis xAxis = new NumberAxis();
+        xAxis.setForceZeroInRange(false);
+        xAxis.setAutoRanging(true);
+        xAxis.setTickUnit(1d);
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setForceZeroInRange(false);
+        yAxis.setAutoRanging(true);
+        lineChart = new LineChart(xAxis,yAxis);
 
     }
 
@@ -30,22 +38,13 @@ public class Graph {
             series.getData().add(new XYChart.Data(entry.getKey(),entry.getValue()));
         }
         this.series.add(series);
+        lineChart.getData().add(series);
     }
-    public Scene getGraph(){
-        NumberAxis xAxis = new NumberAxis();
-        xAxis.setForceZeroInRange(false);
-        xAxis.setAutoRanging(true);
-        xAxis.setTickUnit(1d);
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setAutoRanging(true);
-        LineChart<Number,Number> lineChart = new LineChart<Number,Number>(xAxis,yAxis);
-        Scene scene = new Scene(lineChart,800,600);
-        for(XYChart.Series x:series) {
-            lineChart.getData().add(x);
-        }
-        return scene;
+    public LineChart getGraph(){
+        return lineChart;
     }
     public void reset(){
         series.clear();
+        lineChart.getData().clear();
     }
 }
