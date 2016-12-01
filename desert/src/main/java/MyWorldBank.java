@@ -1,21 +1,74 @@
 package main.java;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.net.URL;
+import java.io.IOException;
 import java.util.TreeMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * This class represents obtaining the data from the World Bank API.
  *
  * @author Haaris Memon
+ * @author Vladislavs Uljanovs
+ * @version 3.0
+ * @since 2016-12-01 16:37
  */
 public class MyWorldBank {
+
+    private static OkHttpClient client = new OkHttpClient();
+
+    private static String buildURL(String indicator, String countryCode, int startYear, int endYear) {
+        String urlString = "http://api.worldbank.org/countries/";
+        if(countryCode != null) urlString += countryCode;
+        else urlString += "all";
+        urlString += "/indicators/" + indicator + "?format=json";
+        if(endYear != 0 && startYear == 0) urlString += "&date=YTD:" + endYear;
+        else if(endYear == 0 && startYear != 0 ) urlString += "&date=YTD:" + startYear;
+        else if(endYear != 0 && startYear != 0) urlString += "&date=" + startYear + ":" + endYear;
+
+        return urlString;
+    }
+
+    private static String downloadJSON(String url) throws IOException {
+        Request request = new Request.Builder().url(url).build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+    private static TreeMap<Integer, Double> makeQuery(String indicator, String countryCode, int startYear, int endYear) {
+        String urlString = buildURL(indicator, countryCode, startYear, endYear);
+
+        String jsonReceived = null;
+
+        try {
+            jsonReceived = downloadJSON(urlString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jsonArray = new JSONArray(jsonReceived).getJSONArray(1);
+
+        TreeMap<Integer, Double> yearValueMap = new TreeMap<>();
+
+        for (int i = 0; i < jsonArray.length(); ++i) {
+            JSONObject o = jsonArray.getJSONObject(i);
+            try{
+                Integer year = Integer.parseInt(o.getString("date"));
+                Double value = Double.parseDouble(o.getString("value"));
+                yearValueMap.put(year, value);
+            } catch(JSONException e) {
+                //do nothing, the entry is not inserted into tree map
+            }
+        }
+
+        return yearValueMap;
+    }
 
     /**
      * Gets the data results for Indicator GDP in US Trillion Dollars.
@@ -31,7 +84,7 @@ public class MyWorldBank {
      * @return Map with year and GDP value in US Dollars (Trillion)
      */
     public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) {
-        return getQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
+        return makeQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
     }
 
     /**
@@ -48,7 +101,7 @@ public class MyWorldBank {
      * @return Map with year and GDP Growth Percentage(%)
      */
     public static TreeMap<Integer, Double> getGDPGrowth(String countryCode, int startYear, int endYear) {
-        return getQuery("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
+        return makeQuery("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
     }
 
     /**
@@ -65,7 +118,7 @@ public class MyWorldBank {
      * @return Map with year and GDP per Capita value in US Dollars (Trillion)
      */
     public static TreeMap<Integer, Double> getGDPPerCapita(String countryCode, int startYear, int endYear) {
-        return getQuery("NY.GDP.PCAP.CD", countryCode, startYear, endYear);
+        return makeQuery("NY.GDP.PCAP.CD", countryCode, startYear, endYear);
     }
 
     /**
@@ -82,7 +135,7 @@ public class MyWorldBank {
      * @return Map with year and GDP per Capita Growth Percentage(%)
      */
     public static TreeMap<Integer, Double> getGDPPerCapitaGrowth(String countryCode, int startYear, int endYear) {
-        return getQuery("NY.GDP.PCAP.KD.ZG", countryCode, startYear, endYear);
+        return makeQuery("NY.GDP.PCAP.KD.ZG", countryCode, startYear, endYear);
     }
 
     /**
@@ -99,7 +152,7 @@ public class MyWorldBank {
      * @return Map with year and Consumer Price Inflation Percentage(%)
      */
     public static TreeMap<Integer, Double> getConsumerPriceInflation(String countryCode, int startYear, int endYear) {
-        return getQuery("FP.CPI.TOTL.ZG", countryCode, startYear, endYear);
+        return makeQuery("FP.CPI.TOTL.ZG", countryCode, startYear, endYear);
     }
 
     /**
@@ -116,7 +169,7 @@ public class MyWorldBank {
      * @return Map with year and Unemployment Percentage(%)
      */
     public static TreeMap<Integer, Double> getUnemploymentTotal(String countryCode, int startYear, int endYear) {
-        return getQuery("SL.UEM.TOTL.ZS", countryCode, startYear, endYear);
+        return makeQuery("SL.UEM.TOTL.ZS", countryCode, startYear, endYear);
     }
 
     /**
@@ -133,7 +186,7 @@ public class MyWorldBank {
      * @return Map with year and Unemployment Percentage(%)
      */
     public static TreeMap<Integer, Double> getUnemploymentMale(String countryCode, int startYear, int endYear) {
-        return getQuery("SL.UEM.TOTL.MA.ZS", countryCode, startYear, endYear);
+        return makeQuery("SL.UEM.TOTL.MA.ZS", countryCode, startYear, endYear);
     }
 
     /**
@@ -150,7 +203,7 @@ public class MyWorldBank {
      * @return Map with year and Unemployment Percentage(%)
      */
     public static TreeMap<Integer, Double> getUnemploymentYoungMale(String countryCode, int startYear, int endYear) {
-        return getQuery("SL.UEM.1524.MA.ZS", countryCode, startYear, endYear);
+        return makeQuery("SL.UEM.1524.MA.ZS", countryCode, startYear, endYear);
     }
 
     /**
@@ -167,7 +220,7 @@ public class MyWorldBank {
      * @return Map with year and Unemployment Percentage(%)
      */
     public static TreeMap<Integer, Double> getUnemploymentFemale(String countryCode, int startYear, int endYear) {
-        return getQuery("SL.UEM.TOTL.FE.ZS", countryCode, startYear, endYear);
+        return makeQuery("SL.UEM.TOTL.FE.ZS", countryCode, startYear, endYear);
     }
 
     /**
@@ -184,7 +237,7 @@ public class MyWorldBank {
      * @return Map with year and Unemployment Percentage(%)
      */
     public static TreeMap<Integer, Double> getUnemploymentYoungFemale(String countryCode, int startYear, int endYear) {
-        return getQuery("SL.UEM.1524.FE.ZS", countryCode, startYear, endYear);
+        return makeQuery("SL.UEM.1524.FE.ZS", countryCode, startYear, endYear);
     }
 
     /**
@@ -201,7 +254,7 @@ public class MyWorldBank {
      * @return Map with year and GDP Deflator Inflation Percentage(%)
      */
     public static TreeMap<Integer, Double> getGDPDeflatorInflation(String countryCode, int startYear, int endYear) {
-        return getQuery("NY.GDP.DEFL.KD.ZG", countryCode, startYear, endYear);
+        return makeQuery("NY.GDP.DEFL.KD.ZG", countryCode, startYear, endYear);
     }
 
     /**
@@ -218,7 +271,7 @@ public class MyWorldBank {
      * @return Map with year and Current Account Balance value in US Dollars (Billion)
      */
     public static TreeMap<Integer, Double> getCurrentAccountBalance(String countryCode, int startYear, int endYear) {
-        return getQuery("BN.CAB.XOKA.CD", countryCode, startYear, endYear);
+        return makeQuery("BN.CAB.XOKA.CD", countryCode, startYear, endYear);
     }
 
     /**
@@ -235,51 +288,7 @@ public class MyWorldBank {
      * @return Map with year and Current Account Balance in Percentage(%)
      */
     public static TreeMap<Integer, Double> getCurrentAccountBalancePercentOfGDP(String countryCode, int startYear, int endYear) {
-        return getQuery("BN.CAB.XOKA.GD.ZS", countryCode, startYear, endYear);
-    }
-
-    private static TreeMap<Integer, Double> getQuery(String indicator, String countryCode, int startYear, int endYear) {
-        String urlString = "http://api.worldbank.org/countries/";
-        if(countryCode != null) urlString += countryCode;
-        else urlString += "all";
-        urlString += "/indicators/" + indicator;
-        if(endYear != 0 && startYear == 0) urlString += "?date=YTD:" + endYear;
-        else if(endYear == 0 && startYear != 0 ) urlString += "?date=YTD:" + startYear;
-        else if(endYear != 0 && startYear != 0) urlString += "?date=" + startYear + ":" + endYear;
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new URL(urlString).openStream());
-            //saves result from url to file
-            return getYearAndValue(doc);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static TreeMap<Integer, Double> getYearAndValue(Document document) {
-        TreeMap<Integer, Double> yearValueMap = new TreeMap<>();
-        //gets the list of all the data
-        NodeList dataList = document.getElementsByTagName("wb:data");
-        for (int i = 0; i < dataList.getLength(); i++) {
-            //data to for every year stored in a node
-            Node d = dataList.item(i);
-            if(d.getNodeType() == Node.ELEMENT_NODE) {
-                Element data = (Element) d;
-                //obtain the date
-                String year = data.getElementsByTagName("wb:date").item(0).getTextContent();
-                //obtain the price value in that year
-                String val = data.getElementsByTagName("wb:value").item(0).getTextContent();
-
-                //store year and value into the map
-                try{ yearValueMap.put(Integer.parseInt(year), Double.parseDouble(val)); }
-                catch(NumberFormatException e) { /*don't add to map if cannot convert number (if cannot find number) */ }
-            }
-        }
-
-        return yearValueMap;
+        return makeQuery("BN.CAB.XOKA.GD.ZS", countryCode, startYear, endYear);
     }
 
 }
