@@ -1,174 +1,162 @@
 
+//package main.java;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.TreeMap;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-//import com.squareup.okhttp3;
-//import org,json;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-//################################# TO COMPILE AND RUN TESTS #################################
-//javac -classpath json-20140107.jar:okhttp-3.4.2-3.jar:okio-1.11.0.jar Main.java
-//java -classpath .:json-20140107.jar:okhttp-3.4.2-3.jar:okio-1.11.0.jar Main
-
 /**
- * Query request implementation using JSON. This is a temperate and test class, further organisation is required.
+ * This class represents obtaining the data from the World Bank API.
  *
- * @author Vladislavs Uljanovs
  * @author Haaris Memon
+ * @author Vladislavs Uljanovs
  * @version 3.0
- * @since   2016-12-01 14:00 
+ * @since 2016-12-01 16:37
  */
 public class Main {
 
-	// Start of base URL
-	private static final String WORLD_BANK_URL = "http://api.worldbank.org/countries/";
-	// Indicators
-	private static final String GDP = "NY.GDP.MKTP.KD.ZG";
-	private static final String GDPGrowth = "NY.GDP.MKTP.CD";
-	private static final String GDPPerCapita = "NY.GDP.PCAP.CD";
-	private static final String GDPPerCapitaGrowth = "NY.GDP.PCAP.KD.ZG";
-	private static final String ConsumerPriceInflation = "FP.CPI.TOTL.ZG";
-	private static final String UnemploymentTotal = "SL.UEM.TOTL.ZS";
-	private static final String UnemploymentMale = "SL.UEM.TOTL.MA.ZS";
-	private static final String UnemploymentYoungMale = "SL.UEM.1524.MA.ZS";
-	private static final String UnemploymentFemale = "SL.UEM.TOTL.FE.ZS";
-	private static final String UnemploymentYoungFemale = "SL.UEM.1524.FE.ZS";
-	private static final String GDPDeflatorInflation = "NY.GDP.DEFL.KD.ZG";
-	private static final String CurrentAccountBalance = "BN.CAB.XOKA.CD";
-	private static final String CurrentAccountBalancePercentOfGDP = "BN.CAB.XOKA.GD.ZS";
-
-	/**
-	 * Creates okhttp object.
-	 */
 	private static OkHttpClient client = new OkHttpClient();
 
-	/**
-	 * Downloads a URL and print its contents as a string.
-	 *
-	 * @param url
-	 * @return contents
-	 * @throws IOException
-	 */
-	public static String downloadJSON(String url) throws IOException {
+	private static String buildURL(String countryCode, String indicator) {
+		return "http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json";
+	}
+
+	private static String downloadJSON(String url) throws IOException {
 		Request request = new Request.Builder().url(url).build();
 		Response response = client.newCall(request).execute();
 		return response.body().string();
 	}
 
-	/**
-	 * Creates an URL from given parameters.
-	 *
-	 * @param countryCode
-	 * @param indicator
-	 * @param fromYear
-	 * @param toYear
-	 * @return url
-	 */
-	public static String buildURL(String countryCode, String indicator, int fromYear, int toYear) {
-		return WORLD_BANK_URL + countryCode + "/indicators/" + indicator + "?date=" + fromYear + ":" + toYear + "&format=json";
-		// http://api.worldbank.org/countries/GB/indicators/NY.GDP.MKTP.CD?date=2010:2013&format=json
+	private static Boolean isQueryValid(String indicator, String countryCode, int startYear, int endYear) {
+		if (indicator == null || countryCode == null)
+			return false;
+		if (startYear == 0 && endYear != 0)
+			return false;
+		// if (!(indicatorArray.contains(indicator))) return false;
+		// if (!(countryArray.contains(countryCode))) return false;
+		return true;
 	}
 
-	/**
-	 * Makes a query: builds the URL, download content in JSON format and
-	 * converts it into Java elements.
-	 *
-	 * @param countryCode
-	 * @param indicator
-	 * @param fromYear
-	 * @param toYear
-	 * @return TreeMap of Value and Year pair
-	 */
-	public static TreeMap<Double, String> makeQuary(String countryCode, String indicator, int fromYear, int toYear) {
+	private static void saveData(String countryCode, String indicator, String jsonReceived) {
+//		Timestamp dateAdded = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
+		
+		Calendar c = Calendar.getInstance();
+		
+		try (PrintWriter writer = new PrintWriter(new FileWriter("test.txt", true))) {
+			writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + jsonReceived);
+		} catch (IOException e) {
+			// Ignore exception
+			e.printStackTrace();
+		}
+	}
 
-		String URL = buildURL(countryCode, indicator, fromYear, toYear);
+	private static String loadData(String countryCode, String indicator) throws IOException {
+    	String result = null;
+
+    	try (BufferedReader reader = new BufferedReader(new FileReader("test.txt"))) {
+
+    		String line = null;
+
+    		Calendar c = Calendar.getInstance();
+    		String currentMMYYYY = Integer.toString(c.get(Calendar.MONTH)) + Integer.toString(c.get(Calendar.YEAR));
+//    		System.out.println(currentMMYYYY);
+
+    		while ((line = reader.readLine()) != null) {
+            	String[] values = line.split("/");
+            	
+            	// BELOW MUST BE SEPARATE METHOD BECAUSE USED TO IN LOAD AND TO VALIDATE IF THE QUERY EXISTS TO DELETE IT
+            	if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
+            		if (values[2].equals(currentMMYYYY)) {
+            			System.out.println("FOUND IN CACHE");
+            			System.out.println(values[3]);
+            		} else {
+            			// fetch new data
+            			System.out.println("DATA TOO OLD SO FETCH NEW DATA here");
+            		}
+    	        } else {
+    	        	System.out.println("NOT FOUND IN CACHE");
+    	        }
+            }
+    		reader.close();
+    	} catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+        	System.out.println("ERROR in loadData");
+        }
+
+
+    	return result;
+    }
+
+	private static TreeMap<Integer, Double> makeQuery(String indicator, String countryCode, int startYear, int endYear)
+			throws IOException {
+
+		isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
+
+		if (startYear != 0 && endYear == 0) {
+			// ONLY HAVE STARTING POINT and but the end
+			// SEPARATE METHOD HERE BECAUSE THIS WILL BE USED WHEN SETTINGS ARE CHANGED IN THE INTERFACE
+		} else if (startYear == 0 && endYear == 0) {
+			// get all the years
+		}
+
+		// if (query exists) {
+		// getJson
+		// } else {
+		// buildURL
+		// downloadJSON
+		// }
+		// getRequiredYears using map if specific year present
+
+		String urlString = buildURL(countryCode, indicator);
 
 		String jsonReceived = null;
 
 		try {
-			jsonReceived = downloadJSON(URL);
+			jsonReceived = downloadJSON(urlString);
 		} catch (Exception e) {
-			// TODO: Handle exception
 			e.printStackTrace();
 		}
 
+		saveData(countryCode, indicator, jsonReceived);
+
+		loadData(countryCode, indicator);
+
 		JSONArray jsonArray = new JSONArray(jsonReceived).getJSONArray(1);
 
-		TreeMap<Double, String> valueAndYear = new TreeMap<>();
+		TreeMap<Integer, Double> map = new TreeMap<>();
 
-		for (int i = 0; i < jsonArray.length(); ++i) {
-			JSONObject o = jsonArray.getJSONObject(i);
-			Double value = Double.parseDouble(o.getString("value"));
-			String year = o.getString("date");
-			valueAndYear.put(value, year);
+		for (int o = 0; o < jsonArray.length(); ++o) {
+			JSONObject object = jsonArray.getJSONObject(o);
+			try {
+				Integer year = Integer.parseInt(object.getString("date"));
+				Double value = Double.parseDouble(object.getString("value"));
+				map.put(year, value);
+			} catch (JSONException e) {
+				// do nothing, the entry is not inserted into tree map
+			}
 		}
 
-		return valueAndYear;
+		return map;
 	}
 
-	// Test
-	public static void main(String[] args) {
-		System.out.println(getGDP("GB", 2000, 2010));
+	public static void main(String[] args) throws IOException {
+		System.out.println(getGDP("GB", 0, 0));
 	}
 
-	// ################################# QUERIES #################################
-
-	public static TreeMap<Double, String> getGDP(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, GDP, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getGDPGrowth(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, GDPGrowth, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getGDPPerCapita(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, GDPPerCapita, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getGDPPerCapitaGrowth(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, GDPPerCapitaGrowth, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getConsumerPriceInflation(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, ConsumerPriceInflation, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getUnemploymentTotal(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, UnemploymentTotal, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getUnemploymentMale(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, UnemploymentMale, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getUnemploymentYoungMale(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, UnemploymentYoungMale, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getUnemploymentFemale(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, UnemploymentFemale, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getUnemploymentYoungFemale(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, UnemploymentYoungFemale, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getGDPDeflatorInflation(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, GDPDeflatorInflation, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getCurrentAccountBalance(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, CurrentAccountBalance, fromYear, toYear);
-	}
-
-	public static TreeMap<Double, String> getCurrentAccountBalancePercentOfGDP(String countryCode, int fromYear, int toYear) {
-		return makeQuary(countryCode, CurrentAccountBalancePercentOfGDP, fromYear, toYear);
+	public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) throws IOException {
+		return makeQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
 	}
 
 }
