@@ -23,7 +23,7 @@ public class Main {
 
         System.out.println("GDP Growth for Brazil" + MyWorldBank.getConsumerPriceInflation("gb", 1990, 2012));
 */
-        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentTotal("gb", 1990, 2012));
+        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentTotal(null, 2000, 2004));
 /*
         System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentMale("gb", 1990, 2012));
 
