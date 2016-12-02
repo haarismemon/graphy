@@ -1,17 +1,21 @@
 package main.java;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * This class represents obtaining the data from the World Bank API.
@@ -21,7 +25,7 @@ import okhttp3.Response;
  */
 public class MyWorldBank {
 
-    private static String fetch(String countryCode, String indicator)  {
+    private static String fetch(String countryCode, String indicator) throws IOException  {
         String rawData = null;
         String fetchOffline = fetchOffline(countryCode, indicator);
 
@@ -36,17 +40,17 @@ public class MyWorldBank {
         return rawData;
     }
     
-    private static OkHttpClient client = new OkHttpClient();
-    
-    private static String fetchOnline(String countryCode, String indicator)  {
-        String url = "http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json";
-        Request request = new Request.Builder().url(url).build();
+    private static String fetchOnline(String countryCode, String indicator) throws IOException  {
+        URL request = new URL("http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json&per_page=250");
+        String response;
         try {
-            Response response = client.newCall(request).execute();
-            return response.body().string();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(request.openStream()));
+            response = reader.readLine();
+            reader.close();
         } catch (IOException e) {
             return null;
         }
+        return response;
     }
     
     private static String fetchOffline(String countryCode, String indicator) {
