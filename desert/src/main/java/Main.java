@@ -3,15 +3,12 @@
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TreeMap;
 
@@ -28,22 +25,62 @@ import okhttp3.Response;
  *
  * @author Haaris Memon
  * @author Vladislavs Uljanovs
- * @version 3.0
- * @since 2016-12-01 16:37
  */
 public class Main {
 
-	private static OkHttpClient client = new OkHttpClient();
-
-	private static String buildURL(String countryCode, String indicator) {
-		return "http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json";
-	}
-
-	private static String downloadJSON(String url) throws IOException {
+	private static String fetchOnline(String countryCode, String indicator) throws IOException {
+		OkHttpClient client = new OkHttpClient();
+		String url = "http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json";
 		Request request = new Request.Builder().url(url).build();
 		Response response = client.newCall(request).execute();
 		return response.body().string();
 	}
+	
+	private static String fetchOffline(String countryCode, String indicator) throws IOException {
+		
+		File f = new File("cache.txt");
+		if(f.exists() && !f.isDirectory()) { 
+		    // good move on
+		} else {
+			return null;
+		}
+		
+    	String json = null;
+
+    	try (BufferedReader reader = new BufferedReader(new FileReader("cache.txt"))) {
+
+    		String line = null;
+
+    		Calendar c = Calendar.getInstance();
+    		String currentMMYYYY = Integer.toString(c.get(Calendar.MONTH)) + Integer.toString(c.get(Calendar.YEAR));
+
+    		while ((line = reader.readLine()) != null) {
+    			
+            	String[] values = line.split("/");
+            	
+            	// BELOW MUST BE SEPARATE METHOD BECAUSE USED TO IN LOAD AND TO VALIDATE IF THE QUERY EXISTS TO DELETE IT
+            	if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
+            		if (values[2].equals(currentMMYYYY)) {
+            			System.out.println("FOUND IN CACHE:");
+            			System.out.println(values[3]);
+            			json = values[3];
+            		} else {
+            			// fetch new data
+            			System.out.println("DATA TOO OLD SO FETCH NEW DATA here");
+//            			json = fetchOnline(countryCode, indicator);
+            		}
+    	        } else {
+    	        	System.out.println("NOT FOUND IN CACHE");
+    	        }
+            }
+    		reader.close();
+    	} catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+        	System.out.println("ERROR in fetchOffline");
+        }
+
+
+    	return json;
+    }
 
 	private static Boolean isQueryValid(String indicator, String countryCode, int startYear, int endYear) {
 		if (indicator == null || countryCode == null)
@@ -55,69 +92,25 @@ public class Main {
 		return true;
 	}
 
-	private static void saveData(String countryCode, String indicator, String jsonReceived) {
-//		Timestamp dateAdded = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
+	private static void cacheQuery(String countryCode, String indicator, String data) {
 		
 		Calendar c = Calendar.getInstance();
 		
-		try (PrintWriter writer = new PrintWriter(new FileWriter("test.txt", true))) {
-			writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + jsonReceived);
+		try (PrintWriter writer = new PrintWriter(new FileWriter("cache.txt", true))) {
+			writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + data);
 		} catch (IOException e) {
 			// Ignore exception
 			e.printStackTrace();
 		}
 	}
-
-	private static String loadData(String countryCode, String indicator) throws IOException {
-    	String result = null;
-
-    	try (BufferedReader reader = new BufferedReader(new FileReader("test.txt"))) {
-
-    		String line = null;
-
-    		Calendar c = Calendar.getInstance();
-    		String currentMMYYYY = Integer.toString(c.get(Calendar.MONTH)) + Integer.toString(c.get(Calendar.YEAR));
-//    		System.out.println(currentMMYYYY);
-
-    		while ((line = reader.readLine()) != null) {
-            	String[] values = line.split("/");
-            	
-            	// BELOW MUST BE SEPARATE METHOD BECAUSE USED TO IN LOAD AND TO VALIDATE IF THE QUERY EXISTS TO DELETE IT
-            	if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
-            		if (values[2].equals(currentMMYYYY)) {
-            			System.out.println("FOUND IN CACHE");
-            			System.out.println(values[3]);
-            			
-            			return values[3];
-            		} else {
-            			// fetch new data
-            			System.out.println("DATA TOO OLD SO FETCH NEW DATA here");
-            		}
-    	        } else {
-    	        	System.out.println("NOT FOUND IN CACHE");
-    	        }
-            }
-    		reader.close();
-    	} catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-        	System.out.println("ERROR in loadData");
-        }
-
-
-    	return result;
-    }
-	
-	private static void deleteAllData() throws IOException {
-		File f = new File("test.txt");
-		f.delete();
-	}
 	
 	// deletes specific query
-	private static void deleteData(String countryCode, String indicator) throws IOException {
-		File inputFile = new File("test.txt"); 
-		File tempFile = new File("temp.txt");
+	private static void removeCachedQuery(String countryCode, String indicator) throws IOException {
+		File cache = new File("cache.txt"); 
+		File temp = new File("temp.txt");
 
-		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+		BufferedReader reader = new BufferedReader(new FileReader(cache));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
 
 		String line = null;
 
@@ -130,14 +123,18 @@ public class Main {
 		writer.close();
 		reader.close();
 		
-		boolean isOK = tempFile.renameTo(inputFile);
+		boolean isOK = temp.renameTo(cache);
 		System.out.println(isOK);
 	}
+	
+	private static void clearCache() throws IOException {
+		File file = new File("cache.txt");
+		file.delete();
+	}
 
-	private static TreeMap<Integer, Double> makeQuery(String indicator, String countryCode, int startYear, int endYear)
-			throws IOException {
+	private static TreeMap<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) throws IOException {
 
-		isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
+//		isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
 
 		if (startYear != 0 && endYear == 0) {
 			// ONLY HAVE STARTING POINT and but the end
@@ -146,38 +143,32 @@ public class Main {
 			// get all the years
 		}
 
-		// if (query exists) {
-		// getJson
-		// } else {
-		// buildURL
-		// downloadJSON
-		// }
-		// getRequiredYears using map if specific year present
-
-		String urlString = buildURL(countryCode, indicator);
-
-		String jsonReceived = null;
-
-		try {
-			jsonReceived = downloadJSON(urlString);
-		} catch (Exception e) {
-			e.printStackTrace();
+		String fetchOffline = fetchOffline(countryCode, indicator);
+		String data = null;
+		
+		if (fetchOffline != null) {
+			data = fetchOffline;
+			System.out.println("/// local ///");
+		} else {
+			data = fetchOnline(countryCode, indicator);
+			cacheQuery(countryCode, indicator, data);
+			System.out.println("/// new ///");
 		}
-
-//		saveData(countryCode, indicator, jsonReceived);
-
-//		loadData(countryCode, indicator);
+		// TODO getRequiredYears using map if specific year present
 		
-//		deleteData(countryCode, indicator);
 		
-		deleteAllData();
+//		cacheQuery(countryCode, indicator, data);
+//		fetchOffline(countryCode, indicator);
+		
+//		removeCachedQuery(countryCode, indicator);
+//		clearCache();
 
-		JSONArray jsonArray = new JSONArray(jsonReceived).getJSONArray(1);
+		JSONArray array = new JSONArray(data).getJSONArray(1);
 
 		TreeMap<Integer, Double> map = new TreeMap<>();
 
-		for (int o = 0; o < jsonArray.length(); ++o) {
-			JSONObject object = jsonArray.getJSONObject(o);
+		for (int o = 0; o < array.length(); ++o) {
+			JSONObject object = array.getJSONObject(o);
 			try {
 				Integer year = Integer.parseInt(object.getString("date"));
 				Double value = Double.parseDouble(object.getString("value"));
@@ -195,7 +186,7 @@ public class Main {
 	}
 
 	public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) throws IOException {
-		return makeQuery("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
+		return query("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
 	}
 
 }
