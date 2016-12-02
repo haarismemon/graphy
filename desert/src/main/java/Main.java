@@ -2,10 +2,15 @@
 //package main.java;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TreeMap;
@@ -82,6 +87,8 @@ public class Main {
             		if (values[2].equals(currentMMYYYY)) {
             			System.out.println("FOUND IN CACHE");
             			System.out.println(values[3]);
+            			
+            			return values[3];
             		} else {
             			// fetch new data
             			System.out.println("DATA TOO OLD SO FETCH NEW DATA here");
@@ -98,6 +105,34 @@ public class Main {
 
     	return result;
     }
+	
+	private static void deleteAllData() throws IOException {
+		File f = new File("test.txt");
+		f.delete();
+	}
+	
+	// deletes specific query
+	private static void deleteData(String countryCode, String indicator) throws IOException {
+		File inputFile = new File("test.txt"); 
+		File tempFile = new File("temp.txt");
+
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+		String line = null;
+
+		while ((line = reader.readLine()) != null) {
+			String[] values = line.split("/");
+			
+			if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) continue;
+		    writer.write(line);
+		}
+		writer.close();
+		reader.close();
+		
+		boolean isOK = tempFile.renameTo(inputFile);
+		System.out.println(isOK);
+	}
 
 	private static TreeMap<Integer, Double> makeQuery(String indicator, String countryCode, int startYear, int endYear)
 			throws IOException {
@@ -129,9 +164,13 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		saveData(countryCode, indicator, jsonReceived);
+//		saveData(countryCode, indicator, jsonReceived);
 
-		loadData(countryCode, indicator);
+//		loadData(countryCode, indicator);
+		
+//		deleteData(countryCode, indicator);
+		
+		deleteAllData();
 
 		JSONArray jsonArray = new JSONArray(jsonReceived).getJSONArray(1);
 
