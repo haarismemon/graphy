@@ -13,6 +13,7 @@ public class Main {
         //GDP in Brazil (all data)
         System.out.println("GDP for Brazil" + MyWorldBank.getGDP("br", 0, 0));
 
+        /*
         //GDP Growth in Brazil between 1990 and 2012
         System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPGrowth("gb", 1990, 2012));
 
@@ -38,6 +39,8 @@ public class Main {
 
         System.out.println("GDP Growth for Brazil" + MyWorldBank.getCurrentAccountBalancePercentOfGDP("gb", 1990, 2012));
 
+
+        */
     }
 
 }

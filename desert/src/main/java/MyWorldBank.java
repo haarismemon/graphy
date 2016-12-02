@@ -76,6 +76,7 @@ public class MyWorldBank {
                         System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE BUT OUTDATED");
                         deleteQuery(countryCode, indicator);
                     }
+                    break;
                 } else {
                     System.out.println("=> Log.fetchOffline: DATA NOT FOUND IN CACHE");
                 }
