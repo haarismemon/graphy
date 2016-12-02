@@ -1,6 +1,7 @@
 package main.java;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.Calendar;
 import java.util.TreeMap;
 
 import org.json.JSONArray;
@@ -19,7 +20,7 @@ import okhttp3.Response;
  */
 public class MyWorldBank {
 
-    private static String fetch(String countryCode, String indicator) throws IOException {
+    private static String fetch(String countryCode, String indicator)  {
         String rawData = null;
         String fetchOffline = fetchOffline(countryCode, indicator);
 
@@ -36,14 +37,18 @@ public class MyWorldBank {
     
     private static OkHttpClient client = new OkHttpClient();
     
-    private static String fetchOnline(String countryCode, String indicator) throws IOException {
+    private static String fetchOnline(String countryCode, String indicator)  {
         String url = "http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json";
         Request request = new Request.Builder().url(url).build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (IOException e) {
+            return null;
+        }
     }
     
-    private static String fetchOffline(String countryCode, String indicator) throws IOException {
+    private static String fetchOffline(String countryCode, String indicator) {
         File cache = new File("cache.txt");
         if(!cache.exists() && !cache.isDirectory()) {
             System.out.println("=> Log.fetchOffline: NO CACHED DATA");
@@ -133,40 +138,48 @@ public class MyWorldBank {
         file.delete();
     }
 
-    private static TreeMap<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) throws IOException {
+    private static TreeMap<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
         
 //      isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
         // HANDLE ALL WORLD
 
+        //can be null
         String rawData = fetch(countryCode, indicator);
         
         // FOR TESTING PURPOSE ARE LEFT HERE:
 //      deleteQuery(countryCode, indicator);
 //      clearCache();
 
-        JSONArray array = new JSONArray(rawData).getJSONArray(1);
-
         TreeMap<Integer, Double> map = new TreeMap<>();
 
-        for (int o = 0; o < array.length(); ++o) {
-            JSONObject object = array.getJSONObject(o);
-            try {
-                Integer year = Integer.parseInt(object.getString("date"));
-                Double value = Double.parseDouble(object.getString("value"));
-                map.put(year, value);
-            } catch (JSONException e) {
-                // do nothing, the entry is not inserted into tree map
+        if(rawData != null) {
+
+            JSONArray array = new JSONArray(rawData).getJSONArray(1);
+
+
+            for (int o = 0; o < array.length(); ++o) {
+                JSONObject object = array.getJSONObject(o);
+                try {
+                    Integer year = Integer.parseInt(object.getString("date"));
+                    Double value = Double.parseDouble(object.getString("value"));
+                    map.put(year, value);
+                } catch (JSONException e) {
+                    // do nothing, the entry is not inserted into tree map
+                }
             }
-        }
-        
-        // IF NO startYear and endYear then ...
-        
-        // BELOW MUST BE SEPARATE METHOD WHICH PROCESS RAW DATA getRequiredYears using map if specific years requested
-        if (startYear != 0 && endYear == 0) {
-            // ONLY STARTING YEAR GIVEN
-            // SEPARATE METHOD HERE BECAUSE THIS WILL BE USED WHEN SETTINGS ARE CHANGED IN THE INTERFACE
-        } else if (startYear == 0 && endYear == 0) {
-            // get all the years 
+
+            // IF NO startYear and endYear then ...
+
+            // BELOW MUST BE SEPARATE METHOD WHICH PROCESS RAW DATA getRequiredYears using map if specific years requested
+            if (startYear != 0 && endYear == 0) {
+                // ONLY STARTING YEAR GIVEN
+                // SEPARATE METHOD HERE BECAUSE THIS WILL BE USED WHEN SETTINGS ARE CHANGED IN THE INTERFACE
+            } else if (startYear == 0 && endYear == 0) {
+                // get all the years
+            }
+
+        } else {
+            System.out.println("Incorrect URL");
         }
 
         return map;
