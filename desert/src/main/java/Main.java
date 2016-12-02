@@ -21,12 +21,27 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * This class represents obtaining the data from the World Bank API.
+ * This class represents obtaining the rawData from the World Bank API.
  *
  * @author Haaris Memon
  * @author Vladislavs Uljanovs
  */
 public class Main {
+	
+	private static String fetch(String countryCode, String indicator) throws IOException {
+		String rawData = null;
+		String fetchOffline = fetchOffline(countryCode, indicator);
+
+		if (fetchOffline != null) {
+			rawData = fetchOffline;
+			System.out.println("=> Log.fetch: /// FETCH OFFLINE ///");
+		} else {
+			rawData = fetchOnline(countryCode, indicator);
+			cache(countryCode, indicator, rawData);
+			System.out.println("=> Log.fetch: /// FETCH ONLINE ///");
+		}
+		return rawData;
+	}
 
 	private static String fetchOnline(String countryCode, String indicator) throws IOException {
 		OkHttpClient client = new OkHttpClient();
@@ -37,17 +52,15 @@ public class Main {
 	}
 	
 	private static String fetchOffline(String countryCode, String indicator) throws IOException {
-		
-		File f = new File("cache.txt");
-		if(f.exists() && !f.isDirectory()) { 
-		    // good move on
-		} else {
+		File cache = new File("cache.txt");
+		if(!cache.exists() && !cache.isDirectory()) {
+			System.out.println("=> Log.fetchOffline: NO CACHED DATA");
 			return null;
 		}
-		
-    	String json = null;
 
-    	try (BufferedReader reader = new BufferedReader(new FileReader("cache.txt"))) {
+    	String rawData = null;
+
+    	try (BufferedReader reader = new BufferedReader(new FileReader(cache))) {
 
     		String line = null;
 
@@ -57,29 +70,25 @@ public class Main {
     		while ((line = reader.readLine()) != null) {
     			
             	String[] values = line.split("/");
-            	
-            	// BELOW MUST BE SEPARATE METHOD BECAUSE USED TO IN LOAD AND TO VALIDATE IF THE QUERY EXISTS TO DELETE IT
+
             	if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
             		if (values[2].equals(currentMMYYYY)) {
-            			System.out.println("FOUND IN CACHE:");
-            			System.out.println(values[3]);
-            			json = values[3];
+            			System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE");
+            			rawData = values[3];
             		} else {
-            			// fetch new data
-            			System.out.println("DATA TOO OLD SO FETCH NEW DATA here");
-//            			json = fetchOnline(countryCode, indicator);
+            			System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE BUT OUTDATED");
+            			deleteQuery(countryCode, indicator);
             		}
     	        } else {
-    	        	System.out.println("NOT FOUND IN CACHE");
+    	        	System.out.println("=> Log.fetchOffline: DATA NOT FOUND IN CACHE");
     	        }
             }
     		reader.close();
     	} catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-        	System.out.println("ERROR in fetchOffline");
+    		System.out.println("=> Log.fetchOffline: ERROR");
         }
-
-
-    	return json;
+    	
+    	return rawData;
     }
 
 	private static Boolean isQueryValid(String indicator, String countryCode, int startYear, int endYear) {
@@ -92,12 +101,11 @@ public class Main {
 		return true;
 	}
 
-	private static void cacheQuery(String countryCode, String indicator, String data) {
-		
+	private static void cache(String countryCode, String indicator, String rawData) {
 		Calendar c = Calendar.getInstance();
 		
 		try (PrintWriter writer = new PrintWriter(new FileWriter("cache.txt", true))) {
-			writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + data);
+			writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + rawData);
 		} catch (IOException e) {
 			// Ignore exception
 			e.printStackTrace();
@@ -105,7 +113,7 @@ public class Main {
 	}
 	
 	// deletes specific query
-	private static void removeCachedQuery(String countryCode, String indicator) throws IOException {
+	private static void deleteQuery(String countryCode, String indicator) throws IOException {
 		File cache = new File("cache.txt"); 
 		File temp = new File("temp.txt");
 
@@ -124,9 +132,10 @@ public class Main {
 		reader.close();
 		
 		boolean isOK = temp.renameTo(cache);
-		System.out.println(isOK);
+		System.out.println("Renamed successfully? " + isOK);
+		System.out.println("=> Log.deleteQuery: QUERY REMOVED");
 	}
-	
+
 	private static void clearCache() throws IOException {
 		File file = new File("cache.txt");
 		file.delete();
@@ -136,34 +145,13 @@ public class Main {
 
 //		isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
 
-		if (startYear != 0 && endYear == 0) {
-			// ONLY HAVE STARTING POINT and but the end
-			// SEPARATE METHOD HERE BECAUSE THIS WILL BE USED WHEN SETTINGS ARE CHANGED IN THE INTERFACE
-		} else if (startYear == 0 && endYear == 0) {
-			// get all the years
-		}
-
-		String fetchOffline = fetchOffline(countryCode, indicator);
-		String data = null;
+		String rawData = fetch(countryCode, indicator);
 		
-		if (fetchOffline != null) {
-			data = fetchOffline;
-			System.out.println("/// local ///");
-		} else {
-			data = fetchOnline(countryCode, indicator);
-			cacheQuery(countryCode, indicator, data);
-			System.out.println("/// new ///");
-		}
-		// TODO getRequiredYears using map if specific year present
-		
-		
-//		cacheQuery(countryCode, indicator, data);
-//		fetchOffline(countryCode, indicator);
-		
-//		removeCachedQuery(countryCode, indicator);
+		// FOR TESTING PURPOSE ARE LEFT HERE:
+//		deleteQuery(countryCode, indicator);
 //		clearCache();
 
-		JSONArray array = new JSONArray(data).getJSONArray(1);
+		JSONArray array = new JSONArray(rawData).getJSONArray(1);
 
 		TreeMap<Integer, Double> map = new TreeMap<>();
 
@@ -178,11 +166,20 @@ public class Main {
 			}
 		}
 
+		// BELOW MUST BE SEPARATE METHOD WHICH PROCESS RAW DATA getRequiredYears using map if specific years requested
+		if (startYear != 0 && endYear == 0) {
+			// ONLY STARTING YEAR GIVEN
+			// SEPARATE METHOD HERE BECAUSE THIS WILL BE USED WHEN SETTINGS ARE CHANGED IN THE INTERFACE
+		} else if (startYear == 0 && endYear == 0) {
+			// get all the years 
+		}
+
 		return map;
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(getGDP("GB", 0, 0));
+		getGDP("GB", 0, 0);
+//		System.out.println(getGDP("GB", 0, 0));
 	}
 
 	public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) throws IOException {
