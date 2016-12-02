@@ -2,7 +2,8 @@ package main.java;
 
 import java.io.*;
 import java.util.Calendar;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -139,7 +140,7 @@ public class MyWorldBank {
         file.delete();
     }
 
-    private static TreeMap<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
+    private static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
         
 //      isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
         // HANDLE ALL WORLD
@@ -151,7 +152,7 @@ public class MyWorldBank {
 //      deleteQuery(countryCode, indicator);
 //      clearCache();
 
-        TreeMap<Integer, Double> map = new TreeMap<>();
+        Map<Integer, Double> yearValueMap = new HashMap<>();
 
         if(rawData != null) {
 
@@ -163,27 +164,38 @@ public class MyWorldBank {
                 try {
                     Integer year = Integer.parseInt(object.getString("date"));
                     Double value = Double.parseDouble(object.getString("value"));
-                    map.put(year, value);
+                    yearValueMap.put(year, value);
                 } catch (JSONException e) {
                     // do nothing, the entry is not inserted into tree map
                 }
             }
 
-            // IF NO startYear and endYear then ...
+            Map<Integer, Double> filteredMap = new HashMap<>();
 
-            // BELOW MUST BE SEPARATE METHOD WHICH PROCESS RAW DATA getRequiredYears using map if specific years requested
-            if (startYear != 0 && endYear == 0) {
-                // ONLY STARTING YEAR GIVEN
-                // SEPARATE METHOD HERE BECAUSE THIS WILL BE USED WHEN SETTINGS ARE CHANGED IN THE INTERFACE
-            } else if (startYear == 0 && endYear == 0) {
-                // get all the years
+            for(Integer yearKey : yearValueMap.keySet()) {
+                //case in which both start and end year is given
+                if(startYear != 0 && endYear != 0) {   //"between [start year] to [end year]"
+                    if((yearKey > startYear && yearKey < endYear) || yearKey == startYear || yearKey == endYear) {
+                        filteredMap.put(yearKey, yearValueMap.get(yearKey));
+                    }
+                } else if(startYear == 0 && endYear != 0) { //"until [end year]"
+                    if(yearKey < endYear || yearKey == endYear) {
+                        filteredMap.put(yearKey, yearValueMap.get(yearKey));
+                    }
+                } else if(startYear != 0 && endYear == 0) { //since [start year]
+                    if(yearKey > startYear || yearKey == startYear) {
+                        filteredMap.put(yearKey, yearValueMap.get(yearKey));
+                    }
+                }
             }
+
+            yearValueMap = filteredMap;
 
         } else {
             System.out.println("Incorrect URL");
         }
 
-        return map;
+        return yearValueMap;
     }
 
     /**
@@ -199,7 +211,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP value in US Dollars (Trillion)
      */
-    public static TreeMap<Integer, Double> getGDP(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getGDP(String countryCode, int startYear, int endYear) {
         return query("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
     }
 
@@ -216,7 +228,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP Growth Percentage(%)
      */
-    public static TreeMap<Integer, Double> getGDPGrowth(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getGDPGrowth(String countryCode, int startYear, int endYear) {
         return query("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
     }
 
@@ -233,7 +245,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP per Capita value in US Dollars (Trillion)
      */
-    public static TreeMap<Integer, Double> getGDPPerCapita(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getGDPPerCapita(String countryCode, int startYear, int endYear) {
         return query("NY.GDP.PCAP.CD", countryCode, startYear, endYear);
     }
 
@@ -250,7 +262,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP per Capita Growth Percentage(%)
      */
-    public static TreeMap<Integer, Double> getGDPPerCapitaGrowth(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getGDPPerCapitaGrowth(String countryCode, int startYear, int endYear) {
         return query("NY.GDP.PCAP.KD.ZG", countryCode, startYear, endYear);
     }
 
@@ -267,7 +279,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Consumer Price Inflation Percentage(%)
      */
-    public static TreeMap<Integer, Double> getConsumerPriceInflation(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getConsumerPriceInflation(String countryCode, int startYear, int endYear) {
         return query("FP.CPI.TOTL.ZG", countryCode, startYear, endYear);
     }
 
@@ -284,7 +296,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Unemployment Percentage(%)
      */
-    public static TreeMap<Integer, Double> getUnemploymentTotal(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getUnemploymentTotal(String countryCode, int startYear, int endYear) {
         return query("SL.UEM.TOTL.ZS", countryCode, startYear, endYear);
     }
 
@@ -301,7 +313,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Unemployment Percentage(%)
      */
-    public static TreeMap<Integer, Double> getUnemploymentMale(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getUnemploymentMale(String countryCode, int startYear, int endYear) {
         return query("SL.UEM.TOTL.MA.ZS", countryCode, startYear, endYear);
     }
 
@@ -318,7 +330,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Unemployment Percentage(%)
      */
-    public static TreeMap<Integer, Double> getUnemploymentYoungMale(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getUnemploymentYoungMale(String countryCode, int startYear, int endYear) {
         return query("SL.UEM.1524.MA.ZS", countryCode, startYear, endYear);
     }
 
@@ -335,7 +347,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Unemployment Percentage(%)
      */
-    public static TreeMap<Integer, Double> getUnemploymentFemale(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getUnemploymentFemale(String countryCode, int startYear, int endYear) {
         return query("SL.UEM.TOTL.FE.ZS", countryCode, startYear, endYear);
     }
 
@@ -352,7 +364,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Unemployment Percentage(%)
      */
-    public static TreeMap<Integer, Double> getUnemploymentYoungFemale(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getUnemploymentYoungFemale(String countryCode, int startYear, int endYear) {
         return query("SL.UEM.1524.FE.ZS", countryCode, startYear, endYear);
     }
 
@@ -369,7 +381,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP Deflator Inflation Percentage(%)
      */
-    public static TreeMap<Integer, Double> getGDPDeflatorInflation(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getGDPDeflatorInflation(String countryCode, int startYear, int endYear) {
         return query("NY.GDP.DEFL.KD.ZG", countryCode, startYear, endYear);
     }
 
@@ -386,7 +398,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Current Account Balance value in US Dollars (Billion)
      */
-    public static TreeMap<Integer, Double> getCurrentAccountBalance(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getCurrentAccountBalance(String countryCode, int startYear, int endYear) {
         return query("BN.CAB.XOKA.CD", countryCode, startYear, endYear);
     }
 
@@ -403,7 +415,7 @@ public class MyWorldBank {
      * @param endYear The end year you want to find data for
      * @return Map with year and Current Account Balance in Percentage(%)
      */
-    public static TreeMap<Integer, Double> getCurrentAccountBalancePercentOfGDP(String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> getCurrentAccountBalancePercentOfGDP(String countryCode, int startYear, int endYear) {
         return query("BN.CAB.XOKA.GD.ZS", countryCode, startYear, endYear);
     }
 
