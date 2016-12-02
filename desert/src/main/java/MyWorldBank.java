@@ -104,20 +104,46 @@ public class MyWorldBank {
         Calendar c = Calendar.getInstance();
         
         try (PrintWriter writer = new PrintWriter(new FileWriter("cache.txt", true))) {
+//            System.out.println(cacheSize(new File("cache.txt")));
+            if(cacheSize(new File("cache.txt")) == 5) {
+                //remove first line
+                BufferedReader reader = new BufferedReader(new FileReader(new File("cache.txt")));
+                String[] values = reader.readLine().split("/");
+                System.out.println("indicator " + values[1] + " country: " + values[0]);
+                deleteQuery(values[0], values[1]);
+            }
             writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + rawData);
         } catch (IOException e) {
             // Ignore exception
             e.printStackTrace();
         }
     }
+
+    private static int cacheSize(File file) {
+        try{
+            FileReader fr = new FileReader(file);
+            LineNumberReader lnr = new LineNumberReader(fr);
+
+            int lineNumber = 0;
+
+            while(lnr.readLine() != null) lineNumber++;
+            lnr.close();
+
+            return lineNumber;
+
+        } catch (IOException e) {
+            System.out.println("File given is not found");
+            return 0;
+        }
+    }
     
     // deletes specific query
     private static void deleteQuery(String countryCode, String indicator) throws IOException {
-        File cache = new File("cache.txt"); 
+        File cache = new File("cache.txt");
         File temp = new File("temp.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(cache));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
+        PrintWriter writer = new PrintWriter(new FileWriter(temp, true));
 
         String line = null;
 
@@ -125,12 +151,14 @@ public class MyWorldBank {
             String[] values = line.split("/");
             
             if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) continue;
-            writer.write(line);
+            writer.println(line);
         }
         writer.close();
         reader.close();
-        
-        boolean isOK = temp.renameTo(cache);
+
+        System.out.println("new cache txt: " + cache.renameTo(new File("newCache.txt")));
+
+        boolean isOK = temp.renameTo(new File("cache.txt"));
         System.out.println("Renamed successfully? " + isOK);
         System.out.println("=> Log.deleteQuery: QUERY REMOVED");
     }
