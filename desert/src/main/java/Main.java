@@ -10,8 +10,8 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        //GDP in Brazil (all data)
-      /*  System.out.println("GDP for Brazil" + MyWorldBank.getGDP("br", 2001, 0));
+ /*       //GDP in Brazil (all data)
+        System.out.println("GDP for Brazil" + MyWorldBank.getGDP("br", 2001, 0));
 
 
         //GDP Growth in Brazil between 1990 and 2012

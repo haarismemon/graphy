@@ -58,7 +58,8 @@ public class MyWorldBank {
 
         String rawData = null;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(cache))) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(cache));
 
             String line = null;
 
@@ -110,6 +111,7 @@ public class MyWorldBank {
                 BufferedReader reader = new BufferedReader(new FileReader(new File("cache.txt")));
                 String[] values = reader.readLine().split("/");
                 System.out.println("indicator " + values[1] + " country: " + values[0]);
+                reader.close();
                 deleteQuery(values[0], values[1]);
             }
             writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + rawData);
@@ -128,6 +130,7 @@ public class MyWorldBank {
 
             while(lnr.readLine() != null) lineNumber++;
             lnr.close();
+            fr.close();
 
             return lineNumber;
 
@@ -156,10 +159,23 @@ public class MyWorldBank {
         writer.close();
         reader.close();
 
-        System.out.println("new cache txt: " + cache.renameTo(new File("newCache.txt")));
 
-        boolean isOK = temp.renameTo(new File("cache.txt"));
-        System.out.println("Renamed successfully? " + isOK);
+        //create source as the temp file
+        BufferedReader tempReader = new BufferedReader(new FileReader(temp));
+        //create the destination to be the cache file
+        PrintWriter cacheWriter = new PrintWriter(new FileWriter(cache));
+
+        String tempLine = null;
+
+        //copy everything from temp into cache txt
+        while ((tempLine = tempReader.readLine()) != null) {
+            cacheWriter.println(tempLine);
+        }
+        cacheWriter.close();
+        tempReader.close();
+
+        temp.delete();
+
         System.out.println("=> Log.deleteQuery: QUERY REMOVED");
     }
 
