@@ -25,7 +25,7 @@ import org.json.JSONObject;
  */
 public class MyWorldBank {
 
-    private static String fetch(String countryCode, String indicator) throws IOException  {
+    private static String fetch(String countryCode, String indicator)  {
         String rawData = null;
         String fetchOffline = fetchOffline(countryCode, indicator);
 
@@ -39,18 +39,28 @@ public class MyWorldBank {
         }
         return rawData;
     }
+
+    private static URL urlBuilder(String countryCode, String indicator) throws IOException {
+         String url = "http://api.worldbank.org/countries/";
+         if(countryCode == null) {
+             url += "1W";
+         } else url += countryCode;
+         url += "/indicators/" + indicator + "?format=json&per_page=250";
+
+         return new URL(url);
+    }
     
-    private static String fetchOnline(String countryCode, String indicator) throws IOException  {
-        URL request = new URL("http://api.worldbank.org/countries/" + countryCode + "/indicators/" + indicator + "?format=json&per_page=250");
-        String response;
+    private static String fetchOnline(String countryCode, String indicator) {
         try {
+            URL request = urlBuilder(countryCode, indicator);
+            String response;
             BufferedReader reader = new BufferedReader(new InputStreamReader(request.openStream()));
             response = reader.readLine();
             reader.close();
+            return response;
         } catch (IOException e) {
             return null;
         }
-        return response;
     }
     
     private static String fetchOffline(String countryCode, String indicator) {
@@ -62,7 +72,8 @@ public class MyWorldBank {
 
         String rawData = null;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(cache))) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(cache));
 
             String line = null;
 
@@ -72,6 +83,8 @@ public class MyWorldBank {
             while ((line = reader.readLine()) != null) {
                 
                 String[] values = line.split("/");
+
+                if(countryCode == null) countryCode = "null";
 
                 if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
                     if (values[2].equals(currentMMYYYY)) {
@@ -113,7 +126,7 @@ public class MyWorldBank {
                 //remove first line
                 BufferedReader reader = new BufferedReader(new FileReader(new File("cache.txt")));
                 String[] values = reader.readLine().split("/");
-                System.out.println("indicator " + values[1] + " country: " + values[0]);
+                reader.close();
                 deleteQuery(values[0], values[1]);
             }
             writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + rawData);
@@ -132,6 +145,7 @@ public class MyWorldBank {
 
             while(lnr.readLine() != null) lineNumber++;
             lnr.close();
+            fr.close();
 
             return lineNumber;
 
@@ -160,10 +174,23 @@ public class MyWorldBank {
         writer.close();
         reader.close();
 
-        System.out.println("new cache txt: " + cache.renameTo(new File("newCache.txt")));
 
-        boolean isOK = temp.renameTo(new File("cache.txt"));
-        System.out.println("Renamed successfully? " + isOK);
+        //create source as the temp file
+        BufferedReader tempReader = new BufferedReader(new FileReader(temp));
+        //create the destination to be the cache file
+        PrintWriter cacheWriter = new PrintWriter(new FileWriter(cache));
+
+        String tempLine = null;
+
+        //copy everything from temp into cache txt
+        while ((tempLine = tempReader.readLine()) != null) {
+            cacheWriter.println(tempLine);
+        }
+        cacheWriter.close();
+        tempReader.close();
+
+        temp.delete();
+
         System.out.println("=> Log.deleteQuery: QUERY REMOVED");
     }
 
@@ -179,7 +206,7 @@ public class MyWorldBank {
 
         //can be null
         String rawData = fetch(countryCode, indicator);
-        
+
         // FOR TESTING PURPOSE ARE LEFT HERE:
 //      deleteQuery(countryCode, indicator);
 //      clearCache();
@@ -190,9 +217,8 @@ public class MyWorldBank {
 
             JSONArray array = new JSONArray(rawData).getJSONArray(1);
 
-
-            for (int o = 0; o < array.length(); ++o) {
-                JSONObject object = array.getJSONObject(o);
+            for (int i = 0; i < array.length(); ++i) {
+                JSONObject object = array.getJSONObject(i);
                 try {
                     Integer year = Integer.parseInt(object.getString("date"));
                     Double value = Double.parseDouble(object.getString("value"));
@@ -218,6 +244,8 @@ public class MyWorldBank {
                     if(yearKey > startYear || yearKey == startYear) {
                         filteredMap.put(yearKey, yearValueMap.get(yearKey));
                     }
+                } else if(startYear == 0 && endYear == 0) {
+                    filteredMap.put(yearKey, yearValueMap.get(yearKey));
                 }
             }
 
