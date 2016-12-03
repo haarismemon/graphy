@@ -3,7 +3,6 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -13,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.TreeMap;
+
 
 public class BasicUI extends Application {
 
