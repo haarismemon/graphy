@@ -3,6 +3,7 @@ package test.java;
 import main.java.MyWorldBank;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +37,19 @@ public class MyWorldBankTest {
     public void endDateIsInvalid() {
         Map<Integer, Double> map = MyWorldBank.getGDP("gb",2002,2020);
         assertEquals("Map returned should be null", null, map);
+    }
+
+    @Test
+    public void queryShouldReturnMap() {
+        Map unemploymentMap = new HashMap<Integer, Double>();
+        unemploymentMap.put(2000, 9.5);
+        assertEquals("Map returned should be {2000=9.5}", unemploymentMap, MyWorldBank.getUnemploymentTotal("br", 2000, 2000));
+
+        Map gdpMap = new HashMap<Integer, Double>();
+        gdpMap.put(1961, 10.275911554301);
+        gdpMap.put(1962, 5.21605942017888);
+        gdpMap.put(1963, 0.87467259240843);
+        assertEquals("Map returned should be {2000=9.5}", gdpMap, MyWorldBank.getGDP("br", 0, 1963));
     }
 
 }

@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static junit.framework.TestCase.fail;
+
 /**
  * This class represents obtaining the data from the World Bank API.
  *
@@ -230,7 +232,6 @@ public class MyWorldBank {
                 try {
                     Integer year = Integer.parseInt(object.getString("date"));
                     Double value = Double.parseDouble(object.getString("value"));
-                    System.out.println(object.getString("country"));
                     yearValueMap.put(year, value);
                 } catch (JSONException e) {
                     // do nothing, the entry is not inserted into tree map
@@ -242,7 +243,7 @@ public class MyWorldBank {
             for(Integer yearKey : yearValueMap.keySet()) {
                 //case in which both start and end year is given
                 if(startYear != 0 && endYear != 0) {   //"between [start year] to [end year]"
-                    if((yearKey > startYear && yearKey < endYear) || yearKey == startYear || yearKey == endYear) {
+                    if((yearKey >= startYear && yearKey <= endYear)) {
                         filteredMap.put(yearKey, yearValueMap.get(yearKey));
                     }
                 } else if(startYear == 0 && endYear != 0) { //"until [end year]"
@@ -258,9 +259,9 @@ public class MyWorldBank {
                 }
             }
 
-            yearValueMap = filteredMap;
+             yearValueMap = filteredMap;
 
-            return yearValueMap;
+             return yearValueMap;
         } else {
             System.out.println("Incorrect URL");
             return null;
