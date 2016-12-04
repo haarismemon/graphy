@@ -20,7 +20,7 @@ public class InputAnalysis {
 	
 	public static void main(String[] a){
 		
-		new InputAnalysis().isValidCommand("Unemployment in Cuba from 1992 to 2002");
+		new InputAnalysis().isValidCommand("GDP per capita in United Kingdom from 1992 to 2002");
 		
 	}
 	
@@ -30,8 +30,8 @@ public class InputAnalysis {
 		
 		String indicator = "";
 		String country;
-		int startDate;
-		int endDate;
+		int startDate = 0;
+		int endDate = 0;
 		
 		if(input == null){
 			
@@ -40,13 +40,28 @@ public class InputAnalysis {
 		}
 			
 		String[] words = ignoreConjunctives(input.split(" "));
-		indicator = getIndicator(words);
-		country = getCountry(words);
+//		indicator = getIndicator(words);
+//		country = getCountry(words);
+		
+		indicator = getIndicator(input);
+		country = getCountry(input);
 		
 		int[] dates = getDates(words);
 		
-		startDate = dates[0];
-		endDate = dates[1];
+		if(dates.length == 0){
+			
+		}
+		else if(dates.length == 1){
+			
+			startDate = dates[0];
+			
+		}
+		else{
+			
+			startDate = dates[0];
+			endDate = dates[1];
+			
+		}
 		
 		System.out.println(indicator);
 		System.out.println(country);
@@ -102,43 +117,121 @@ public class InputAnalysis {
 		
 	}
 
-	private String getIndicator(String[] words){
+//	private String getIndicator(String[] words){
+//		
+//		for(String i: words){
+//			
+//			for(String j: indicators){
+//				
+//				if(i.equals(j)){
+//					
+//					return i;
+//					
+//				}
+//				
+//			}
+//			
+//		}
+//		
+//		return null;
+//		
+//	}
+	
+	private String getIndicator(String input){
 		
-		for(String i: words){
+		ArrayList<String> matches = new ArrayList<>();
+		
+		for(String s: indicators){
 			
-			for(String j: indicators){
+			if(input.toLowerCase().contains(s.toLowerCase())){
 				
-				if(i.equals(j)){
-					
-					return i;
-					
-				}
+				matches.add(s);
 				
 			}
 			
 		}
 		
-		return null;
+		if(matches.size() == 1){
+			
+			return matches.get(0);
+			
+		}
+		
+		int length = matches.get(0).length();
+		String longest = matches.get(0);
+
+		
+		for(int i=0; i < matches.size(); i++){
+			
+		    if(matches.get(i).length() > length){
+		    	
+		        length = matches.get(i).length();
+		        longest = matches.get(i);
+		        
+		    }      
+		} 
+
+		
+		return longest;
 		
 	}
 	
-	private String getCountry(String[] words){
+//	private String getCountry(String[] words){
+//		
+//		for(String i: words){
+//			
+//			for(String j: countries){
+//				
+//				if(i.equals(j)){
+//					
+//					return i;
+//					
+//				}
+//				
+//			}
+//			
+//		}
+//		
+//		return null;
+//		
+//	}
+	
+	private String getCountry(String input){
 		
-		for(String i: words){
+		ArrayList<String> matches = new ArrayList<>();
+		
+		for(String s: countries){
 			
-			for(String j: countries){
+			if(input.toLowerCase().contains(s.toLowerCase())){
 				
-				if(i.equals(j)){
-					
-					return i;
-					
-				}
+				matches.add(s);
 				
 			}
 			
 		}
 		
-		return null;
+		if(matches.size() == 1){
+			
+			
+			return matches.get(0);
+			
+		}
+		
+		int length = matches.get(0).length();
+		String longest = matches.get(0);
+
+		for(int i=0; i < matches.size(); i++){
+			
+		    if(matches.get(i).length() > length){
+		    	
+		        length = matches.get(i).length();
+		        longest = matches.get(i);
+		        
+		    }      
+		} 
+
+		
+		return longest;
 		
 	}
 	
