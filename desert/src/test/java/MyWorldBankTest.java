@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * This class represents the JUnit Tests for the World Bank Class.
  *
- * @author Haaris
+ * @author Haaris Memon
  */
 public class MyWorldBankTest {
 
