@@ -59,6 +59,7 @@ public class MyWorldBank {
             reader.close();
             return response;
         } catch (IOException e) {
+            System.out.println("error");
             return null;
         }
     }
@@ -200,12 +201,19 @@ public class MyWorldBank {
     }
 
     private static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
-        
+
+        //the start and end year passed must be valid i.e. between 1960 and 2016
+        if(((startYear < 1960 || startYear > 2016) && startYear != 0) || ((endYear < 1960 || endYear > 2016) && endYear != 0)) return null;
+        if(countryCode.equals("")) return null;
+
 //      isQueryValid(indicator, countryCode, startYear, endYear); // if false return error and empty map
         // HANDLE ALL WORLD
 
         //can be null
         String rawData = fetch(countryCode, indicator);
+
+        //if the data returned says that the parameter was not valid, then return null
+        if(rawData.contains("parameter value is not valid")) return null;
 
         // FOR TESTING PURPOSE ARE LEFT HERE:
 //      deleteQuery(countryCode, indicator);
@@ -222,6 +230,7 @@ public class MyWorldBank {
                 try {
                     Integer year = Integer.parseInt(object.getString("date"));
                     Double value = Double.parseDouble(object.getString("value"));
+                    System.out.println(object.getString("country"));
                     yearValueMap.put(year, value);
                 } catch (JSONException e) {
                     // do nothing, the entry is not inserted into tree map
@@ -237,7 +246,7 @@ public class MyWorldBank {
                         filteredMap.put(yearKey, yearValueMap.get(yearKey));
                     }
                 } else if(startYear == 0 && endYear != 0) { //"until [end year]"
-                    if(yearKey < endYear || yearKey == endYear) {
+                    if(yearKey <= endYear) {
                         filteredMap.put(yearKey, yearValueMap.get(yearKey));
                     }
                 } else if(startYear != 0 && endYear == 0) { //since [start year]
@@ -251,11 +260,11 @@ public class MyWorldBank {
 
             yearValueMap = filteredMap;
 
+            return yearValueMap;
         } else {
             System.out.println("Incorrect URL");
+            return null;
         }
-
-        return yearValueMap;
     }
 
     /**
