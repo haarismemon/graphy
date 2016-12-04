@@ -17,8 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static junit.framework.TestCase.fail;
-
 /**
  * This class represents obtaining the data from the World Bank API.
  *
