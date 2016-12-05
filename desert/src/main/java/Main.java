@@ -30,7 +30,7 @@ public class Main {
 //
 //        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentFemale("gb", 1990, 2012));
 //
-        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentYoungFemale("gb", 1990, 2012));
+        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentYoungFemale("br", 1990, 2012));
 //
 //        System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPDeflatorInflation("gb", 1990, 2012));
 //
