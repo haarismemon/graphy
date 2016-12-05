@@ -1,6 +1,6 @@
 package test.java;
 
-import main.java.MyWorldBank;
+import main.java.api.MyWorldBank;
 import org.junit.Test;
 
 import java.util.HashMap;
