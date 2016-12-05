@@ -1,5 +1,6 @@
 
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -8,8 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckComboBox;
 
 import java.util.TreeMap;
 
@@ -30,16 +31,15 @@ public class BasicUI extends Application {
         hBox.setSpacing(10);
         final ComboBox indicatorComboBox = new ComboBox();
         indicatorComboBox.getItems().addAll("GDP/National income", "Unemployment");
-        final ComboBox countryComboBox = new ComboBox();
+        final CheckComboBox countryComboBox = new CheckComboBox();
         countryComboBox.getItems().addAll("HK","US","AU");
         TextField textField1 = new TextField();
-        TextField textField2 = new TextField ();
-        hBox.getChildren().addAll(indicatorComboBox,countryComboBox,textField1,textField2);
+        TextField textField2 = new TextField();
+        final ComboBox graphType = new ComboBox();
+        graphType.getItems().addAll("LineGraph","BarChart");
+        hBox.getChildren().addAll(indicatorComboBox,countryComboBox,textField1,textField2,graphType);
 
-        StackPane graphPane = new StackPane();
-        graphPane.getChildren().add(graph.getGraph());
-
-        BorderPane root = new BorderPane(graphPane);
+        BorderPane root = new BorderPane(graph.getGraph());
         root.setTop(hBox);
 
         Scene scene = new Scene(root,800,400);
@@ -47,14 +47,27 @@ public class BasicUI extends Application {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
-                    case ENTER:    graph.reset();
+                    case ENTER:graph.reset();
                         TreeMap corresbondingSeries = new TreeMap();
-                        switch((String)indicatorComboBox.getValue()){
-                            case "GDP/National income": corresbondingSeries = MyWorldBank.getGDPGrowth((String)countryComboBox.getValue(),Integer.parseInt(textField1.getText()),Integer.parseInt(textField2.getText()));break;
-                            case "Unemployment": corresbondingSeries = MyWorldBank.getUnemploymentTotal((String)countryComboBox.getValue(),Integer.parseInt(textField1.getText()),Integer.parseInt(textField2.getText()));break;
+                        ObservableList<String> list = countryComboBox.getCheckModel().getCheckedItems();
+                        for(String s:list) {
+                            switch ((String) indicatorComboBox.getValue()) {
+                                case "GDP/National income":
+                                    corresbondingSeries = MyWorldBank.getGDPGrowth(s, Integer.parseInt(textField1.getText()), Integer.parseInt(textField2.getText()));
+                                    break;
+                                case "Unemployment":
+                                    corresbondingSeries = MyWorldBank.getUnemploymentTotal(s, Integer.parseInt(textField1.getText()), Integer.parseInt(textField2.getText()));
+                                    break;
+                            }
+                            graph.addSeries(s, corresbondingSeries);
+
                         }
-                                    graph.addSeries((String)countryComboBox.getValue(),corresbondingSeries);
-                                    ; break;
+                        graph.switchGraph((String) graphType.getValue());
+                        break;
+                    case SPACE:;
+                        System.out.println((String)graphType.getValue());
+                        break;
+
                 }
             }
         });
