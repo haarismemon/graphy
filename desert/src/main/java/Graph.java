@@ -1,8 +1,8 @@
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.chart.*;
@@ -61,7 +61,7 @@ public class Graph {
         return returnSeries;
     }
 
-    public void addSeries(String name, TreeMap<Integer, Double> a){
+    public void addSeries(String name, HashMap<Integer, Double> a){
         XYChart.Series series = new XYChart.Series();
         XYChart.Series series1 = new XYChart.Series();
         series.setName(name);
