@@ -1,0 +1,19 @@
+.search-field {
+	 -fx-focus-color: transparent;
+	 -fx-border: none;
+	 -fx-background-color: #E6E6E6;
+	 -fx-font-size: 25;
+	 -fx-text-fill: #3A3A3A;
+	 -fx-border-radius: 5;
+	 -fx-background-image:url('/search.png');
+  	 -fx-background-repeat: no-repeat;
+  	 -fx-background-position: left 13 center;
+  	 -fx-padding: 0 0 0 45;
+}
+.search-field-not-found {
+	 -fx-border: 2;
+	 -fx-border-color: #F05350;
+}
+.text-field {
+    -fx-prompt-text-fill: rgba(111,111,111,0.51);
+}
