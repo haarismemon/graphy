@@ -1,3 +1,5 @@
+package graph;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class Graph {
         Double last = 0d;
         for(Map.Entry<Integer,Double> entry:series.entrySet()){
             XYChart.Data data = new XYChart.Data(entry.getKey(),entry.getValue());
-            data.setNode(new HoverNode(entry.getValue(),this.lineChart.getData().size()));
+            data.setNode(new HoverLineNode(entry.getValue(),this.lineChart.getData().size()));
             line.getData().add(data);
             bar.getData().add(new XYChart.Data(""+entry.getKey(),entry.getValue()));
             last = entry.getValue();
@@ -115,8 +117,8 @@ public class Graph {
      * HoverNode Class is class for the lineChart.
      * Creates Hovering Node to show the value of data on the graph rounded to two significant figure
      */
-    class HoverNode extends StackPane{
-        public HoverNode(double value, int size){
+    class HoverLineNode extends StackPane{
+        public HoverLineNode(double value, int size){
             BigDecimal bd = new BigDecimal(value);
             bd = bd.round(new MathContext(3));
             double rounded = bd.doubleValue();
@@ -139,5 +141,15 @@ public class Graph {
                 }
             });
         }
+    }
+
+    /**
+     * Darren, Try to fill this class in. This class is like the HoverLineNode class. But instead it is
+     * build for adding a hover label for the bars in bar chart
+     * u need do basically do what i did in HoverLineNode but rotate the label 90 degrees and test out
+     * different styles, or use no style with give a transparent background
+     */
+    class HoverBarNode extends StackPane{
+
     }
 }
