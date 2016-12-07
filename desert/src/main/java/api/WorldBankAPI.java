@@ -123,8 +123,6 @@ public class WorldBankAPI {
                 
                 String[] values = line.split("/");
 
-                if (countryCode == null) countryCode = "null";
-                
                 // countryCode AND indicator FOUND
                 if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
                     // must be cached in the same month to be valid
