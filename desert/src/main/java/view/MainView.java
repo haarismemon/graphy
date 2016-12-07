@@ -35,10 +35,10 @@ public class MainView extends Application {
 
 		// Set minimum size of the window
 		primaryStage.setMinHeight(650);
-		primaryStage.setMinWidth(900);
-
+		
 		container = new HBox();
-
+		container.setMinWidth(900);
+		
 		//Root pane
 		root = new BorderPane();
 		//Get the main stylesheet main.css
@@ -79,7 +79,7 @@ public class MainView extends Application {
 
 		Button addButton = new Button("");
 		addButton.setOnAction((event) -> {
-			removeInitialMessage();
+			toggleInspector();
 		});		
 		addButton.getStyleClass().add("button-add");
 		addButton.setPrefSize(18, 18);
@@ -92,7 +92,6 @@ public class MainView extends Application {
 		//Inspector
 		inspector = new InspectorPane();
 		inspector.setPrefWidth(300);
-		container.getChildren().add(inspector);
 		
 		Scene scene = new Scene(container);
 
@@ -116,6 +115,6 @@ public class MainView extends Application {
 			container.getChildren().remove(inspector);
 		} else {
 			container.getChildren().add(inspector);
-		}	
+		}
 	}
 }
