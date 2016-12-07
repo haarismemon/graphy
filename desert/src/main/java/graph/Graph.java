@@ -1,7 +1,5 @@
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -11,97 +9,112 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 public class Graph {
-    String name;
     LineChart lineChart;
     BarChart barChart;
     PieChart pieChart;
     StackPane pane;
-    ArrayList<XYChart.Series> series;
-    ArrayList<XYChart.Series> series1;
-    ArrayList<XYChart.Series> series2;
-    int numYears;
 
 
-
+    /**
+     * Graph constructor: Creates the graph object that contains all three graphType of the same data.
+     * @param graphName
+     */
     public Graph(String graphName){
-        name = graphName;
-        series = new ArrayList<XYChart.Series>();
-        series1 = new ArrayList<XYChart.Series>();
-        series2 =  new ArrayList<XYChart.Series>();
 
-        NumberAxis xAxis = new NumberAxis();
-        CategoryAxis cxAxis = new CategoryAxis();
-        cxAxis.setLabel("Year");
-        cxAxis.setAnimated(true);
-
-        xAxis.setForceZeroInRange(false);
-        xAxis.setAutoRanging(true);
-        xAxis.setLabel("Year");
-        xAxis.setTickUnit(1d);
-
-        pane = new StackPane();
-        lineChart = new LineChart(xAxis,new NumberAxis());
-        barChart = new BarChart(cxAxis,new NumberAxis());
+        lineChart = new LineChart(new NumberAxis(),new NumberAxis());
+        barChart = new BarChart(new CategoryAxis(),new NumberAxis());
         pieChart = new PieChart();
-        barChart.setAnimated(true);
-        lineChart.setAnimated(true);
-        lineChart.setCursor(Cursor.CROSSHAIR);
+
+        NumberAxis xAxis = (NumberAxis)lineChart.getXAxis();
+        NumberAxis yAxis = (NumberAxis)lineChart.getYAxis();
+        yAxis.setAutoRanging(true);
+        yAxis.setForceZeroInRange(false);
+        xAxis.setForceZeroInRange(false);
+        xAxis.setLabel("Year");
+
+        CategoryAxis cxAxis = (CategoryAxis)barChart.getXAxis();
+        cxAxis.setLabel("Year");
+        yAxis = (NumberAxis)barChart.getYAxis();
+        yAxis.setAutoRanging(true);
+        yAxis.setForceZeroInRange(false);
+
+
+        setGraphName(graphName);
+        pane = new StackPane();
         switchGraph("LineGraph");
 
     }
-    public XYChart.Series getSeries(String name, ArrayList<XYChart.Series> list){
-        for(XYChart.Series x:list){
-            if(x.getName() == name){
-                return x;
-            }
-        }
-        XYChart.Series returnSeries = new XYChart.Series();
-        list.add(returnSeries);
-        barChart.getData().add(returnSeries);
-        return returnSeries;
+
+    /**
+     * Set title for the graph
+     * @param name name of the graph
+     */
+    public void setGraphName(String name){
+        lineChart.setTitle(name);
+        barChart.setTitle(name);
+        pieChart.setTitle(name);
     }
 
-    public void addSeries(String name, HashMap<Integer, Double> a){
-        XYChart.Series series = new XYChart.Series();
-        XYChart.Series series1 = new XYChart.Series();
-        series.setName(name);
+    /**
+     * Adds a data to the Graphs in form of series. Each series represent a query.
+     * @param seriesName name of series for the query to show in legend
+     * @param series Map of data representing the series
+     */
+    public void addSeries(String seriesName, Map<Integer, Double> series){
+        XYChart.Series line = new XYChart.Series();
+        XYChart.Series bar = new XYChart.Series();
+        line.setName(seriesName);
+        bar.setName(seriesName);
 
-        for(Map.Entry<Integer,Double> entry:a.entrySet()){
+        Double last = 0d;
+        for(Map.Entry<Integer,Double> entry:series.entrySet()){
             XYChart.Data data = new XYChart.Data(entry.getKey(),entry.getValue());
-            data.setNode(new HoverNode(entry.getValue(),this.series.size()));
-            series.getData().add(data);
-            series1.getData().add(new XYChart.Data(""+entry.getKey(),entry.getValue()));
+            data.setNode(new HoverNode(entry.getValue(),this.lineChart.getData().size()));
+            line.getData().add(data);
+            bar.getData().add(new XYChart.Data(""+entry.getKey(),entry.getValue()));
+            last = entry.getValue();
         }
 
-        this.series.add(series);
-        this.series1.add(series1);
-        lineChart.getData().add(series);
-        barChart.getData().add(series1);
-
-
+        lineChart.getData().add(line);
+        barChart.getData().add(bar);
+        pieChart.getData().add(new PieChart.Data(seriesName,last));
     }
+
+    /**
+     * Change the graph contained in pane to the sellected graph type
+     * Select graph type using the parameter graph name
+     * @param graphName Graph type name(one of three values : LineGraph   BarChart    PieChart)
+     */
     public void switchGraph(String graphName){
         pane.getChildren().clear();
         switch(graphName) {
             case "LineGraph": pane.getChildren().add(lineChart);break;
             case "BarChart": pane.getChildren().add(barChart);break;
+            case "PieChart": pane.getChildren().add(pieChart);break;
         }
     }
 
     /**
-     *
-     * @return
+     *returns a StackPane containing a one of three following graphs: LineGraph, BarGraph or PieChart
+     * @return StackPane with graph
      */
     public StackPane getGraph(){
         return pane;
     }
+
+    /**
+     * clears data for this lineChart, barChart, and pieChart
+     */
     public void reset(){
-        series.clear();
-        series1.clear();
-        series2.clear();
         lineChart.getData().clear();
         barChart.getData().clear();
+        pieChart.getData().clear();
     }
+
+    /**
+     * HoverNode Class is class for the lineChart.
+     * Creates Hovering Node to show the value of data on the graph rounded to two significant figure
+     */
     class HoverNode extends StackPane{
         public HoverNode(double value, int size){
             BigDecimal bd = new BigDecimal(value);
