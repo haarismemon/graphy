@@ -18,63 +18,37 @@ public class InputAnalysis {
 			"in", "between", "from", "since", "at", "-", "to"
 	};
 	
-	public static void main(String[] a){
-		
-		new InputAnalysis().isValidCommand("GDP per capita in United Kingdom from 1992 to 2002");
-		
-	}
-	
-	private boolean isValidCommand(String input){
+
+	public QueryData isValidCommand(String input){
 		
 		
 		
 		String indicator = "";
 		String country;
-		int startDate = 0;
-		int endDate = 0;
 		
 		if(input == null){
 			
-			return false;
+			return null;
 			
 		}
 			
 		String[] words = ignoreConjunctives(input.split(" "));
-//		indicator = getIndicator(words);
-//		country = getCountry(words);
+
 		
 		indicator = getIndicator(input);
 		country = getCountry(input);
 		
 		int[] dates = getDates(words);
 		
-		if(dates.length == 0){
-			
-		}
-		else if(dates.length == 1){
-			
-			startDate = dates[0];
-			
-		}
-		else{
-			
-			startDate = dates[0];
-			endDate = dates[1];
-			
-		}
 		
-		System.out.println(indicator);
-		System.out.println(country);
-		System.out.println(startDate);
-		System.out.println(endDate);
 		
 		if(indicator != null && country != null){
 			
-			return true;
+			return new QueryData(indicator, country, dates);
 			
 		}else{
 			
-			return false;
+			return null;
 			
 		}
 	
@@ -117,26 +91,7 @@ public class InputAnalysis {
 		
 	}
 
-//	private String getIndicator(String[] words){
-//		
-//		for(String i: words){
-//			
-//			for(String j: indicators){
-//				
-//				if(i.equals(j)){
-//					
-//					return i;
-//					
-//				}
-//				
-//			}
-//			
-//		}
-//		
-//		return null;
-//		
-//	}
-	
+
 	private String getIndicator(String input){
 		
 		ArrayList<String> matches = new ArrayList<>();
@@ -175,26 +130,7 @@ public class InputAnalysis {
 		return longest;
 		
 	}
-	
-//	private String getCountry(String[] words){
-//		
-//		for(String i: words){
-//			
-//			for(String j: countries){
-//				
-//				if(i.equals(j)){
-//					
-//					return i;
-//					
-//				}
-//				
-//			}
-//			
-//		}
-//		
-//		return null;
-//		
-//	}
+
 	
 	private String getCountry(String input){
 		
@@ -260,6 +196,39 @@ public class InputAnalysis {
 		int[] output = dates.stream().mapToInt(i -> i).toArray();
 		
 		return output;
+	}
+	
+	public class QueryData{
+		
+		public QueryData(String indicator, String country, int[] dates) {
+			
+			this.indicator = indicator;
+			this.country = country;
+			this.dates = dates;
+		}
+		String indicator = "";
+		String country;
+		int[] dates;
+		
+		public int[] getDates() {
+			return dates;
+		}
+		public void setDates(int[] dates) {
+			this.dates = dates;
+		}
+		public String getIndicator() {
+			return indicator;
+		}
+		public void setIndicator(String indicator) {
+			this.indicator = indicator;
+		}
+		public String getCountry() {
+			return country;
+		}
+		public void setCountry(String country) {
+			this.country = country;
+		}
+
 	}
 	
 }
