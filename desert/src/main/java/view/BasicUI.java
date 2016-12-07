@@ -1,3 +1,4 @@
+package main.java.view;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
