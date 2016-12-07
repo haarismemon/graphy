@@ -27,12 +27,28 @@ public class InspectorPane extends BorderPane{
 	private Button deleteButton;
 	//Update/create button
 	private Button updateButton;
+	
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar ","Pie chart","Line chart");
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList("Italy ","United Kingdom","Russia","France",
 			"Romania","Greece","Sweden","Spain");
 	final ObservableList<String> graphIndicators = FXCollections.observableArrayList("Deflation","Inflation","Income","GDP");
-
+	
+	//Graph title
+	private TextField titleField;
+	//Indicators
+	private ComboBox<String> indicatorComboBox;
+	//Countries
+	private ComboBox<String> countryComboBox;
+	//Graph types
+	private ComboBox<String> graphTypeComboBox;
+	//Start year
+	private TextField startYearComboBox;
+	//End year
+	private TextField endYearComboBox;
+	//Colors
+	private ComboBox<String> colorComboBox;
+	
 	public InspectorPane(){
 		super();
 		this.getStylesheets().add("/css/inspector-pane.css");
@@ -52,7 +68,19 @@ public class InspectorPane extends BorderPane{
 		deleteButton.getStyleClass().add("delete");
 		buttonPane.getChildren().add(deleteButton);
 		
-		updateButton = new Button("Update");
+		updateButton = new Button("Create");
+		
+		//////TEST///////////
+		updateButton.setOnAction((event) -> {
+			System.out.println(this.getIndicator());
+			System.out.println(this.getCountry());
+			System.out.println(this.getTitle());
+			System.out.println(this.getColor());
+			System.out.println(this.getStartYear());
+			System.out.println(this.getEndYear());
+		});	
+		//////TEST///////////
+		
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
 		buttonPane.getChildren().add(updateButton);
@@ -74,7 +102,7 @@ public class InspectorPane extends BorderPane{
 		Label titleLabel = new Label("Graph title");
 		titleLabel.getStyleClass().add("title-label");
 		titleBox.getChildren().add(titleLabel);
-		TextField titleField = new TextField();
+		titleField = new TextField();
 		titleField.setPromptText("Graph title");
 		titleField.getStyleClass().add("options");
 		titleBox.getChildren().add(titleField);
@@ -84,7 +112,8 @@ public class InspectorPane extends BorderPane{
 		Label indicatorLabel = new Label("Indicator");
 		indicatorLabel.getStyleClass().add("title-label");
 		indicatorBox.getChildren().add(indicatorLabel);
-		ComboBox indicatorComboBox = new ComboBox(graphIndicators);
+		indicatorComboBox = new ComboBox<String>(graphIndicators);
+		indicatorComboBox.getSelectionModel().selectFirst();
 		indicatorComboBox.getStyleClass().add("options");
 		indicatorBox.getChildren().add(indicatorComboBox);
 		optionPane.add(indicatorBox,0,2);
@@ -93,8 +122,9 @@ public class InspectorPane extends BorderPane{
 		Label countryLabel = new Label("Country");
 		countryLabel.getStyleClass().add("title-label");
 		countryBox.getChildren().add(countryLabel);
-		ComboBox countryComboBox = new ComboBox(graphCountries);
+		countryComboBox = new ComboBox<String>(graphCountries);
 		countryComboBox.getStyleClass().add("options");
+		countryComboBox.getSelectionModel().selectFirst();
 		countryBox.getChildren().add(countryComboBox);
 		optionPane.add(countryBox,0,3);
 		
@@ -102,8 +132,9 @@ public class InspectorPane extends BorderPane{
 		Label graphTypeLabel = new Label("Graph Type");
 		graphTypeLabel.getStyleClass().add("title-label");
 		graphTypeBox.getChildren().add(graphTypeLabel);
-		ComboBox graphTypeComboBox = new ComboBox(graphType);
+		graphTypeComboBox = new ComboBox<String>(graphType);
 		graphTypeComboBox.setPromptText("Select graph type");
+		graphTypeComboBox.getSelectionModel().selectFirst();
 		graphTypeComboBox.getStyleClass().add("options");
 		graphTypeBox.getChildren().add(graphTypeComboBox);
 		optionPane.add(graphTypeBox,0,4);
@@ -116,7 +147,7 @@ public class InspectorPane extends BorderPane{
 		startYear.getStyleClass().add("title-label");
 		leftBox.getChildren().add(startYear);
 		
-		TextField startYearComboBox = new TextField();
+		startYearComboBox = new TextField();
 		startYearComboBox.setPromptText("Start year");
 		startYearComboBox.getStyleClass().add("optionsYear");		
 		leftBox.getChildren().add(startYearComboBox);
@@ -127,8 +158,7 @@ public class InspectorPane extends BorderPane{
 		endYear.getStyleClass().add("title-label");
 		rightBox.getChildren().add(endYear);
 		
-		TextField endYearComboBox = new TextField();
-		endYearComboBox.setPrefWidth(20);
+		endYearComboBox = new TextField();
 		endYearComboBox.setPromptText("End year");
 		endYearComboBox.getStyleClass().add("optionsYear");
 		rightBox.getChildren().add(endYearComboBox);
@@ -142,7 +172,7 @@ public class InspectorPane extends BorderPane{
 		Label colorLabel = new Label("Color");
 		colorLabel.getStyleClass().add("title-label");
 		colorBox.getChildren().add(colorLabel);
-		ComboBox<String> colorComboBox = new ComboBox<String>(graphColors);
+		colorComboBox = new ComboBox<String>(graphColors);
 		colorComboBox.getSelectionModel().selectFirst();
 		colorComboBox.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
 		    @Override
@@ -158,11 +188,11 @@ public class InspectorPane extends BorderPane{
 		                    Image icon;
 		                    try {
 		                        int iconNumber = this.getIndex() + 1;
-		                        String iconPath = "/color" + iconNumber + ".png";
+		                        String iconPath = "/images/color" + iconNumber + ".png";
 		                        icon = new Image(iconPath);
 		                    } catch(NullPointerException ex) {
 		                        // in case the above image doesn't exist, use a default one
-		                        String iconPath = "/color1.png";
+		                        String iconPath = "/images/color1.png";
 		                        icon = new Image(iconPath);
 		                    }
 		                    ImageView iconImageView = new ImageView(icon);
@@ -195,5 +225,101 @@ public class InspectorPane extends BorderPane{
 	 */
 	public void setADD(){
 		updateButton.setText("Create");
+	}
+	
+	/**
+	 * @return the title of the text field
+	 */
+	public String getTitle(){
+		return  titleField.getText();
+	}
+	
+	/**
+	 * @return indicator represented in the graph
+	 */
+	public String getIndicator(){
+		return indicatorComboBox.getSelectionModel().getSelectedItem().toString();
+	}
+	
+	/**
+	 * @return the country represented in the graph
+	 */
+	public String getCountry(){
+		return countryComboBox.getSelectionModel().getSelectedItem().toString();
+	}
+	
+	/**
+	 * @return get the exadecimal value for the color of the graph
+	 */
+	public String getColor(){
+		switch(colorComboBox.getSelectionModel().getSelectedItem().toString()) {
+		case "Red": return "#F05350";
+		case "Yellow": return "#FFEF58";
+		case "Blue": return "#29B7F7";
+		case "Orange": return "#FFA826";
+		default: return null;
+		}
+	}
+	
+	/**
+	 * @return get the start year of the graph
+	 */
+	public String getStartYear(){
+		return startYearComboBox.getText();
+	}
+	
+	/**
+	 * @return get the start end of the graph
+	 */
+	public String getEndYear(){
+		return endYearComboBox.getText();
+	}
+	
+	
+	/**
+	 * @return the title of the text field
+	 */
+	public void setTitle(String title){
+		titleField.setText(title);
+	}
+	
+	
+	/**
+	 * @param indicator - indicator to tbe displayed in the indicator comboBox
+	 */
+	public void setIndicator(String indicator){
+		indicatorComboBox.setValue(indicator);
+	}
+	
+	
+	/**
+	 * @param country - country to be displaye in the country comboBox
+	 */
+	public void setCountry(String country){
+		countryComboBox.setValue(country);
+	}
+	
+	
+	/**
+	 * @param color - color to be displayed on the color comboBox
+	 */
+	public void setColor(String color){
+		colorComboBox.setValue(color);
+	}
+	
+	
+	/**
+	 * @param year - year to be displayed on the start year text field
+	 */
+	public void setStartYear(String year){
+		startYearComboBox.setText(year);
+	}
+	
+	
+	/**
+	 * @param year - year to be displayed on the end year text field
+	 */
+	public void setEndYear(String year){
+		endYearComboBox.setText(year);
 	}
 }
