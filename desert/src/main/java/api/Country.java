@@ -1,32 +1,342 @@
 package main.java.api;
 
-import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
- * Converts country name to country code and validates if such country exists.
+ * Stores country names and codes. Converts country name to country code 
+ * and validates if such country exists.
  * 
  * @author Vladislavs Uljanovs
  */
 public class Country {
 	
-	// a list of all 2-letter country codes defined in ISO 3166
-	private static String[] isoCountries = Locale.getISOCountries();
+	// a list of pairs (country name, country code)
+	final static Map<String, String> countries;
 	
-	/**
-     * Converts country name to 2-letter country code defined in ISO 3166
+	/*
+	 * Source of the list of countries name and code:
+	 * http://api.worldbank.org/countries/?format=json&per_page=400
+	 */
+    static {
+    	countries = new TreeMap<String, String> (String.CASE_INSENSITIVE_ORDER);
+        countries.put("Aruba", "AW");
+    	countries.put("Afghanistan", "AF");
+    	countries.put("Africa", "A9");
+    	countries.put("Angola", "AO");
+    	countries.put("Albania", "AL");
+    	countries.put("Andorra", "AD");
+    	countries.put("Andean Region", "L5");
+    	countries.put("Arab World", "1A");
+    	countries.put("United Arab Emirates", "AE");
+    	countries.put("Argentina", "AR");
+    	countries.put("Armenia", "AM");
+    	countries.put("American Samoa", "AS");
+    	countries.put("Antigua and Barbuda", "AG");
+    	countries.put("Australia", "AU");
+    	countries.put("Austria", "AT");
+    	countries.put("Azerbaijan", "AZ");
+    	countries.put("Burundi", "BI");
+    	countries.put("East Asia & Pacific (IBRD-only countries)", "B4");
+    	countries.put("Europe & Central Asia (IBRD-only countries)", "B7");
+    	countries.put("Belgium", "BE");
+    	countries.put("Benin", "BJ");
+    	countries.put("Burkina Faso", "BF");
+    	countries.put("Bangladesh", "BD");
+    	countries.put("Bulgaria", "BG");
+    	countries.put("IBRD countries classified as high income", "B1");
+    	countries.put("Bahrain", "BH");
+    	countries.put("Bahamas, The", "BS");
+    	countries.put("Bosnia and Herzegovina", "BA");
+    	countries.put("Latin America & the Caribbean (IBRD-only countries)", "B2");
+    	countries.put("Belarus", "BY");
+    	countries.put("Belize", "BZ");
+    	countries.put("Middle East & North Africa (IBRD-only countries)", "B3");
+    	countries.put("Bermuda", "BM");
+    	countries.put("Bolivia", "BO");
+    	countries.put("Brazil", "BR");
+    	countries.put("Barbados", "BB");
+    	countries.put("Brunei Darussalam", "BN");
+    	countries.put("Sub-Saharan Africa (IBRD-only countries)", "B6");
+    	countries.put("Bhutan", "BT");
+    	countries.put("Botswana", "BW");
+    	countries.put("Sub-Saharan Africa (IFC classification)", "C9");
+    	countries.put("Central African Republic", "CF");
+    	countries.put("Canada", "CA");
+    	countries.put("East Asia and the Pacific (IFC classification)", "C4");
+    	countries.put("Central Europe and the Baltics", "B8");
+    	countries.put("Europe and Central Asia (IFC classification)", "C5");
+    	countries.put("Switzerland", "CH");
+    	countries.put("Channel Islands", "JG");
+    	countries.put("Chile", "CL");
+    	countries.put("China", "CN");
+    	countries.put("Cote d'Ivoire", "CI");
+    	countries.put("Latin America and the Caribbean (IFC classification)", "C6");
+    	countries.put("Middle East and North Africa (IFC classification)", "C7");
+    	countries.put("Cameroon", "CM");
+    	countries.put("Congo, Dem. Rep.", "CD");
+    	countries.put("Congo, Rep.", "CG");
+    	countries.put("Colombia", "CO");
+    	countries.put("Comoros", "KM");
+    	countries.put("Cabo Verde", "CV");
+    	countries.put("Costa Rica", "CR");
+    	countries.put("South Asia (IFC classification)", "C8");
+    	countries.put("Caribbean small states", "S3");
+    	countries.put("Cuba", "CU");
+    	countries.put("Curacao", "CW");
+    	countries.put("Cayman Islands", "KY");
+    	countries.put("Cyprus", "CY");
+    	countries.put("Czech Republic", "CZ");
+    	countries.put("East Asia & Pacific (IDA-eligible countries)", "D4");
+    	countries.put("Europe & Central Asia (IDA-eligible countries)", "D7");
+    	countries.put("Germany", "DE");
+    	countries.put("IDA countries classified as Fragile Situations", "D8");
+    	countries.put("Djibouti", "DJ");
+    	countries.put("Latin America & the Caribbean (IDA-eligible countries)", "D2");
+    	countries.put("Dominica", "DM");
+    	countries.put("Middle East & North Africa (IDA-eligible countries)", "D3");
+    	countries.put("IDA countries not classified as Fragile Situations", "D9");
+    	countries.put("Denmark", "DK");
+    	countries.put("IDA countries in Sub-Saharan Africa not classified as fragile situations ", "N6");
+    	countries.put("Dominican Republic", "DO");
+    	countries.put("South Asia (IDA-eligible countries)", "D5");
+    	countries.put("IDA countries in Sub-Saharan Africa classified as fragile situations ", "F6");
+    	countries.put("Sub-Saharan Africa (IDA-eligible countries)", "D6");
+    	countries.put("IDA total, excluding Sub-Saharan Africa", "6D");
+    	countries.put("Algeria", "DZ");
+    	countries.put("East Asia & Pacific (excluding high income)", "4E");
+    	countries.put("Early-demographic dividend", "V2");
+    	countries.put("East Asia & Pacific", "Z4");
+    	countries.put("Europe & Central Asia (excluding high income)", "7E");
+    	countries.put("Europe & Central Asia", "Z7");
+    	countries.put("Ecuador", "EC");
+    	countries.put("Egypt, Arab Rep.", "EG");
+    	countries.put("Euro area", "XC");
+    	countries.put("Eritrea", "ER");
+    	countries.put("Spain", "ES");
+    	countries.put("Estonia", "EE");
+    	countries.put("Ethiopia", "ET");
+    	countries.put("European Union", "EU");
+    	countries.put("Fragile and conflict affected situations", "F1");
+    	countries.put("Finland", "FI");
+    	countries.put("Fiji", "FJ");
+    	countries.put("France", "FR");
+    	countries.put("Faroe Islands", "FO");
+    	countries.put("Micronesia, Fed. Sts.", "FM");
+    	countries.put("IDA countries classified as fragile situations, excluding Sub-Saharan Africa", "6F");
+    	countries.put("Gabon", "GA");
+    	countries.put("United Kingdom", "GB");
+    	countries.put("Georgia", "GE");
+    	countries.put("Ghana", "GH");
+    	countries.put("Gibraltar", "GI");
+    	countries.put("Guinea", "GN");
+    	countries.put("Gambia, The", "GM");
+    	countries.put("Guinea-Bissau", "GW");
+    	countries.put("Equatorial Guinea", "GQ");
+    	countries.put("Greece", "GR");
+    	countries.put("Grenada", "GD");
+    	countries.put("Greenland", "GL");
+    	countries.put("Guatemala", "GT");
+    	countries.put("Guam", "GU");
+    	countries.put("Guyana", "GY");
+    	countries.put("High income", "XD");
+    	countries.put("Hong Kong SAR, China", "HK");
+    	countries.put("Honduras", "HN");
+    	countries.put("Heavily indebted poor countries (HIPC)", "XE");
+    	countries.put("Croatia", "HR");
+    	countries.put("Haiti", "HT");
+    	countries.put("Hungary", "HU");
+    	countries.put("IBRD, including blend", "ZB");
+    	countries.put("IBRD only", "XF");
+    	countries.put("IDA & IBRD total", "ZT");
+    	countries.put("IDA total", "XG");
+    	countries.put("IDA blend", "XH");
+    	countries.put("Indonesia", "ID");
+    	countries.put("IDA only", "XI");
+    	countries.put("Isle of Man", "IM");
+    	countries.put("India", "IN");
+    	countries.put("Not classified", "XY");
+    	countries.put("Ireland", "IE");
+    	countries.put("Iran, Islamic Rep.", "IR");
+    	countries.put("Iraq", "IQ");
+    	countries.put("Iceland", "IS");
+    	countries.put("Israel", "IL");
+    	countries.put("Italy", "IT");
+    	countries.put("Jamaica", "JM");
+    	countries.put("Jordan", "JO");
+    	countries.put("Japan", "JP");
+    	countries.put("Kazakhstan", "KZ");
+    	countries.put("Kenya", "KE");
+    	countries.put("Kyrgyz Republic", "KG");
+    	countries.put("Cambodia", "KH");
+    	countries.put("Kiribati", "KI");
+    	countries.put("St. Kitts and Nevis", "KN");
+    	countries.put("Korea, Rep.", "KR");
+    	countries.put("Kosovo", "XK");
+    	countries.put("Kuwait", "KW");
+    	countries.put("Latin America & Caribbean (excluding high income)", "XJ");
+    	countries.put("Lao PDR", "LA");
+    	countries.put("Lebanon", "LB");
+    	countries.put("Liberia", "LR");
+    	countries.put("Libya", "LY");
+    	countries.put("St. Lucia", "LC");
+    	countries.put("Latin America & Caribbean ", "ZJ");
+    	countries.put("Latin America and the Caribbean", "L4");
+    	countries.put("Least developed countries: UN classification", "XL");
+    	countries.put("Low income", "XM");
+    	countries.put("Liechtenstein", "LI");
+    	countries.put("Sri Lanka", "LK");
+    	countries.put("Lower middle income", "XN");
+    	countries.put("Low & middle income", "XO");
+    	countries.put("Lesotho", "LS");
+    	countries.put("Late-demographic dividend", "V3");
+    	countries.put("Lithuania", "LT");
+    	countries.put("Luxembourg", "LU");
+    	countries.put("Latvia", "LV");
+    	countries.put("Macao SAR, China", "MO");
+    	countries.put("St. Martin (French part)", "MF");
+    	countries.put("Morocco", "MA");
+    	countries.put("Central America", "L6");
+    	countries.put("Monaco", "MC");
+    	countries.put("Moldova", "MD");
+    	countries.put("Middle East (developing only)", "M1");
+    	countries.put("Madagascar", "MG");
+    	countries.put("Maldives", "MV");
+    	countries.put("Middle East & North Africa", "ZQ");
+    	countries.put("Mexico", "MX");
+    	countries.put("Marshall Islands", "MH");
+    	countries.put("Middle income", "XP");
+    	countries.put("Macedonia, FYR", "MK");
+    	countries.put("Mali", "ML");
+    	countries.put("Malta", "MT");
+    	countries.put("Myanmar", "MM");
+    	countries.put("Middle East & North Africa (excluding high income)", "XQ");
+    	countries.put("Montenegro", "ME");
+    	countries.put("Mongolia", "MN");
+    	countries.put("Northern Mariana Islands", "MP");
+    	countries.put("Mozambique", "MZ");
+    	countries.put("Mauritania", "MR");
+    	countries.put("Mauritius", "MU");
+    	countries.put("Malawi", "MW");
+    	countries.put("Malaysia", "MY");
+    	countries.put("North America", "XU");
+    	countries.put("North Africa", "M2");
+    	countries.put("Namibia", "NA");
+    	countries.put("New Caledonia", "NC");
+    	countries.put("Niger", "NE");
+    	countries.put("Nigeria", "NG");
+    	countries.put("Nicaragua", "NI");
+    	countries.put("Netherlands", "NL");
+    	countries.put("Non-resource rich Sub-Saharan Africa countries, of which landlocked", "6L");
+    	countries.put("Norway", "NO");
+    	countries.put("Nepal", "NP");
+    	countries.put("Non-resource rich Sub-Saharan Africa countries", "6X");
+    	countries.put("Nauru", "NR");
+    	countries.put("IDA countries not classified as fragile situations, excluding Sub-Saharan Africa", "6N");
+    	countries.put("New Zealand", "NZ");
+    	countries.put("OECD members", "OE");
+    	countries.put("Oman", "OM");
+    	countries.put("Other small states", "S4");
+    	countries.put("Pakistan", "PK");
+    	countries.put("Panama", "PA");
+    	countries.put("Peru", "PE");
+    	countries.put("Philippines", "PH");
+    	countries.put("Palau", "PW");
+    	countries.put("Papua New Guinea", "PG");
+    	countries.put("Poland", "PL");
+    	countries.put("Pre-demographic dividend", "V1");
+    	countries.put("Puerto Rico", "PR");
+    	countries.put("Korea, Dem. People’s Rep.", "KP");
+    	countries.put("Portugal", "PT");
+    	countries.put("Paraguay", "PY");
+    	countries.put("West Bank and Gaza", "PS");
+    	countries.put("Pacific island small states", "S2");
+    	countries.put("Post-demographic dividend", "V4");
+    	countries.put("French Polynesia", "PF");
+    	countries.put("Qatar", "QA");
+    	countries.put("Romania", "RO");
+    	countries.put("Resource rich Sub-Saharan Africa countries", "R6");
+    	countries.put("Resource rich Sub-Saharan Africa countries, of which oil exporters", "O6");
+    	countries.put("Russian Federation", "RU");
+    	countries.put("Rwanda", "RW");
+    	countries.put("South Asia", "8S");
+    	countries.put("Saudi Arabia", "SA");
+    	countries.put("Southern Cone", "L7");
+    	countries.put("Sudan", "SD");
+    	countries.put("Senegal", "SN");
+    	countries.put("Singapore", "SG");
+    	countries.put("Solomon Islands", "SB");
+    	countries.put("Sierra Leone", "SL");
+    	countries.put("El Salvador", "SV");
+    	countries.put("San Marino", "SM");
+    	countries.put("Somalia", "SO");
+    	countries.put("Serbia", "RS");
+    	countries.put("Sub-Saharan Africa (excluding high income)", "ZF");
+    	countries.put("South Sudan", "SS");
+    	countries.put("Sub-Saharan Africa ", "ZG");
+    	countries.put("Small states", "S1");
+    	countries.put("Sao Tome and Principe", "ST");
+    	countries.put("Suriname", "SR");
+    	countries.put("Slovak Republic", "SK");
+    	countries.put("Slovenia", "SI");
+    	countries.put("Sweden", "SE");
+    	countries.put("Swaziland", "SZ");
+    	countries.put("Sint Maarten (Dutch part)", "SX");
+    	countries.put("Sub-Saharan Africa excluding South Africa", "A4");
+    	countries.put("Seychelles", "SC");
+    	countries.put("Syrian Arab Republic", "SY");
+    	countries.put("Turks and Caicos Islands", "TC");
+    	countries.put("Chad", "TD");
+    	countries.put("East Asia & Pacific (IDA & IBRD countries)", "T4");
+    	countries.put("Europe & Central Asia (IDA & IBRD countries)", "T7");
+    	countries.put("Togo", "TG");
+    	countries.put("Thailand", "TH");
+    	countries.put("Tajikistan", "TJ");
+    	countries.put("Turkmenistan", "TM");
+    	countries.put("Latin America & the Caribbean (IDA & IBRD countries)", "T2");
+    	countries.put("Timor-Leste", "TL");
+    	countries.put("Middle East & North Africa (IDA & IBRD countries)", "T3");
+    	countries.put("Tonga", "TO");
+    	countries.put("South Asia (IDA & IBRD)", "T5");
+    	countries.put("Sub-Saharan Africa (IDA & IBRD countries)", "T6");
+    	countries.put("Trinidad and Tobago", "TT");
+    	countries.put("Tunisia", "TN");
+    	countries.put("Turkey", "TR");
+    	countries.put("Tuvalu", "TV");
+    	countries.put("Taiwan, China", "TW");
+    	countries.put("Tanzania", "TZ");
+    	countries.put("Uganda", "UG");
+    	countries.put("Ukraine", "UA");
+    	countries.put("Upper middle income", "XT");
+    	countries.put("Uruguay", "UY");
+    	countries.put("United States", "US");
+    	countries.put("Uzbekistan", "UZ");
+    	countries.put("St. Vincent and the Grenadines", "VC");
+    	countries.put("Venezuela, RB", "VE");
+    	countries.put("British Virgin Islands", "VG");
+    	countries.put("Virgin Islands (U.S.)", "VI");
+    	countries.put("Vietnam", "VN");
+    	countries.put("Vanuatu", "VU");
+    	countries.put("World", "1W");
+    	countries.put("Samoa", "WS");
+    	countries.put("Sub-Saharan Africa excluding South Africa and Nigeria", "A5");
+    	countries.put("Yemen, Rep.", "YE");
+    	countries.put("South Africa", "ZA");
+    	countries.put("Zambia", "ZM");
+    	countries.put("Zimbabwe", "ZW");
+    }
+
+    /**
+     * Converts country name to 2-letter country code.
      * 
-     * @param 	countryName		country name to be converted to country code
-     * @return 	countryCode 	2-letter country code (ISO 3166) or null if country not found
+     * @param 	countryName		country name to be converted to country Code
+     * @return 	countryCode 	2-letter country code (ISO 3166) or null if not found
      */
-	public static String getCountryCode(String countryName) {
-		String countryCode = null;
-		for (String country : isoCountries) {
-			Locale locale = new Locale("en", country);
-			if (countryName == locale.getDisplayCountry()) {
-				countryCode = country;
-				break;
-			}
-		}
-		return countryCode;
+    public static String getCountryCode(String countryName) {
+        String countryCode = countries.get(countryName);
+        if (countryCode == null) { // if country not found
+        	return null;
+        }
+        return countryCode;
     }
 }
