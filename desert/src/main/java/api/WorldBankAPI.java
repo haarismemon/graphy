@@ -210,21 +210,22 @@ public class WorldBankAPI {
      * Make End Year 0 to get all data from the Start year
      * Make Start and End Year both 0 to get All the data from 1961 to present
      *
-     * @param indicator The Economic Indicator Name in English words e.g. "Consumer Price Inflation"
-     * @param countryCode The country you want to find data for (null to get for All countries)
+     * @param indicatorName The Economic Indicator Name in English words e.g. "Consumer Price Inflation"
+     * @param countryName The Country Name you want to find data for (null to get for All countries)
      * @param startYear The start year you want to find data for (0 to get data for just end year)
      * @param endYear The end year you want to find data for
      * @return Map with year and GDP value in US Dollars (Trillion)
      */
-    public static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
+    public static Map<Integer, Double> query(String indicatorName, String countryName, int startYear, int endYear) {
 
-//        String indicatorCode = IndicatorCodes.getIndicatorCode(indicator);
+        String indicatorCode = IndicatorCodes.getIndicatorCode(indicatorName);
+        String countryCode = Country.getCountryCode(countryName);
 
-        if (!isValid(indicator, countryCode, startYear, endYear)) {
+        if (!isValid(indicatorCode, countryCode, startYear, endYear)) {
             return null;
         }
 
-        String rawData = fetch(indicator, countryCode); // can be null
+        String rawData = fetch(indicatorCode, countryCode); // can be null
 
         //if the data returned says that the parameter was not valid, then return null
         if(rawData.contains("parameter value is not valid")) return null;
