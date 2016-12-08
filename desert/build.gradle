@@ -22,7 +22,7 @@ apply plugin: 'java'
 
 jar {
   manifest {
-    attributes 'Main-Class': 'main.java.view.MainView'
+    attributes 'Main-Class': 'main.java.Main'
   }
   from {
     configurations.compile.collect{ it.isDirectory() ? it : zipTree(it) }

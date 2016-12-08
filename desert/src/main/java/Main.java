@@ -4,17 +4,33 @@ import main.java.api.WorldBankAPI;
 
 import java.io.IOException;
 
+import javafx.application.Application;
+
+import javafx.stage.Stage;
+
+import main.java.view.MainView;
+
+import main.java.controller.GraphController;
+
+
 /**
- * This class represents the running of the basic application which queries the API.
+ * This class represents the entry point of the whole application
  *
- * @author Haaris Memon
+ * @author pietrocalzini
  */
-public class Main {
+public class Main extends Application {
 
     public static void main(String[] args) throws IOException {
 
-        System.out.println(WorldBankAPI.query("gdp", "gb", 2000, 2006));
-
+    	launch();
     }
+
+    @Override
+	public void start(Stage primaryStage) throws Exception {
+		MainView m = new MainView();
+		GraphController gc = new GraphController(m);
+		m.assignController(gc);
+		m.start();
+	}
 
 }
