@@ -1,3 +1,5 @@
+package main.java.view;
+
 import javafx.scene.control.TextField;
 
 /**
@@ -13,12 +15,13 @@ public class SearchField extends TextField {
 		super();
 		
 		//Link CSS file search-field.css
-		getStylesheets().add("/css/search-field.css");
+		getStylesheets().add("./main/java/view/css/search-field.css");
 		getStyleClass().add("search-field");
 		
 		//set placeholder text
 		setPromptText("Income in Italy between 2010 to 2015");
 		setPrefSize(540, 55);
+		setNotFound();
 		
 	}
 	

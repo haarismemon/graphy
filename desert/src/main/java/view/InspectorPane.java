@@ -1,3 +1,4 @@
+package main.java.view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,7 +52,7 @@ public class InspectorPane extends BorderPane{
 	
 	public InspectorPane(){
 		super();
-		this.getStylesheets().add("/css/inspector-pane.css");
+		this.getStylesheets().add("./main/java/view/css/inspector-pane.css");
 		this.getStyleClass().add("inspector-pane");
 		this.setStyle("-fx-background-color: #E7E7E7");
 		drawWidgets();
@@ -188,11 +189,11 @@ public class InspectorPane extends BorderPane{
 		                    Image icon;
 		                    try {
 		                        int iconNumber = this.getIndex() + 1;
-		                        String iconPath = "/images/color" + iconNumber + ".png";
+		                        String iconPath = "./main/java/view/images/color" + iconNumber + ".png";
 		                        icon = new Image(iconPath);
 		                    } catch(NullPointerException ex) {
 		                        // in case the above image doesn't exist, use a default one
-		                        String iconPath = "/images/color1.png";
+		                        String iconPath = "./main/java/view/images/color1.png";
 		                        icon = new Image(iconPath);
 		                    }
 		                    ImageView iconImageView = new ImageView(icon);

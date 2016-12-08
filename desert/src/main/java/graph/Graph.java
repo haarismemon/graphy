@@ -24,7 +24,9 @@ public class Graph {
     public Graph(String graphName){
 
         lineChart = new LineChart(new NumberAxis(),new NumberAxis());
+        lineChart.setLegendVisible(false);
         barChart = new BarChart(new CategoryAxis(),new NumberAxis());
+        barChart.setLegendVisible(false);
         pieChart = new PieChart();
 
         NumberAxis xAxis = (NumberAxis)lineChart.getXAxis();

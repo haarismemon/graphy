@@ -1,3 +1,5 @@
+package main.java.view;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import main.java.graph.Graph;
 
 /**
  * This class represents the main view with all its components
@@ -46,7 +49,7 @@ public class MainView extends Application {
 		//Root pane
 		root = new BorderPane();
 		//Get the main stylesheet main.css
-		root.getStylesheets().add("/css/main.css");
+		root.getStylesheets().add("./main/java/view/css/main.css");
 		root.setStyle("-fx-background-color: white");
 
 		// Top bar containing the search bar
