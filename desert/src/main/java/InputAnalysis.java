@@ -4,22 +4,23 @@ import java.util.regex.Pattern;
 
 public class InputAnalysis {
 	
-	String[] indicators = new String[]{"GDP", "GDP per capita", "Consumer Price Indices", "Retail Price Indices",
+	
+	static String[] indicators = new String[]{"GDP", "GDP per capita", "Consumer Price Indices", "Retail Price Indices",
 			"Unemployment", "Inflation", "Deflation", "Investment", "Production Possibility curve",
 			"Aggregate Demand", "Aggregate Supply", "Current account balance"};
 	
-	String[] countries = new String[]{
+	static String[] countries = new String[]{
 			"Afghanistan","Argentina","Barbados","Brazil","Chile","China","Colombia","Cuba",
 			"Ecuador","Finland","Fiji","France","United Kingdom","Greece","India",
 			"Ireland","Indonesia","Hungary","Croatia"
 	};
 	
-	String[] toIgnore = new String[]{
+	static String[] toIgnore = new String[]{
 			"in", "between", "from", "since", "at", "-", "to"
 	};
 	
 
-	public QueryData isValidCommand(String input){
+	public static QueryData isValidCommand(String input){
 		
 		
 		
@@ -55,7 +56,7 @@ public class InputAnalysis {
 	}
 	
 	
-	private String[] ignoreConjunctives(String[] s){
+	private static String[] ignoreConjunctives(String[] s){
 		
 		
 		
@@ -92,7 +93,7 @@ public class InputAnalysis {
 	}
 
 
-	private String getIndicator(String input){
+	private static String getIndicator(String input){
 		
 		ArrayList<String> matches = new ArrayList<>();
 		
@@ -132,7 +133,7 @@ public class InputAnalysis {
 	}
 
 	
-	private String getCountry(String input){
+	private static String getCountry(String input){
 		
 		ArrayList<String> matches = new ArrayList<>();
 		
@@ -143,6 +144,12 @@ public class InputAnalysis {
 				matches.add(s);
 				
 			}
+			
+		}
+		
+		if(matches.size() == 0){
+			
+			return null;
 			
 		}
 		
@@ -171,7 +178,7 @@ public class InputAnalysis {
 		
 	}
 	
-	private int[] getDates(String[] words){
+	private static int[] getDates(String[] words){
 		
 		ArrayList<Integer> dates = new ArrayList<>();
 		
@@ -198,37 +205,6 @@ public class InputAnalysis {
 		return output;
 	}
 	
-	public class QueryData{
-		
-		public QueryData(String indicator, String country, int[] dates) {
-			
-			this.indicator = indicator;
-			this.country = country;
-			this.dates = dates;
-		}
-		String indicator = "";
-		String country;
-		int[] dates;
-		
-		public int[] getDates() {
-			return dates;
-		}
-		public void setDates(int[] dates) {
-			this.dates = dates;
-		}
-		public String getIndicator() {
-			return indicator;
-		}
-		public void setIndicator(String indicator) {
-			this.indicator = indicator;
-		}
-		public String getCountry() {
-			return country;
-		}
-		public void setCountry(String country) {
-			this.country = country;
-		}
-
-	}
+	
 	
 }
