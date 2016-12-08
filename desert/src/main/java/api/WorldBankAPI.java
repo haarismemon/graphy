@@ -320,7 +320,7 @@ public class WorldBankAPI {
      */
     public static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
 
-        String indicatorCode = Indicators.getIndicator(indicator);
+        String indicatorCode = IndicatorCodes.getIndicatorCode(indicator);
 
         if (!isValid(indicatorCode, countryCode, startYear, endYear)) {
             return null;
