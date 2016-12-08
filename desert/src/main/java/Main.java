@@ -1,6 +1,6 @@
+package main.java;
 
-
-import main.java.api.MyWorldBank;
+import main.java.api.WorldBankAPI;
 
 import java.io.IOException;
 

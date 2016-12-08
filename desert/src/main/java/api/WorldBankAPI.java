@@ -23,7 +23,7 @@ import org.json.JSONObject;
  * @author Haaris Memon
  * @author Vladislavs Uljanovs
  */
-public class MyWorldBank {
+public class WorldBankAPI {
 
     /**
      * Makes a decision whether to download the data from online or load from cache.
@@ -261,7 +261,7 @@ public class MyWorldBank {
         if (((startYear < 1960 || startYear > currentYYYY) && startYear != 0)
                 || ((endYear < 1960 || endYear > currentYYYY) && endYear != 0)) {
             return false;
-        } else if (countryCode.equals("") || indicatorCode.equals("")) {
+        } else if (countryCode.equals("") || indicator.equals("")) {
             return false;
         } else if (indicator == null || countryCode == null) {
             return false;
