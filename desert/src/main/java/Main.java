@@ -1,4 +1,4 @@
-
+package main.java;
 
 import main.java.api.MyWorldBank;
 
@@ -12,33 +12,8 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-//        //GDP in Brazil (all data)
-//        System.out.println("GDP for Brazil" + MyWorldBank.getGDP("br", 0, 1963));
-//
-//        //GDP Growth in Brazil between 1990 and 2012
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPGrowth("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPPerCapita("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPPerCapitaGrowth("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getConsumerPriceInflation("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentTotal("br", 2000, 2000));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentMale("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentYoungMale("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentFemale("gb", 1990, 2012));
-//
-        System.out.println("GDP Growth for Brazil" + MyWorldBank.getUnemploymentYoungFemale("br", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getGDPDeflatorInflation("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getCurrentAccountBalance("gb", 1990, 2012));
-//
-//        System.out.println("GDP Growth for Brazil" + MyWorldBank.getCurrentAccountBalancePercentOfGDP("gb", 1990, 2012));
+
+        System.out.println(MyWorldBank.query("gdp", "gb", 2000, 2006));
 
     }
 
