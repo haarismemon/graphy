@@ -8,7 +8,7 @@ import java.util.Map;
  *
  * @author Haaris Memon
  */
-public class Indicators {
+public class IndicatorCodes {
 
     private static Map<String, String> indicatorQueryMap;
     static {
@@ -35,7 +35,7 @@ public class Indicators {
      * @param searchIndicator - The Indicator in english words from the search
      * @return The Indicator Code used inside the query method.
      */
-    public static String getIndicator(String searchIndicator) {
+    public static String getIndicatorCode(String searchIndicator) {
         for(String indicator : indicatorQueryMap.keySet()) {
             if(indicator.toLowerCase().equals(searchIndicator.toLowerCase())) {
                 return indicatorQueryMap.get(indicator);

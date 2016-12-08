@@ -36,7 +36,7 @@ public class InspectorPane extends BorderPane{
 	
 	//Graph title
 	private TextField titleField;
-	//Indicators
+	//IndicatorCodes
 	private ComboBox<String> indicatorComboBox;
 	//Countries
 	private ComboBox<String> countryComboBox;
