@@ -3,11 +3,9 @@ package main.java.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
+
 import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -18,14 +16,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class represents getting and caching data from the World Bank API.
- *
+ * Serves as a facade to WorldBank API.
+ * 
  * @author Haaris Memon
  * @author Vladislavs Uljanovs
  */
 public class WorldBankAPI {
-
-    /**
+	/**
      * Makes a decision whether to download the data from online or load from cache.
      * i.e. if cache unable to provide the requested data then download data from online.
      *
@@ -64,7 +61,7 @@ public class WorldBankAPI {
 
          return new URL(url);
     }
-    
+
     /**
      * Downloads raw data from online World Bank API.
      *
@@ -81,7 +78,7 @@ public class WorldBankAPI {
             reader.close();
 
             if (!response.contains("parameter value is not valid")) { // do not cache invalid data
-                cache(indicator, countryCode, response);
+                CacheAPI.cache(indicator, countryCode, response);
             } else {
                 System.out.println("=> Log.fetch: INVALID RETURNED JSON thus NOT CACHED");
             }
@@ -131,7 +128,7 @@ public class WorldBankAPI {
                         rawData = values[3];
                     } else {
                         System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE BUT OUTDATED");
-                        deleteQuery(indicator, countryCode); // delete outdated data from cache file
+                        CacheAPI.deleteQuery(indicator, countryCode); // delete outdated data from cache file
                     }
                     break;
                 } else {
@@ -144,105 +141,6 @@ public class WorldBankAPI {
         }
         
         return rawData;
-    }
-
-    /**
-     * Saves the query to file.
-     *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     */
-    private static void cache(String indicator, String countryCode, String rawData) {
-        Calendar c = Calendar.getInstance();
-        
-        try (PrintWriter writer = new PrintWriter(new FileWriter("cache.txt", true))) {
-            if (cacheSize(new File("cache.txt")) == 30) { // limit of 30 queries to be store in the cache file
-                BufferedReader reader = new BufferedReader(new FileReader(new File("cache.txt")));
-                String[] values = reader.readLine().split("/");
-                reader.close();
-                deleteQuery(values[0], values[1]); // delete the oldest query
-            }
-            writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + rawData);
-            System.out.println("=> Log.cache: DATA CACHED");
-        } catch (IOException e) {
-            // Ignore exception
-            System.out.println("=> Log.cache: ERROR");
-        }
-    }
-
-    /**
-     * Finds the number of queries stored in the cache file.
-     *
-     * @param file the text file that stores the queries
-     * @return number of queries in the file
-     */
-    private static int cacheSize(File file) {
-        try {
-            FileReader fr = new FileReader(file);
-            LineNumberReader lnr = new LineNumberReader(fr);
-
-            int size = 0;
-
-            while(lnr.readLine() != null) size++;
-            lnr.close();
-            fr.close();
-
-            return size;
-        } catch (IOException e) {
-            System.out.println("=> Log.cacheSize: ERROR");
-            return 0;
-        }
-    }
-
-    /**
-     * Deletes (one) specified query from the cache file.
-     *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     */
-    private static void deleteQuery(String indicator, String countryCode) throws IOException {
-        File cache = new File("cache.txt");
-        File temp = new File("temp.txt");
-
-        BufferedReader reader = new BufferedReader(new FileReader(cache));
-        PrintWriter writer = new PrintWriter(new FileWriter(temp, true));
-
-        String line = null;
-
-        while ((line = reader.readLine()) != null) {
-            String[] values = line.split("/");
-            // countryCode AND indicator FOUND
-            if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) continue;
-            writer.println(line);
-        }
-        writer.close();
-        reader.close();
-
-        // create source as the temp file
-        BufferedReader tempReader = new BufferedReader(new FileReader(temp));
-        // create the destination to be the cache file
-        PrintWriter cacheWriter = new PrintWriter(new FileWriter(cache));
-
-        String tempLine = null;
-
-        // copy everything from temp into cache text file
-        while ((tempLine = tempReader.readLine()) != null) {
-            cacheWriter.println(tempLine);
-        }
-        cacheWriter.close();
-        tempReader.close();
-
-        temp.delete();
-
-        System.out.println("=> Log.deleteQuery: QUERY REMOVED");
-    }
-
-    /**
-     * Deletes all queries from the cache file i.e. deletes file.
-     */
-    private static void clearCache() throws IOException {
-        File file = new File("cache.txt");
-        file.delete();
     }
 
     /**
@@ -320,13 +218,13 @@ public class WorldBankAPI {
      */
     public static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
 
-        String indicatorCode = IndicatorCodes.getIndicatorCode(indicator);
+//        String indicatorCode = IndicatorCodes.getIndicatorCode(indicator);
 
-        if (!isValid(indicatorCode, countryCode, startYear, endYear)) {
+        if (!isValid(indicator, countryCode, startYear, endYear)) {
             return null;
         }
 
-        String rawData = fetch(indicatorCode, countryCode); // can be null
+        String rawData = fetch(indicator, countryCode); // can be null
 
         //if the data returned says that the parameter was not valid, then return null
         if(rawData.contains("parameter value is not valid")) return null;
@@ -350,10 +248,8 @@ public class WorldBankAPI {
 
             return filter(yearValueMap, startYear, endYear);
 
-        } else {
-            System.out.println("Incorrect URL");
-            return null;
         }
+        
+		return null;
     }
-
 }
