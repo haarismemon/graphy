@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.java.graph.Graph;
+import main.java.controller.GraphController;
 
 /**
  * This class represents the main view with all its components
@@ -21,7 +22,7 @@ import main.java.graph.Graph;
  * @author pietrocalzini
  */
 
-public class MainView extends Application {
+public class MainView extends Stage {
 	
 	//Inspector panel
 	private InspectorPane inspector;
@@ -31,17 +32,28 @@ public class MainView extends Application {
 	private Label beginningLabel;
 	//Graph view
 	private BorderPane root;
+	//Controller
+	private GraphController controller;
 	
-	public static void main(String[] args) {
-		launch(args);
+	public MainView(){
+		super();
 	}
-	
-	@Override
-	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Graphy");
+
+	/**
+ 	* Assign controller to the view
+ 	* 
+ 	* @param controller to be assigned to the view
+ 	*/
+	public void assignController(GraphController controller){
+		this.controller = controller;
+		System.out.println(controller);
+	}
+
+	public void start() {
+		setTitle("Graphy");
 
 		// Set minimum size of the window
-		primaryStage.setMinHeight(650);
+		setMinHeight(650);
 		
 		container = new HBox();
 		container.setMinWidth(900);
@@ -120,9 +132,8 @@ public class MainView extends Application {
 		bottomBar.getChildren().add(addNewGraph);
 
 		Button addButton = new Button("");
-		addButton.setOnAction((event) -> {
-			toggleInspector();
-		});		
+		System.out.println(controller);
+		addButton.setOnAction(controller);
 		addButton.getStyleClass().add("button-add");
 		addButton.setPrefSize(18, 18);
 		bottomBar.getChildren().add(addButton);
@@ -137,9 +148,9 @@ public class MainView extends Application {
 		
 		Scene scene = new Scene(container);
 
-		primaryStage.setScene(scene);
-		primaryStage.setResizable(true);
-		primaryStage.show();
+		setScene(scene);
+		setResizable(true);
+		show();
 	}
 	
 	/**
