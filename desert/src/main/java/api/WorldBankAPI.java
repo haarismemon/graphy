@@ -18,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Represents getting from the World Bank API and data being cached by user.
+ * This class represents getting and caching data from the World Bank API.
  *
  * @author Haaris Memon
  * @author Vladislavs Uljanovs
@@ -267,9 +267,6 @@ public class WorldBankAPI {
             return false;
         }
 
-        // if (!(indicatorArray.contains(indicator))) return false;
-        // if (!(countryArray.contains(countryCode))) return false;
-
         return true;
     }
 
@@ -323,11 +320,13 @@ public class WorldBankAPI {
      */
     public static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
 
-        if (!isValid(indicator, countryCode, startYear, endYear)) {
+        String indicatorCode = Indicators.getIndicator(indicator);
+
+        if (!isValid(indicatorCode, countryCode, startYear, endYear)) {
             return null;
         }
 
-        String rawData = fetch(indicator, countryCode); // can be null
+        String rawData = fetch(indicatorCode, countryCode); // can be null
 
         //if the data returned says that the parameter was not valid, then return null
         if(rawData.contains("parameter value is not valid")) return null;
