@@ -18,8 +18,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serves as a facade to WorldBank API and it caches the query made by the user.
- * 
+ * This class represents getting and caching data from the World Bank API.
+ *
  * @author Haaris Memon
  * @author Vladislavs Uljanovs
  */
@@ -28,7 +28,7 @@ public class WorldBankAPI {
     /**
      * Makes a decision whether to download the data from online or load from cache.
      * i.e. if cache unable to provide the requested data then download data from online.
-     * 
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      * @return rawData unprocessed requested data in JSON string format
@@ -46,10 +46,10 @@ public class WorldBankAPI {
         }
         return rawData;
     }
-    
+
     /**
      * Builds URL which is used to request data from World Bank API.
-     * 
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      * @return URL to request data from World Bank API
@@ -58,16 +58,16 @@ public class WorldBankAPI {
          String url = "http://api.worldbank.org/countries/";
          if (countryCode == null) url += "1W";
          else url += countryCode;
-         
-         url += "/indicators/" + indicator 
+
+         url += "/indicators/" + indicator
                  + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
-         
+
          return new URL(url);
     }
     
     /**
-     * Downloads raw data from online World Bank API. 
-     * 
+     * Downloads raw data from online World Bank API.
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      * @return rawData unprocessed requested data in JSON string format
@@ -79,13 +79,13 @@ public class WorldBankAPI {
             BufferedReader reader = new BufferedReader(new InputStreamReader(request.openStream()));
             response = reader.readLine();
             reader.close();
-            
+
             if (!response.contains("parameter value is not valid")) { // do not cache invalid data
                 cache(indicator, countryCode, response);
             } else {
                 System.out.println("=> Log.fetch: INVALID RETURNED JSON thus NOT CACHED");
             }
-            
+
             return response;
         } catch (IOException e) {
             System.out.println("=> Log.fetchOnline: ERROR");
@@ -95,7 +95,7 @@ public class WorldBankAPI {
     
     /**
      * Loads raw data from cache.
-     * 
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      * @return rawData unprocessed requested data in JSON string format, OR null if:
@@ -145,10 +145,10 @@ public class WorldBankAPI {
         
         return rawData;
     }
-    
+
     /**
      * Saves the query to file.
-     * 
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      */
@@ -169,10 +169,10 @@ public class WorldBankAPI {
             System.out.println("=> Log.cache: ERROR");
         }
     }
-    
+
     /**
      * Finds the number of queries stored in the cache file.
-     * 
+     *
      * @param file the text file that stores the queries
      * @return number of queries in the file
      */
@@ -196,7 +196,7 @@ public class WorldBankAPI {
 
     /**
      * Deletes (one) specified query from the cache file.
-     * 
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      */
@@ -236,7 +236,7 @@ public class WorldBankAPI {
 
         System.out.println("=> Log.deleteQuery: QUERY REMOVED");
     }
-    
+
     /**
      * Deletes all queries from the cache file i.e. deletes file.
      */
@@ -244,10 +244,10 @@ public class WorldBankAPI {
         File file = new File("cache.txt");
         file.delete();
     }
-    
+
     /**
      * Validates the input parameters.
-     * 
+     *
      * @param indicator the indicator id
      * @param countryCode the country id
      * @param startYear the start of the year range to output
@@ -257,32 +257,29 @@ public class WorldBankAPI {
     private static Boolean isValid(String indicator, String countryCode, int startYear, int endYear) {
         Calendar c = Calendar.getInstance();
         int currentYYYY = c.get(Calendar.YEAR);
-        
-        if (((startYear < 1960 || startYear > currentYYYY) && startYear != 0) 
+
+        if (((startYear < 1960 || startYear > currentYYYY) && startYear != 0)
                 || ((endYear < 1960 || endYear > currentYYYY) && endYear != 0)) {
             return false;
-        } else if (countryCode.equals("")) {
+        } else if (countryCode.equals("") || indicator.equals("")) {
             return false;
         } else if (indicator == null || countryCode == null) {
             return false;
         }
-        
-        // if (!(indicatorArray.contains(indicator))) return false;
-        // if (!(countryArray.contains(countryCode))) return false;
-        
+
         return true;
     }
-    
+
     /**
      * Filters out the required year range.
-     * 
+     *
      * @param yearValueMap processed data containing all the years
      * @param startYear the start of the year range to output
      * @param endYear the end of the year range to output
      * @return map containing only required year range
      */
     private static Map<Integer, Double> filter(Map<Integer, Double> yearValueMap, int startYear, int endYear) {
-        
+
         Map<Integer, Double> filteredMap = new HashMap<>();
 
         for (Integer yearKey : yearValueMap.keySet()) {
@@ -303,31 +300,41 @@ public class WorldBankAPI {
                 filteredMap.put(yearKey, yearValueMap.get(yearKey));
             }
         }
-        
+
         return filteredMap;
     }
-    
-    /**
-     * The main query method, validates input, fetches raw data and processes data.
-     * 
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     * @param startYear the start of the year range to output
-     * @param endYear the end of the year range to output
-     * @return map of data for the requested years
-     */
-    private static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
 
-        if (!isValid(indicator, countryCode, startYear, endYear)) {
+    /**
+     * Gets the data results for Indicator Name passed in.
+     *
+     * Make country code 'null' to get for All Countries
+     * Make Start Year 0 to get all data till the End year
+     * Make End Year 0 to get all data from the Start year
+     * Make Start and End Year both 0 to get All the data from 1961 to present
+     *
+     * @param indicator The Economic Indicator Name in English words e.g. "Consumer Price Inflation"
+     * @param countryCode The country you want to find data for (null to get for All countries)
+     * @param startYear The start year you want to find data for (0 to get data for just end year)
+     * @param endYear The end year you want to find data for
+     * @return Map with year and GDP value in US Dollars (Trillion)
+     */
+    public static Map<Integer, Double> query(String indicator, String countryCode, int startYear, int endYear) {
+
+        String indicatorCode = Indicators.getIndicator(indicator);
+
+        if (!isValid(indicatorCode, countryCode, startYear, endYear)) {
             return null;
         }
 
-        String rawData = fetch(indicator, countryCode); // can be null
+        String rawData = fetch(indicatorCode, countryCode); // can be null
+
+        //if the data returned says that the parameter was not valid, then return null
+        if(rawData.contains("parameter value is not valid")) return null;
 
         Map<Integer, Double> yearValueMap = new HashMap<>();
 
         if (rawData != null) {
-            
+
             JSONArray array = new JSONArray(rawData).getJSONArray(1);
 
             for (int i = 0; i < array.length(); ++i) {
@@ -340,234 +347,13 @@ public class WorldBankAPI {
                     // do nothing, the entry is not inserted into tree map
                 }
             }
-            
+
             return filter(yearValueMap, startYear, endYear);
 
         } else {
             System.out.println("Incorrect URL");
             return null;
         }
-    }
-
-    /**
-     * Gets the data results for Indicator GDP in US Trillion Dollars.
-     *
-     * Make country code 'null' to get for All Countries
-     * Make Start Year 0 to get data for just End year
-     * Make End Year 0 to get data for just Start year
-     * Make Start and End Year both 0 to get All the data from 1961 to present
-     *
-     * @param countryCode The country you want to find data for (null to get for All countries)
-     * @param startYear The start year you want to find data for (0 to get data for just end year)
-     * @param endYear The end year you want to find data for
-     * @return Map with year and GDP value in US Dollars (Trillion)
-     */
-    public static Map<Integer, Double> getGDP(String countryCode, int startYear, int endYear) {
-        return query("NY.GDP.MKTP.KD.ZG", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator GDP Growth in Percentage.
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and GDP Growth Percentage(%)
-     */
-    public static Map<Integer, Double> getGDPGrowth(String countryCode, int startYear, int endYear) {
-        return query("NY.GDP.MKTP.CD", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator GDP per Capita in US Trillion Dollars.
-     *
-     * Make country code 'null' to get for All Countries
-     * Make Start Year 0 to get data for just End year
-     * Make End Year 0 to get data for just Start year
-     * Make Start and End Year both 0 to get All the data from 1961 to present
-     *
-     * @param countryCode The country you want to find data for (null to get for All countries)
-     * @param startYear The start year you want to find data for (0 to get data for just end year)
-     * @param endYear The end year you want to find data for
-     * @return Map with year and GDP per Capita value in US Dollars (Trillion)
-     */
-    public static Map<Integer, Double> getGDPPerCapita(String countryCode, int startYear, int endYear) {
-        return query("NY.GDP.PCAP.CD", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator GDP per Capita Growth in Percentage.
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and GDP per Capita Growth Percentage(%)
-     */
-    public static Map<Integer, Double> getGDPPerCapitaGrowth(String countryCode, int startYear, int endYear) {
-        return query("NY.GDP.PCAP.KD.ZG", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Consumer Price Inflation in Percentage.
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Consumer Price Inflation Percentage(%)
-     */
-    public static Map<Integer, Double> getConsumerPriceInflation(String countryCode, int startYear, int endYear) {
-        return query("FP.CPI.TOTL.ZG", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Unemployment, total in Percentage
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Unemployment Percentage(%)
-     */
-    public static Map<Integer, Double> getUnemploymentTotal(String countryCode, int startYear, int endYear) {
-        return query("SL.UEM.TOTL.ZS", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Unemployment, Male in Percentage
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Unemployment Percentage(%)
-     */
-    public static Map<Integer, Double> getUnemploymentMale(String countryCode, int startYear, int endYear) {
-        return query("SL.UEM.TOTL.MA.ZS", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Unemployment, Young Male in Percentage
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Unemployment Percentage(%)
-     */
-    public static Map<Integer, Double> getUnemploymentYoungMale(String countryCode, int startYear, int endYear) {
-        return query("SL.UEM.1524.MA.ZS", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Unemployment, Female in Percentage
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Unemployment Percentage(%)
-     */
-    public static Map<Integer, Double> getUnemploymentFemale(String countryCode, int startYear, int endYear) {
-        return query("SL.UEM.TOTL.FE.ZS", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Unemployment, Young Feale in Percentage
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Unemployment Percentage(%)
-     */
-    public static Map<Integer, Double> getUnemploymentYoungFemale(String countryCode, int startYear, int endYear) {
-        return query("SL.UEM.1524.FE.ZS", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator GDP Deflator Inflation in Percentage.
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and GDP Deflator Inflation Percentage(%)
-     */
-    public static Map<Integer, Double> getGDPDeflatorInflation(String countryCode, int startYear, int endYear) {
-        return query("NY.GDP.DEFL.KD.ZG", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Current Account Balance in US Billion Dollars.
-     *
-     * Make country code 'null' to get for All Countries
-     * Make Start Year 0 to get data for just End year
-     * Make End Year 0 to get data for just Start year
-     * Make Start and End Year both 0 to get All the data from 1961 to present
-     *
-     * @param countryCode The country you want to find data for (null to get for All countries)
-     * @param startYear The start year you want to find data for (0 to get data for just end year)
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Current Account Balance value in US Dollars (Billion)
-     */
-    public static Map<Integer, Double> getCurrentAccountBalance(String countryCode, int startYear, int endYear) {
-        return query("BN.CAB.XOKA.CD", countryCode, startYear, endYear);
-    }
-
-    /**
-     * Gets the data results for Indicator Current Account Balance in Percentage of GDP.
-     *
-     * Make country code 'null' to get for All Countries.
-     * Make Start Year 0 to get data for just End year.
-     * Make End Year 0 to get data for just Start year.
-     * Make Start and End Year both 0 to get All the data from 1961 to present.
-     *
-     * @param countryCode The country you want to find data for
-     * @param startYear The start year you want to find data for
-     * @param endYear The end year you want to find data for
-     * @return Map with year and Current Account Balance in Percentage(%)
-     */
-    public static Map<Integer, Double> getCurrentAccountBalancePercentOfGDP(String countryCode, int startYear, int endYear) {
-        return query("BN.CAB.XOKA.GD.ZS", countryCode, startYear, endYear);
     }
 
 }
