@@ -1,4 +1,4 @@
-package main.java;
+
 
 import main.java.api.MyWorldBank;
 
@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        System.out.println(MyWorldBank.query("gdp", "gb", 2000, 2006));
+        System.out.println(WorldBankAPI.query("gdp", "gb", 2000, 2006));
 
     }
 
