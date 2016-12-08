@@ -62,11 +62,16 @@ public class MainView extends Application {
 		graphSpace.setAlignment(Pos.CENTER);
 		
 		//Label displayed when the application is launched and no graphs are shown
-		beginningLabel = new Label("Start searching for one indicator or add a new graph");
-		beginningLabel.getStyleClass().add("beginning-label");
-		graphSpace.getChildren().add(beginningLabel);
-		root.setCenter(graphSpace);
+//		beginningLabel = new Label("Start searching for one indicator or add a new graph");
+//		beginningLabel.getStyleClass().add("beginning-label");
+//		graphSpace.getChildren().add(beginningLabel);
+//		root.setCenter(graphSpace);
 
+		Graph centralGraph = new Graph("My Graph");
+		centralGraph.addSeries("My Serie", MyWorldBank.getGDPGrowth("gb", 1990, 2012));
+		centralGraph.switchGraph("LineGraph");
+		root.setCenter(centralGraph.getGraph());
+		
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
 		bottomBar.setAlignment(Pos.CENTER_RIGHT);
