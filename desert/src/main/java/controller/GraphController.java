@@ -6,7 +6,10 @@ import java.awt.event.ActionListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import main.java.view.MainView;
+import main.java.api.WorldBankAPI;
 
+import java.util.HashMap;
+import java.util.Map;
 /**
  * The controller of the graph view
  * @author pietrocalzini
@@ -24,7 +27,8 @@ private MainView mainView;
 
 	@Override
 	public void handle(Event event) {
-		// TODO Auto-generated method stub
-		System.out.println(mainView);
+		Map<Integer, Double> graphMap = WorldBankAPI.query("GDP","GB",2010,2012);
+		System.out.println(graphMap);
+		mainView.addGraph(graphMap);
 	}
 }

@@ -34,6 +34,8 @@ public class MainView extends Stage {
 	private BorderPane root;
 	//Controller
 	private GraphController controller;
+	//GraphContainer
+	private GridPane graphContainer;
 	
 	public MainView(){
 		super();
@@ -86,39 +88,8 @@ public class MainView extends Stage {
 //		graphSpace.getChildren().add(beginningLabel);
 //		root.setCenter(graphSpace);
 		
-		GridPane graphContainer = new GridPane();
+		graphContainer = new GridPane();
 		graphContainer.getStyleClass().add("graph-container");
-		
-		Graph centralGraph = new Graph("My Graph");
-		Map<Integer, Double> graphMap = new HashMap<Integer, Double>();
-		graphMap.put(1,2.0);
-		graphMap.put(2,4.0);
-		graphMap.put(3,5.0);
-		graphMap.put(4,2.0);
-		graphMap.put(5,4.0);
-		graphMap.put(6,5.0);
-		centralGraph.addSeries("My Serie", graphMap);
-		centralGraph.switchGraph("BarChart");
-		graphContainer.add(centralGraph.getGraph(),0,0);
-		
-		Graph centralGraph1 = new Graph("My Graph");
-		Map<Integer, Double> graphMap1 = new HashMap<Integer, Double>();
-		centralGraph1.addSeries("My Serie", graphMap1);
-		centralGraph1.switchGraph("LineGraph");
-		graphContainer.add(centralGraph1.getGraph(),1,0);
-		root.setCenter(graphContainer);
-		
-		Graph centralGraph2 = new Graph("My Graph");
-		Map<Integer, Double> graphMap2 = new HashMap<Integer, Double>();
-		centralGraph2.addSeries("My Serie", graphMap2);
-		centralGraph2.switchGraph("LineGraph");
-		graphContainer.add(centralGraph2.getGraph(),0,1);
-		
-		Graph centralGraph3 = new Graph("My Graph");
-		Map<Integer, Double> graphMap3 = new HashMap<Integer, Double>();
-		centralGraph3.addSeries("My Serie", graphMap3);
-		centralGraph3.switchGraph("LineGraph");
-		graphContainer.add(centralGraph3.getGraph(),1,1);
 		root.setCenter(graphContainer);
 		
 		// Bottom bar containing 'add' button
@@ -169,5 +140,19 @@ public class MainView extends Stage {
 		} else {
 			container.getChildren().add(inspector);
 		}
+	}
+
+	public void addGraph(Map<Integer, Double> graphMap){
+		Graph centralGraph = new Graph("My Graph");
+		graphMap.put(1,2.0);
+		graphMap.put(2,4.0);
+		graphMap.put(3,5.0);
+		graphMap.put(4,2.0);
+		graphMap.put(5,4.0);
+		graphMap.put(6,5.0);
+		centralGraph.addSeries("My Serie", graphMap);
+		centralGraph.switchGraph("BarChart");
+		graphContainer.add(centralGraph.getGraph(),0,0);
+		System.out.println("GRAPH ADDED");
 	}
 }
