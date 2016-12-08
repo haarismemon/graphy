@@ -52,7 +52,7 @@ public class InspectorPane extends BorderPane{
 	
 	public InspectorPane(){
 		super();
-		this.getStylesheets().add("./main/java/view/css/inspector-pane.css");
+		this.getStylesheets().add("css/inspector-pane.css");
 		this.getStyleClass().add("inspector-pane");
 		this.setStyle("-fx-background-color: #E7E7E7");
 		drawWidgets();

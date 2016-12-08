@@ -49,7 +49,7 @@ public class MainView extends Application {
 		//Root pane
 		root = new BorderPane();
 		//Get the main stylesheet main.css
-		root.getStylesheets().add("./main/java/view/css/main.css");
+		root.getStylesheets().add("/css/main.css");
 		root.setStyle("-fx-background-color: white");
 
 		// Top bar containing the search bar

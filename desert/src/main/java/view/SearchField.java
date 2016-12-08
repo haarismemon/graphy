@@ -15,7 +15,7 @@ public class SearchField extends TextField {
 		super();
 		
 		//Link CSS file search-field.css
-		getStylesheets().add("./main/java/view/css/search-field.css");
+		getStylesheets().add("/css/search-field.css");
 		getStyleClass().add("search-field");
 		
 		//set placeholder text
