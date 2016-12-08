@@ -1,9 +1,13 @@
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -61,12 +65,47 @@ public class MainView extends Application {
 		graphSpace.setStyle("-fx-background-color: white");
 		graphSpace.setAlignment(Pos.CENTER);
 		
-		//Label displayed when the application is launched and no graphs are shown
-		beginningLabel = new Label("Start searching for one indicator or add a new graph");
-		beginningLabel.getStyleClass().add("beginning-label");
-		graphSpace.getChildren().add(beginningLabel);
-		root.setCenter(graphSpace);
-
+//		//Label displayed when the application is launched and no graphs are shown
+//		beginningLabel = new Label("Start searching for one indicator or add a new graph");
+//		beginningLabel.getStyleClass().add("beginning-label");
+//		graphSpace.getChildren().add(beginningLabel);
+//		root.setCenter(graphSpace);
+		
+		GridPane graphContainer = new GridPane();
+		graphContainer.getStyleClass().add("graph-container");
+		
+		Graph centralGraph = new Graph("My Graph");
+		Map<Integer, Double> graphMap = new HashMap<Integer, Double>();
+		graphMap.put(1,2.0);
+		graphMap.put(2,4.0);
+		graphMap.put(3,5.0);
+		graphMap.put(4,2.0);
+		graphMap.put(5,4.0);
+		graphMap.put(6,5.0);
+		centralGraph.addSeries("My Serie", graphMap);
+		centralGraph.switchGraph("BarChart");
+		graphContainer.add(centralGraph.getGraph(),0,0);
+		
+		Graph centralGraph1 = new Graph("My Graph");
+		Map<Integer, Double> graphMap1 = new HashMap<Integer, Double>();
+		centralGraph1.addSeries("My Serie", graphMap1);
+		centralGraph1.switchGraph("LineGraph");
+		graphContainer.add(centralGraph1.getGraph(),1,0);
+		root.setCenter(graphContainer);
+		
+		Graph centralGraph2 = new Graph("My Graph");
+		Map<Integer, Double> graphMap2 = new HashMap<Integer, Double>();
+		centralGraph2.addSeries("My Serie", graphMap2);
+		centralGraph2.switchGraph("LineGraph");
+		graphContainer.add(centralGraph2.getGraph(),0,1);
+		
+		Graph centralGraph3 = new Graph("My Graph");
+		Map<Integer, Double> graphMap3 = new HashMap<Integer, Double>();
+		centralGraph3.addSeries("My Serie", graphMap3);
+		centralGraph3.switchGraph("LineGraph");
+		graphContainer.add(centralGraph3.getGraph(),1,1);
+		root.setCenter(graphContainer);
+		
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
 		bottomBar.setAlignment(Pos.CENTER_RIGHT);
