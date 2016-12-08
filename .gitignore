@@ -5,3 +5,4 @@ desert/cache.txt
 .idea
 .settings
 *.class
+.project
