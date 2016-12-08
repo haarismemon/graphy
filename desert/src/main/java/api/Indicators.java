@@ -42,7 +42,7 @@ public class Indicators {
             }
         }
 
-        return "";
+        return null;
     }
 
 }
