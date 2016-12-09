@@ -7,16 +7,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
- * Cache management.
+ * Cache management: add, update and delete queries.
  * 
- * @author Haaris Memon
  * @author Vladislavs Uljanovs
+ * @author Haaris Memon
  */
 public class CacheAPI {
-	
+    
+    /**
+     * Validates existence of cache.
+     *
+     * @return cache cache file or null if cache file does not exist
+     */
+    public static File getCacheFile() {
+        File cache = new File("cache.txt");
+        if (!cache.exists() && !cache.isDirectory()) { // file does not exist i.e. no cached data
+            System.out.println("=> Log.fetchOffline: NO CACHED DATA");
+            return null;
+        }
+        return cache;
+    }
+    
     /**
      * Saves the query to file.
      *
@@ -24,57 +41,54 @@ public class CacheAPI {
      * @param countryCode the country id
      */
     public static void cache(String indicator, String countryCode, String rawData) {
-        Calendar c = Calendar.getInstance();
+
+        File cache = getCacheFile();
         
-        try (PrintWriter writer = new PrintWriter(new FileWriter("cache.txt", true))) {
-            if (cacheSize(new File("cache.txt")) == 30) { // limit of 30 queries to be store in the cache file
-                BufferedReader reader = new BufferedReader(new FileReader(new File("cache.txt")));
+        try (PrintWriter writer = new PrintWriter(new FileWriter(cache, true))) {
+            if (cacheSize(cache) == 30) { // limit of 30 queries to be store in the cache file
+                BufferedReader reader = new BufferedReader(new FileReader(cache));
                 String[] values = reader.readLine().split("/");
                 reader.close();
                 deleteQuery(values[0], values[1]); // delete the oldest query
             }
-            writer.println(countryCode + "/" + indicator + "/" + c.get(Calendar.MONTH) + c.get(Calendar.YEAR) + "/" + rawData);
+            writer.println(countryCode + "/" + indicator + "/" + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date()) + "/" + rawData);
             System.out.println("=> Log.cache: DATA CACHED");
         } catch (IOException e) {
             // Ignore exception
             System.out.println("=> Log.cache: ERROR");
         }
     }
+    
+    /**
+     * Lists all cached queries.
+     *
+     * @return lists list of list of String
+     */
+    public static List<List<String>> listCache() {
 
-    private static String listCache() {
-    	File cache = new File("cache.txt");
-        if (!cache.exists() && !cache.isDirectory()) { // file does not exist i.e. no cached data
-            System.out.println("=> Log.fetchOffline: NO CACHED DATA");
-            return null;
-        }
-
-        String rawData = null;
-
+        File cache = getCacheFile(); // if null then file does not exists
+        
+        List<List<String>> lists = new ArrayList<List<String>>();
+        
         try {
             BufferedReader reader = new BufferedReader(new FileReader(cache));
 
             String line = null;
 
-            Calendar c = Calendar.getInstance();
-            String currentMMYYYY = Integer.toString(c.get(Calendar.MONTH)) + Integer.toString(c.get(Calendar.YEAR));
-
             while ((line = reader.readLine()) != null) {
-                
+                List<String> list = new ArrayList<String>();
                 String[] values = line.split("/");
-                
-                System.out.println(values[0] + " " + values[1] + " " + values[2]);
-                
-//                List<String[]> list;
-                
+                list.add(values[0]); list.add(values[1]); list.add(values[2]);
+                lists.add(list);
             }
             reader.close();
-        } catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+        } catch (IOException e) {
             System.out.println("=> Log.fetchOffline: ERROR");
         }
         
-        return rawData;
+        return lists;
     }
-    
+      
     /**
      * Finds the number of queries stored in the cache file.
      *
@@ -106,7 +120,7 @@ public class CacheAPI {
      * @param countryCode the country id
      */
     public static void deleteQuery(String indicator, String countryCode) throws IOException {
-        File cache = new File("cache.txt");
+        File cache = getCacheFile();
         File temp = new File("temp.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(cache));

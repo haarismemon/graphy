@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,15 +25,16 @@ import org.json.JSONObject;
  * @author Vladislavs Uljanovs
  */
 public class WorldBankAPI {
-	/**
+    /**
      * Makes a decision whether to download the data from online or load from cache.
      * i.e. if cache unable to provide the requested data then download data from online.
      *
      * @param indicator the indicator id
      * @param countryCode the country id
      * @return rawData unprocessed requested data in JSON string format
+     * @throws ParseException 
      */
-    private static String fetch(String indicator, String countryCode)  {
+    private static String fetch(String indicator, String countryCode) {
         String rawData = null;
         String fetchOffline = fetchOffline(indicator, countryCode);
 
@@ -56,8 +60,7 @@ public class WorldBankAPI {
          if (countryCode == null) url += "1W";
          else url += countryCode;
 
-         url += "/indicators/" + indicator
-                 + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
+         url += "/indicators/" + indicator + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
 
          return new URL(url);
     }
@@ -98,13 +101,11 @@ public class WorldBankAPI {
      * @return rawData unprocessed requested data in JSON string format, OR null if:
      *          - data stored is outdated i.e it is not cached in the same month
      *          - required data is not in cache
+     * @throws ParseException 
      */
     private static String fetchOffline(String indicator, String countryCode) {
-        File cache = new File("cache.txt");
-        if (!cache.exists() && !cache.isDirectory()) { // file does not exist i.e. no cached data
-            System.out.println("=> Log.fetchOffline: NO CACHED DATA");
-            return null;
-        }
+        
+        File cache = CacheAPI.getCacheFile();
 
         String rawData = null;
 
@@ -113,17 +114,19 @@ public class WorldBankAPI {
 
             String line = null;
 
-            Calendar c = Calendar.getInstance();
-            String currentMMYYYY = Integer.toString(c.get(Calendar.MONTH)) + Integer.toString(c.get(Calendar.YEAR));
-
+            String currectDate = new SimpleDateFormat("MM.yyyy").format(new Date()); // MMYYYY
+            
             while ((line = reader.readLine()) != null) {
                 
                 String[] values = line.split("/");
 
                 // countryCode AND indicator FOUND
                 if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
-                    // must be cached in the same month to be valid
-                    if (values[2].equals(currentMMYYYY)) {
+                    
+                    String queryDate = values[2].substring(3, values[2].length() - 6); // MMYYYY
+                    
+                    // data must be cached in the same month to be valid
+                    if (queryDate.equals(currectDate)) {
                         System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE");
                         rawData = values[3];
                     } else {
@@ -251,6 +254,6 @@ public class WorldBankAPI {
 
         }
         
-		return null;
+        return null;
     }
 }
