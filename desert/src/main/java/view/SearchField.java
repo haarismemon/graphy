@@ -20,9 +20,7 @@ public class SearchField extends TextField {
 		
 		//set placeholder text
 		setPromptText("Income in Italy between 2010 to 2015");
-		setPrefSize(540, 55);
-		setNotFound();
-		
+		setPrefSize(540, 55);		
 	}
 	
 	/**
@@ -32,6 +30,14 @@ public class SearchField extends TextField {
 		getStyleClass().add("search-field-not-found");
 	}
 	
+	/**
+	 * return the value in the search field
+	 * @return the value inserted in the searhc field
+	 */
+	public String getSearch(){
+		return getText();
+	}
+
 	/**
 	 * Reset search field to normal mode
 	 */

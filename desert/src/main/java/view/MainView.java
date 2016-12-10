@@ -36,7 +36,9 @@ public class MainView extends Stage {
 	private GraphController controller;
 	//GraphContainer
 	private GridPane graphContainer;
-	
+	//Search field
+	private SearchField searchField;
+
 	public MainView(){
 		super();
 	}
@@ -72,7 +74,7 @@ public class MainView extends Stage {
 		topBar.setPrefHeight(80);
 		
 		//Add search field to the view
-		SearchField searchField = new SearchField();
+		searchField = new SearchField();
 		topBar.getChildren().add(searchField);
 				
 		root.setTop(topBar);
@@ -142,16 +144,22 @@ public class MainView extends Stage {
 		}
 	}
 
-	public void addGraph(Map<Integer, Double> graphMap){
-		Graph centralGraph = new Graph("My Graph");
-		graphMap.put(1,2.0);
-		graphMap.put(2,4.0);
-		graphMap.put(3,5.0);
-		graphMap.put(4,2.0);
-		graphMap.put(5,4.0);
-		graphMap.put(6,5.0);
+	public String getTextField(){
+		return searchField.getSearch();
+	}
+
+	public void invalidQuery(){
+		searchField.setNotFound();
+	}
+
+	public void removeNotFound(){
+		searchField.removeNotFound();
+	}
+
+	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
+		Graph centralGraph = new Graph("graphName");
 		centralGraph.addSeries("My Serie", graphMap);
-		centralGraph.switchGraph("BarChart");
+		centralGraph.switchGraph("PieChart");
 		graphContainer.add(centralGraph.getGraph(),0,0);
 		System.out.println("GRAPH ADDED");
 	}
