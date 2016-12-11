@@ -2,14 +2,11 @@ package main.java.nlp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.java.api.IndicatorCodes;
-import main.java.api.Query;
-import main.java.nlp.QueryData;
 import main.java.api.Country;
 
 public class InputAnalysis {
