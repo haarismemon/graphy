@@ -1,26 +1,28 @@
 package main.java.nlp;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import main.java.api.IndicatorCodes;
+import main.java.api.Query;
 import main.java.nlp.QueryData;
 import main.java.api.Country;
 
 public class InputAnalysis {
 	
 	
-	static String[] indicators = new String[]{"GDP", "GDP per capita", "Consumer Price Indices", "Retail Price Indices",
-			"Unemployment", "Inflation", "Deflation", "Investment", "Production Possibility curve",
-			"Aggregate Demand", "Aggregate Supply", "Current account balance"};
+	static String[] indicators = IndicatorCodes.getAllIndicatorNames();
 	
 	//Get a complete list of all the countries
 	final static String[] countries = Country.getCountries();
 	
 	static String[] toIgnore = new String[]{
-			"in", "between", "from", "since", "at", "-", "to"
+			"in", "between", "from", "since", "at", "-", "to", "till"
 	};
 	
-	public static QueryData isValidCommand(String input){
+	public static Query isValidCommand(String input){
 		
 		
 		String indicator = "";
@@ -40,13 +42,20 @@ public class InputAnalysis {
 		
 		int[] dates = getDates(words);
 		
-		
-		
-		if(indicator != null && country != null){
+		if(indicator != null && country != null && dates.length != 0) {
 			
-			return new QueryData(indicator, country, dates);
+			if(dates.length == 1) {
+				if(wordsContain(words, "since")) {
+					return new Query(indicator, country, dates[0], 0, new Date());
+				}
+				else if(wordsContain(words, "till")) {
+					return new Query(indicator, country, 0, dates[0], new Date());
+				}
+			}
 			
-		}else{
+			return new Query(indicator, country, dates[0], dates[1], new Date());
+			
+		} else{
 			
 			return null;
 			
@@ -111,6 +120,8 @@ public class InputAnalysis {
 			return matches.get(0);
 			
 		}
+
+		if(matches.size() == 0) return null;
 		
 		int length = matches.get(0).length();
 		String longest = matches.get(0);
@@ -202,6 +213,35 @@ public class InputAnalysis {
 		int[] output = dates.stream().mapToInt(i -> i).toArray();
 		
 		return output;
+	}
+	
+	private static boolean wordsContain(String[] words, String containWord) {
+		for(String word: words) {
+			if(word.toLowerCase().equals(containWord.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(isValidCommand("gdp in brazil since 2004"));
+		System.out.println(isValidCommand("gdp growth in united kingdom till 2007"));
+		System.out.println(isValidCommand("gdp per capita in spain between 2010 and 2015"));
+		System.out.println(isValidCommand("gdp per capita growth in italy between 2010 and 2015"));
+		System.out.println(isValidCommand("consumer price inflation in australia between 2010 and 2015"));
+		System.out.println(isValidCommand("unemployment total in united states between 2010 and 2015"));
+		System.out.println(isValidCommand("unemployment male in canada between 2010 and 2015"));
+		System.out.println(isValidCommand("unemployment young male in brazil between 2010 and 2015"));
+		System.out.println(isValidCommand("unemployment female in brazil between 2010 and 2015"));
+		System.out.println(isValidCommand("unemployment young female in brazil between 2010 and 2015"));
+		System.out.println(isValidCommand("gdp deflator inflation in brazil between 2010 and 2015"));
+		System.out.println(isValidCommand("current account balance in brazil between 2010 and 2015"));
+		System.out.println(isValidCommand("Current Account Balance Percent Of GDP in brazil between 2010 and 2015"));
+
+//		String input = "gdp in brazil between 2016";
+//		ignoreConjunctives(input.split(" "));
+//		getDates(ignoreConjunctives(input.split(" ")));
 	}
 	
 	
