@@ -27,8 +27,6 @@ private MainView mainView;
 
 	@Override
 	public void handle(Event event) {
-		Map<Integer, Double> graphMap = WorldBankAPI.query("gdp","united kingdom",2010,2012);
-		System.out.println(graphMap);
-		mainView.addGraph(graphMap);
+
 	}
 }

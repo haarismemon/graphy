@@ -1,5 +1,5 @@
 .button-add {
-	-fx-background-image: url(../images/add-icon.png);
+	-fx-background-image: url(/images/add-icon.png);
 	-fx-background-position: center center;
 	-fx-background-repeat: no-repeat;  
 	-fx-background-color: transparent;

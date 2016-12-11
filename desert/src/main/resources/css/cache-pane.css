@@ -1,0 +1,55 @@
+.button {
+	 -fx-text-fill: white;
+	 -fx-border-radius: 5;
+	 -fx-padding: 8 16 8 16;
+	 -fx-font-size: 15;
+	 -fx-border: none;
+	 -fx-background-color: #42A6F6;
+}
+
+.button:hover {
+	-fx-background-color: #91CBFA;
+}
+
+.query-container {
+	-fx-padding: 10 10 10 10;
+}
+
+.back-button {
+	-fx-background-image: url(/images/back.png);
+	-fx-background-position: center center;
+	-fx-background-repeat: no-repeat;  
+	-fx-background-color: transparent;
+	-fx-background-size: contain;
+	-fx-padding: 10;
+	-fx-pref-width: 10;
+}
+.top-pane {
+	-fx-pref-height: 60;
+	-fx-min-height: 60;
+	-fx-padding: 10 20 0 20;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button {
+  visibility: hidden;
+}
+.scroll-bar > .thumb {
+	-fx-background-color: grey;
+    -fx-background-insets: 1;	
+}
+
+.scroll-bar:vertical {
+    -fx-background-insets: 2, 3 1 0 1;
+}
+
+.scroll-bar > .decrement-button {
+  visibility: hidden;
+}
+
+.scroll-pane {
+   -fx-background-color: none;
+}

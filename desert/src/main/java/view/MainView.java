@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.java.graph.Graph;
 import main.java.controller.GraphController;
+import main.java.view.CachePan;
 
 /**
  * This class represents the main view with all its components
@@ -24,18 +25,22 @@ import main.java.controller.GraphController;
 
 public class MainView extends Stage {
 	
+	//Main container 
+	private StackPane superContainer;
 	//Inspector panel
 	private InspectorPane inspector;
-	//Main container
+	//Cache panel
+	private CachePan cachePane;
+	//Main graph + inspector container
 	private HBox container;
 	//Initial message
 	private Label beginningLabel;
-	//Graph view
-	private BorderPane root;
 	//Controller
 	private GraphController controller;
 	//GraphContainer
 	private GridPane graphContainer;
+	//Graph view
+	private BorderPane root;
 	
 	public MainView(){
 		super();
@@ -57,8 +62,18 @@ public class MainView extends Stage {
 		// Set minimum size of the window
 		setMinHeight(650);
 		
+		superContainer = new StackPane();
+		
 		container = new HBox();
 		container.setMinWidth(900);
+		superContainer.getChildren().add(container);
+		
+		//Cache history
+		cachePane = new CachePan();
+		cachePane.setPrefWidth(200);
+		cachePane.setMaxWidth(250);
+		superContainer.setAlignment(cachePane, Pos.CENTER_LEFT);
+//		superContainer.getChildren().add(cachePane);
 		
 		//Root pane
 		root = new BorderPane();
@@ -88,9 +103,8 @@ public class MainView extends Stage {
 //		graphSpace.getChildren().add(beginningLabel);
 //		root.setCenter(graphSpace);
 		
-		graphContainer = new GridPane();
+		GridPane graphContainer = new GridPane();
 		graphContainer.getStyleClass().add("graph-container");
-		root.setCenter(graphContainer);
 		
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
@@ -103,8 +117,9 @@ public class MainView extends Stage {
 		bottomBar.getChildren().add(addNewGraph);
 
 		Button addButton = new Button("");
-		System.out.println(controller);
-		addButton.setOnAction(controller);
+		addButton.setOnAction((event) -> {
+			toggleCachePane();
+		});			
 		addButton.getStyleClass().add("button-add");
 		addButton.setPrefSize(18, 18);
 		bottomBar.getChildren().add(addButton);
@@ -116,8 +131,9 @@ public class MainView extends Stage {
 		//Inspector
 		inspector = new InspectorPane();
 		inspector.setPrefWidth(300);
-		
-		Scene scene = new Scene(container);
+		container.getChildren().add(inspector);
+
+		Scene scene = new Scene(superContainer);
 
 		setScene(scene);
 		setResizable(true);
@@ -132,6 +148,17 @@ public class MainView extends Stage {
 	}
 	
 	/**
+	 * Method used to hide and show the cache pane
+	 */
+	public void toggleCachePane() {
+		if(superContainer.getChildren().contains(cachePane)){
+			superContainer.getChildren().remove(cachePane);
+		} else {
+			superContainer.getChildren().add(cachePane);
+		}
+	}
+	
+	/**
 	 * Method used to hide and show the inspector
 	 */
 	public void toggleInspector() {
@@ -142,16 +169,16 @@ public class MainView extends Stage {
 		}
 	}
 
-	public void addGraph(Map<Integer, Double> graphMap){
-		Graph centralGraph = new Graph("My Graph");
-		graphMap.put(1,2.0);
-		graphMap.put(2,4.0);
-		graphMap.put(3,5.0);
-		graphMap.put(4,2.0);
-		graphMap.put(5,4.0);
-		graphMap.put(6,5.0);
+	/**
+	 * Add a new graph in the graph area
+	 *@param graphName - the name of the graph
+	 *@param graphType - the type of the graph
+	 *@param graphMap - the map that contains the data to be plotted in the graph
+	 */
+	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
+		Graph centralGraph = new Graph("graphName");
 		centralGraph.addSeries("My Serie", graphMap);
-		centralGraph.switchGraph("BarChart");
+		centralGraph.switchGraph("LineGraph");
 		graphContainer.add(centralGraph.getGraph(),0,0);
 		System.out.println("GRAPH ADDED");
 	}
