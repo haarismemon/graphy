@@ -44,6 +44,7 @@ public class MainView extends Stage {
 	
 	public MainView(){
 		super();
+		drawWidgets();
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class MainView extends Stage {
 		System.out.println(controller);
 	}
 
-	public void start() {
+	public void drawWidgets() {
 		setTitle("Graphy");
 
 		// Set minimum size of the window
@@ -137,9 +138,12 @@ public class MainView extends Stage {
 
 		setScene(scene);
 		setResizable(true);
-		show();
 	}
 	
+	public void start(){
+		show();
+	}
+
 	/**
 	 * Remove initial message from the graph space
 	 */
@@ -167,6 +171,10 @@ public class MainView extends Stage {
 		} else {
 			container.getChildren().add(inspector);
 		}
+	}
+
+	public InspectorPane getInspectorPane(){
+		return inspector;
 	}
 
 	/**

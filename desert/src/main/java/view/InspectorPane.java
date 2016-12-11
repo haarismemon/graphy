@@ -16,6 +16,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseEvent;
+import main.java.controller.CreateEvent;
+
 
 /**
  * This class represents the inspector pane, containing all the options to change graph parameters
@@ -49,6 +57,8 @@ public class InspectorPane extends BorderPane{
 	private TextField endYearComboBox;
 	//Colors
 	private ComboBox<String> colorComboBox;
+	//Create a new graph action
+	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
 	
 	public InspectorPane(){
 		super();
@@ -71,16 +81,9 @@ public class InspectorPane extends BorderPane{
 		
 		updateButton = new Button("Create");
 		
-		//////TEST///////////
 		updateButton.setOnAction((event) -> {
-			System.out.println(this.getIndicator());
-			System.out.println(this.getCountry());
-			System.out.println(this.getTitle());
-			System.out.println(this.getColor());
-			System.out.println(this.getStartYear());
-			System.out.println(this.getEndYear());
+			createButtonAction.get().handle(new CreateEvent(titleField.getText()));
 		});	
-		//////TEST///////////
 		
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
@@ -323,4 +326,9 @@ public class InspectorPane extends BorderPane{
 	public void setEndYear(String year){
 		endYearComboBox.setText(year);
 	}
+
+	public void createButtonHandler(EventHandler<CreateEvent> handler) {
+		createButtonAction.set(handler);
+	}
+
 }
