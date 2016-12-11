@@ -242,8 +242,8 @@ public class WorldBankAPI {
 //      query("GDP", "Latvia", 2000, 2015);
 //  }
 
-    public static void main(String[] args) {
-        System.out.println(checkConnectionStatus());
-    }
+//    public static void main(String[] args) {
+//        System.out.println(checkConnectionStatus());
+//    }
 
 }
