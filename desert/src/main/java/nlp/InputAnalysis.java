@@ -1,7 +1,9 @@
 package main.java.nlp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,9 +24,7 @@ public class InputAnalysis {
 			"in", "between", "from", "since", "at", "-", "to", "till"
 	};
 	
-	public static Query isValidCommand(String input){
-		
-		
+	public static List<String> isValidCommand(String input){
 		String indicator = "";
 		String country;
 		
@@ -43,32 +43,28 @@ public class InputAnalysis {
 		int[] dates = getDates(words);
 		
 		if(indicator != null && country != null && dates.length != 0) {
-			
 			if(dates.length == 1) {
 				if(wordsContain(words, "since")) {
-					return new Query(indicator, country, dates[0], 0, new Date());
+				    return Arrays.asList(indicator, country, "" + dates[0], "0");
+
 				}
 				else if(wordsContain(words, "till")) {
-					return new Query(indicator, country, 0, dates[0], new Date());
+                    return Arrays.asList(indicator, country, "0", "" + dates[0]);
 				}
+				else {
+                    return Arrays.asList(indicator, country, "" + dates[0], "" + dates[0]);
+                }
 			}
-			
-			return new Query(indicator, country, dates[0], dates[1], new Date());
-			
-		} else{
-			
+
+            return Arrays.asList(indicator, country, "" + dates[0], "" + dates[1]);
+		} else {
 			return null;
-			
 		}
 	
 	}
 	
 	
 	private static String[] ignoreConjunctives(String[] s){
-		
-		
-		
-		
 		for(String i: s){
 			
 			for(String j: toIgnore){
@@ -227,7 +223,7 @@ public class InputAnalysis {
 	public static void main(String[] args) {
 		System.out.println(isValidCommand("gdp in brazil since 2004"));
 		System.out.println(isValidCommand("gdp growth in united kingdom till 2007"));
-		System.out.println(isValidCommand("gdp per capita in spain between 2010 and 2015"));
+		System.out.println(isValidCommand("gdp per capita in spain in 2006"));
 		System.out.println(isValidCommand("gdp per capita growth in italy between 2010 and 2015"));
 		System.out.println(isValidCommand("consumer price inflation in australia between 2010 and 2015"));
 		System.out.println(isValidCommand("unemployment total in united states between 2010 and 2015"));
