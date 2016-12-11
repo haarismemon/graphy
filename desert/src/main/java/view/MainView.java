@@ -187,7 +187,7 @@ public class MainView extends Stage {
 	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
 		Graph centralGraph = new Graph(graphName);
 		centralGraph.addSeries("My Serie", graphMap);
-		centralGraph.switchGraph("LineGraph");
+		centralGraph.switchGraph(graphType);
 		root.setCenter(centralGraph.getGraph());
 	}
 }

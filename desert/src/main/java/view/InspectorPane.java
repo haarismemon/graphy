@@ -40,11 +40,11 @@ public class InspectorPane extends BorderPane{
 	//Update/create button
 	private Button updateButton;
 	
-	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar ","Pie chart","Line chart");
+	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getCountries()));
 	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(IndicatorCodes.getAllIndicatorNames()));
-	
+
 	//Graph title
 	private TextField titleField;
 	//IndicatorCodes
@@ -251,8 +251,12 @@ public class InspectorPane extends BorderPane{
 	 * @return the graph type of the currently shown graph
 	 */
 	public String getGraphType(){
-		return graphTypeComboBox.getSelectionModel().getSelectedItem().toString();
-	}
+		switch(graphTypeComboBox.getSelectionModel().getSelectedItem().toString()) {
+		case "Bar Chart": return "BarChart";
+		case "Pie Chart": return "PieChart";
+		case "Line Graph": return "LineGraph";
+		default: return "LineGraph";
+		}	}
 
 	/**
 	 * @return the country represented in the graph
@@ -270,7 +274,7 @@ public class InspectorPane extends BorderPane{
 		case "Yellow": return "#FFEF58";
 		case "Blue": return "#29B7F7";
 		case "Orange": return "#FFA826";
-		default: return null;
+		default: return "#F05350";
 		}
 	}
 	

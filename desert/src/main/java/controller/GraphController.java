@@ -42,7 +42,8 @@ private MainView mainView;
 		    		if(title.isEmpty()) {
 		    			title = event.getIndicator() + " in " + event.getCountry();
 		    		}
-		    		mainView.addGraph(title,"Bar Chart",dataMap);
+		    		System.out.println(event.getGraphType());
+		    		mainView.addGraph(title,event.getGraphType(),dataMap);
 		    	} else {
 		    		System.out.println("NO DATA");
 		    	}
