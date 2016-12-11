@@ -32,11 +32,17 @@ private MainView mainView;
 	public void assignActionHandlers(){
 		EventHandler<CreateEvent> handler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
-		    	
+		    	System.out.println(event.getIndicator() + " in " + event.getCountry() + " YEARS: " + Integer.parseInt(event.getStartYear()) + " - " + Integer.parseInt(event.getEndYear()));
+
 		    	Map<Integer, Double> dataMap = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
 		    	System.out.println(dataMap);
 		    	if(dataMap != null){
-		    		mainView.addGraph(event.getTitle(),"Bar Chart",dataMap);
+		    		String title = event.getTitle();
+		    		System.out.println(title.isEmpty());
+		    		if(title.isEmpty()) {
+		    			title = event.getIndicator() + " in " + event.getCountry();
+		    		}
+		    		mainView.addGraph(title,"Bar Chart",dataMap);
 		    	} else {
 		    		System.out.println("NO DATA");
 		    	}

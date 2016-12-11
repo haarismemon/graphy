@@ -185,10 +185,9 @@ public class MainView extends Stage {
 	 *@param graphMap - the map that contains the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
-		Graph centralGraph = new Graph("graphName");
+		Graph centralGraph = new Graph(graphName);
 		centralGraph.addSeries("My Serie", graphMap);
 		centralGraph.switchGraph("LineGraph");
-		System.out.println(centralGraph.getGraph());
-		// graphContainer.add(centralGraph.getGraph(),0,0);
+		root.setCenter(centralGraph.getGraph());
 	}
 }
