@@ -159,7 +159,7 @@ public class MainView extends Stage {
 	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
 		Graph centralGraph = new Graph("graphName");
 		centralGraph.addSeries("My Serie", graphMap);
-		centralGraph.switchGraph("PieChart");
+		centralGraph.switchGraph("LineGraph");
 		graphContainer.add(centralGraph.getGraph(),0,0);
 		System.out.println("GRAPH ADDED");
 	}

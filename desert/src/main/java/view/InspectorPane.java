@@ -323,4 +323,8 @@ public class InspectorPane extends BorderPane{
 	public void setEndYear(String year){
 		endYearComboBox.setText(year);
 	}
+
+	public void setOnCreateHandler(ActionHandler){
+		
+	}
 }
