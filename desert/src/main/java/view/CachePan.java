@@ -8,6 +8,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import main.java.view.CachedQueryPane;
+import main.java.api.Query;
+import main.java.api.CacheAPI;
+
 
 public class CachePan extends BorderPane {
 	public CachePan(){
@@ -35,12 +38,10 @@ public class CachePan extends BorderPane {
 		container.setAlignment(Pos.CENTER);
 		
 		
-		//CHANGE WITH API DATA
-		for(int i = 0;i<30;i++){
-			CachedQueryPane q = new CachedQueryPane();
+		for(Query query : CacheAPI.listCache()){
+			CachedQueryPane q = new CachedQueryPane(query);
 			container.getChildren().add(q);
 		}
-		//CHANGE WITH API DATA
 		
 		scrollContainer.setContent(container);
 		setCenter(scrollContainer);
