@@ -1,0 +1,24 @@
+.query-container {
+	-fx-background-color: #D4D4D4;
+	-fx-padding: 0 5 0 5;
+	-fx-pref-height: 40;
+	-fx-max-height: 40;
+	-fx-border-radius: 10;
+	-fx-min-height: 40;
+}
+
+.delete-query-button {
+	-fx-background-image: url(/images/delete.png);
+	-fx-background-position: center center;
+	-fx-background-repeat: no-repeat;  
+	-fx-background-color: transparent;
+	-fx-pref-width: 25;
+	-fx-max-width: 25;
+	-fx-pref-height: 25;
+	-fx-max-height: 25;
+}
+
+.delete-button:hover {
+	-fx-background-color: none;
+}
+
