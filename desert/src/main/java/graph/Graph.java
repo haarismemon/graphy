@@ -3,8 +3,11 @@ package graph;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Map;
+import java.util.Set;
+
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +17,7 @@ public class Graph {
     LineChart lineChart;
     BarChart barChart;
     PieChart pieChart;
+    AreaChart areaChart;
     StackPane pane;
 
 
@@ -24,11 +28,22 @@ public class Graph {
     public Graph(String graphName){
 
         lineChart = new LineChart(new NumberAxis(),new NumberAxis());
+        lineChart.setLegendVisible(false);
         barChart = new BarChart(new CategoryAxis(),new NumberAxis());
+        barChart.setLegendVisible(false);
         pieChart = new PieChart();
+        areaChart = new AreaChart(new NumberAxis(),new NumberAxis());
+
 
         NumberAxis xAxis = (NumberAxis)lineChart.getXAxis();
         NumberAxis yAxis = (NumberAxis)lineChart.getYAxis();
+        yAxis.setAutoRanging(true);
+        yAxis.setForceZeroInRange(false);
+        xAxis.setForceZeroInRange(false);
+        xAxis.setLabel("Year");
+
+        xAxis = (NumberAxis)areaChart.getXAxis();
+        yAxis = (NumberAxis)areaChart.getYAxis();
         yAxis.setAutoRanging(true);
         yAxis.setForceZeroInRange(false);
         xAxis.setForceZeroInRange(false);
@@ -55,8 +70,18 @@ public class Graph {
         lineChart.setTitle(name);
         barChart.setTitle(name);
         pieChart.setTitle(name);
+        areaChart.setTitle(name);
     }
-
+//    public void setColour(int number, String colour){
+//        lineChart.applyCss();
+//        Set<Node> n = lineChart.lookupAll("default-color"+number);
+//        StringBuilder style = new StringBuilder();
+//        style.append("-fx-stroke: red; -fx-background-color: red, white; ");
+//        for(Node node:n){
+//            node.setStyle(style.toString());
+//        }
+//        lineChart.applyCss();
+//    }
     /**
      * Adds a data to the Graphs in form of series. Each series represent a query.
      * @param seriesName name of series for the query to show in legend
@@ -64,20 +89,27 @@ public class Graph {
      */
     public void addSeries(String seriesName, Map<Integer, Double> series){
         XYChart.Series line = new XYChart.Series();
+        XYChart.Series area = new XYChart.Series();
         XYChart.Series bar = new XYChart.Series();
+
         line.setName(seriesName);
         bar.setName(seriesName);
+        area.setName(seriesName);
 
         Double last = 0d;
         for(Map.Entry<Integer,Double> entry:series.entrySet()){
             XYChart.Data data = new XYChart.Data(entry.getKey(),entry.getValue());
-            data.setNode(new HoverLineNode(entry.getValue(),this.lineChart.getData().size()));
+            data.setNode(new HoverNode(entry.getValue(),this.lineChart.getData().size()));
             line.getData().add(data);
+            data = new XYChart.Data(entry.getKey(),entry.getValue());
+            data.setNode(new HoverNode(entry.getValue(),this.lineChart.getData().size()));
+            area.getData().add(data);
             bar.getData().add(new XYChart.Data(""+entry.getKey(),entry.getValue()));
             last = entry.getValue();
         }
 
         lineChart.getData().add(line);
+        areaChart.getData().add(area);
         barChart.getData().add(bar);
         pieChart.getData().add(new PieChart.Data(seriesName,last));
     }
@@ -93,6 +125,7 @@ public class Graph {
             case "LineGraph": pane.getChildren().add(lineChart);break;
             case "BarChart": pane.getChildren().add(barChart);break;
             case "PieChart": pane.getChildren().add(pieChart);break;
+            case "AreaChart": pane.getChildren().add(areaChart);break;
         }
     }
 
@@ -111,14 +144,15 @@ public class Graph {
         lineChart.getData().clear();
         barChart.getData().clear();
         pieChart.getData().clear();
+        areaChart.getData().clear();
     }
 
     /**
      * HoverNode Class is class for the lineChart.
      * Creates Hovering Node to show the value of data on the graph rounded to two significant figure
      */
-    class HoverLineNode extends StackPane{
-        public HoverLineNode(double value, int size){
+    class HoverNode extends StackPane{
+        public HoverNode(double value, int size){
             BigDecimal bd = new BigDecimal(value);
             bd = bd.round(new MathContext(3));
             double rounded = bd.doubleValue();
@@ -137,19 +171,9 @@ public class Graph {
             setOnMouseExited(new EventHandler<MouseEvent>() {
                 @Override public void handle(MouseEvent mouseEvent) {
                     getChildren().clear();
-                    setCursor(Cursor.CROSSHAIR);
+                    setCursor(Cursor.DEFAULT);
                 }
             });
         }
-    }
-
-    /**
-     * Darren, Try to fill this class in. This class is like the HoverLineNode class. But instead it is
-     * build for adding a hover label for the bars in bar chart
-     * u need do basically do what i did in HoverLineNode but rotate the label 90 degrees and test out
-     * different styles, or use no style with give a transparent background
-     */
-    class HoverBarNode extends StackPane{
-
     }
 }
