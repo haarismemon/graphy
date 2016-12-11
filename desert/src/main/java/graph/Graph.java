@@ -16,7 +16,6 @@ public class Graph {
     PieChart pieChart;
     StackPane pane;
 
-
     /**
      * Graph constructor: Creates the graph object that contains all three graphType of the same data.
      * @param graphName

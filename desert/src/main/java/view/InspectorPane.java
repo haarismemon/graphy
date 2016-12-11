@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import main.java.controller.CreateEvent;
+import main.java.controller.DeleteEvent;
 import java.util.Arrays;
 import main.java.api.Country;
 import main.java.api.IndicatorCodes;
@@ -39,10 +40,14 @@ public class InspectorPane extends BorderPane{
 	private Button deleteButton;
 	//Update/create button
 	private Button updateButton;
-	
+
+	//List of supported graph types
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
+	//List of supported graph colors and tints
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
+	//List of all supoorted countries
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getCountries()));
+	//List of all supported indicators (full names)
 	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(IndicatorCodes.getAllIndicatorNames()));
 
 	//Graph title
@@ -59,9 +64,12 @@ public class InspectorPane extends BorderPane{
 	private TextField endYearComboBox;
 	//Colors
 	private ComboBox<String> colorComboBox;
+
 	//Create a new graph action
 	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
-	
+	//Delete graph action
+	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
+
 	public InspectorPane(){
 		super();
 		this.getStylesheets().add("css/inspector-pane.css");
@@ -77,6 +85,11 @@ public class InspectorPane extends BorderPane{
 		buttonPane.setSpacing(60.0);
 		
 		deleteButton = new Button("Delete");
+
+		deleteButton.setOnAction((event) -> {
+			deleteButtonAction.get().handle(new DeleteEvent());
+		});	
+
 		deleteButton.getStyleClass().add("button");
 		deleteButton.getStyleClass().add("delete");
 		buttonPane.getChildren().add(deleteButton);
@@ -340,8 +353,18 @@ public class InspectorPane extends BorderPane{
 		endYearComboBox.setText(year);
 	}
 
+	/**
+	 * create handler for the 'create graph' button
+	 */
 	public void createButtonHandler(EventHandler<CreateEvent> handler) {
 		createButtonAction.set(handler);
+	}
+
+	/**
+	 * create handler for the 'delete graph' button
+	 */
+	public void deleteButtonHandler(EventHandler<DeleteEvent> handler) {
+		deleteButtonAction.set(handler);
 	}
 
 }

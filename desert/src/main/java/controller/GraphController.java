@@ -30,28 +30,33 @@ private MainView mainView;
 	}
 
 	public void assignActionHandlers(){
-		EventHandler<CreateEvent> handler = new EventHandler<CreateEvent>() {
+		//Add a new graph to the main view
+		EventHandler<CreateEvent> addGrapEndler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
-		    	System.out.println(event.getIndicator() + " in " + event.getCountry() + " YEARS: " + Integer.parseInt(event.getStartYear()) + " - " + Integer.parseInt(event.getEndYear()));
-
 		    	Map<Integer, Double> dataMap = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-		    	System.out.println(dataMap);
 		    	if(dataMap != null){
 		    		String title = event.getTitle();
 		    		System.out.println(title.isEmpty());
 		    		if(title.isEmpty()) {
 		    			title = event.getIndicator() + " in " + event.getCountry();
 		    		}
-		    		System.out.println(event.getGraphType());
 		    		mainView.addGraph(title,event.getGraphType(),dataMap);
-		    	} else {
-		    		System.out.println("NO DATA");
 		    	}
 		        event.consume();
 		    }
 		  };
 
-		 mainView.getInspectorPane().createButtonHandler(handler);
+		 mainView.getInspectorPane().createButtonHandler(addGrapEndler);
+
+		 //Delete graph from the main view
+		 EventHandler<DeleteEvent> deleteGraphHandler = new EventHandler<DeleteEvent>() {
+		    public void handle(DeleteEvent event) {
+		    	System.out.println("DELETED");
+		        event.consume();
+		    }
+		  };
+
+		 mainView.getInspectorPane().deleteButtonHandler(deleteGraphHandler);
 	}
 
 }
