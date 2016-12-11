@@ -3,6 +3,10 @@ package test.java;
 import main.java.api.WorldBankAPI;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +54,23 @@ public class MyWorldBankTest {
         gdpMap.put(1962, 5.21605942017888);
         gdpMap.put(1963, 0.87467259240843);
         assertEquals("Map returned should be {2000=9.5}", gdpMap, WorldBankAPI.query("gdp","brazil", 0, 1963));
+    }
+
+    @Test
+    public void checkConnectionIsCorrect() {
+        boolean isConnected;
+        try {
+            final URL url = new URL("http://api.worldbank.org/countries/");
+            final URLConnection conn = url.openConnection();
+            conn.connect();
+            isConnected =  true;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            isConnected = false;
+        }
+
+        assertEquals("The Check Connection should return" + isConnected, isConnected, WorldBankAPI.checkConnectionStatus());
     }
 
 }
