@@ -1,15 +1,10 @@
 package main.java.api;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,67 +16,78 @@ import org.json.JSONObject;
 /**
  * Serves as a facade to WorldBank API.
  * 
- * @author Haaris Memon
  * @author Vladislavs Uljanovs
+ * @author Haaris Memon
  */
 public class WorldBankAPI {
+    
     /**
      * Makes a decision whether to download the data from online or load from cache.
      * i.e. if cache unable to provide the requested data then download data from online.
      *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     * @return rawData unprocessed requested data in JSON string format
-     * @throws ParseException 
+     * @param   query   query object holding data about query made by the user
+     * @return          unprocessed requested data in JSON string format
      */
-    private static String fetch(String indicator, String countryCode) {
-        String rawData = null;
-        String fetchOffline = fetchOffline(indicator, countryCode);
+    private static String fetch(Query query) {
+        String fetchOffline = CacheAPI.fetchOffline(query);
 
         if (fetchOffline != null) {
-            rawData = fetchOffline;
             System.out.println("=> Log.fetch: /// FETCH OFFLINE ///");
-        } else {
-            rawData = fetchOnline(indicator, countryCode);
-            System.out.println("=> Log.fetch: /// FETCH ONLINE ///");
+            return fetchOffline;
         }
-        return rawData;
+        
+        System.out.println("=> Log.fetch: /// FETCH ONLINE ///");
+        return fetchOnline(query);
     }
 
     /**
-     * Builds URL which is used to request data from World Bank API.
+     * Builds URL which is used to request data from api.worldbank.org
      *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     * @return URL to request data from World Bank API
+     * @param   query   query object holding data about query made by the user
+     * @return  URL     link to request data from api.worldbank.org
      */
-    private static URL buildURL(String indicator, String countryCode) throws IOException {
-         String url = "http://api.worldbank.org/countries/";
-         if (countryCode == null) url += "1W";
-         else url += countryCode;
-
-         url += "/indicators/" + indicator + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
-
-         return new URL(url);
+    private static URL buildURL(Query query) {
+        URL assemledURL = null;
+        String url = "http://api.worldbank.org/countries/";
+        //TODO this should be part of country indicator? world == 1w
+        if (query.getCountryCode() == null) url += "1W";
+        else url += query.getCountryCode();
+        url += "/indicators/" + query.getIndicatorCode() + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
+        try { 
+            assemledURL = new URL(url); 
+        } catch (IOException e) {
+        
+        }
+        return assemledURL;
     }
-
+    
+    /**
+     * Validates the obtained data from api.worldbank.org
+     *
+     * @param   response    obtained data from api.worldbank.org in JSON string format
+     * @return              {@code true} if the response is valid, and {@code false} otherwise.
+     */
+    private static boolean isResponseValid(String response) {
+        //TODO more checks?
+        if (!response.contains("parameter value is not valid")) return true;
+        else return false;
+    }
+    
     /**
      * Downloads raw data from online World Bank API.
      *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     * @return rawData unprocessed requested data in JSON string format
+     * @param   query   query object holding data about query made by the user
+     * @return          unprocessed requested data in JSON string format 
      */
-    private static String fetchOnline(String indicator, String countryCode) {
+    private static String fetchOnline(Query query) {
         try {
-            URL request = buildURL(indicator, countryCode);
-            String response;
+            URL request = buildURL(query);
             BufferedReader reader = new BufferedReader(new InputStreamReader(request.openStream()));
-            response = reader.readLine();
+            String response = reader.readLine();
             reader.close();
-
-            if (!response.contains("parameter value is not valid")) { // do not cache invalid data
-                CacheAPI.cache(indicator, countryCode, response);
+            
+            if (isResponseValid(response)) { // cache only valid response
+                CacheAPI.cache(query, response);
             } else {
                 System.out.println("=> Log.fetch: INVALID RETURNED JSON thus NOT CACHED");
             }
@@ -92,79 +98,24 @@ public class WorldBankAPI {
             return null;
         }
     }
-    
-    /**
-     * Loads raw data from cache.
-     *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     * @return rawData unprocessed requested data in JSON string format, OR null if:
-     *          - data stored is outdated i.e it is not cached in the same month
-     *          - required data is not in cache
-     * @throws ParseException 
-     */
-    private static String fetchOffline(String indicator, String countryCode) {
-        
-        File cache = CacheAPI.getCacheFile();
-
-        String rawData = null;
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(cache));
-
-            String line = null;
-
-            String currectDate = new SimpleDateFormat("MM.yyyy").format(new Date()); // MMYYYY
-            
-            while ((line = reader.readLine()) != null) {
-                
-                String[] values = line.split("/");
-
-                // countryCode AND indicator FOUND
-                if ((values[0]).equalsIgnoreCase(countryCode) && (values[1]).equalsIgnoreCase(indicator)) {
-                    
-                    String queryDate = values[2].substring(3, values[2].length() - 6); // MMYYYY
-                    
-                    // data must be cached in the same month to be valid
-                    if (queryDate.equals(currectDate)) {
-                        System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE");
-                        rawData = values[3];
-                    } else {
-                        System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE BUT OUTDATED");
-                        CacheAPI.deleteQuery(indicator, countryCode); // delete outdated data from cache file
-                    }
-                    break;
-                } else {
-                    System.out.println("=> Log.fetchOffline: DATA NOT FOUND IN CACHE");
-                }
-            }
-            reader.close();
-        } catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("=> Log.fetchOffline: ERROR");
-        }
-        
-        return rawData;
-    }
 
     /**
      * Validates the input parameters.
      *
-     * @param indicator the indicator id
-     * @param countryCode the country id
-     * @param startYear the start of the year range to output
-     * @param endYear the end of the year range to output
-     * @return {@code true} if the query parameters are valid, and {@code false} otherwise.
+     * @param   query   query object holding data about query made by the user
+     * @return          {@code true} if the query parameters are valid, and {@code false} otherwise.
      */
-    private static Boolean isValid(String indicator, String countryCode, int startYear, int endYear) {
-        Calendar c = Calendar.getInstance();
-        int currentYYYY = c.get(Calendar.YEAR);
+    private static Boolean isValid(Query query) {
+        int currentYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()));
+        int startYear = query.getStartYear();
+        int endYear = query.getEndYear();
 
-        if (((startYear < 1960 || startYear > currentYYYY) && startYear != 0)
-                || ((endYear < 1960 || endYear > currentYYYY) && endYear != 0)) {
+        if (((startYear < 1960 || startYear > currentYear) && query.getStartYear() != 0)
+                || ((endYear < 1960 || endYear > currentYear) && endYear != 0)) {
             return false;
-        } else if (indicator == null || countryCode == null) {
+        } else if (query.getIndicatorCode() == null || query.getCountryCode() == null) {
             return false;
-        } else if (indicator.equals("") || countryCode.equals("")) {
+        } else if (query.getIndicatorCode().equals("") || query.getCountryCode().equals("")) {
             return false;
         }
 
@@ -172,88 +123,103 @@ public class WorldBankAPI {
     }
 
     /**
-     * Filters out the required year range.
+     * Filters out the user-requested year range.
      *
-     * @param yearValueMap processed data containing all the years
-     * @param startYear the start of the year range to output
-     * @param endYear the end of the year range to output
-     * @return map containing only required year range
+     * @param   query           query object holding data about query made by the user
+     * @return  filteredMap     containing only required year range list
      */
-    private static Map<Integer, Double> filter(Map<Integer, Double> yearValueMap, int startYear, int endYear) {
+    private static Map<Integer, Double> filter(Query query) {
 
         Map<Integer, Double> filteredMap = new HashMap<>();
 
-        for (Integer yearKey : yearValueMap.keySet()) {
+        for (Integer yearKey : query.getData().keySet()) {
             //case in which both start and end year is given
-            if (startYear != 0 && endYear != 0) {   // "between [start year] to [end year]"
-                if ((yearKey >= startYear && yearKey <= endYear)) {
-                    filteredMap.put(yearKey, yearValueMap.get(yearKey));
+            if (query.getStartYear() != 0 && query.getEndYear() != 0) {   // "between [start year] to [end year]"
+                if ((yearKey >= query.getStartYear() && yearKey <= query.getEndYear() )) {
+                    filteredMap.put(yearKey, query.getData().get(yearKey));
                 }
-            } else if (startYear == 0 && endYear != 0) { // "until [end year]"
-                if(yearKey <= endYear) {
-                    filteredMap.put(yearKey, yearValueMap.get(yearKey));
+            } else if (query.getStartYear() == 0 && query.getEndYear() != 0) { // "until [end year]"
+                if(yearKey <= query.getEndYear()) {
+                    filteredMap.put(yearKey, query.getData().get(yearKey));
                 }
-            } else if (startYear != 0 && endYear == 0) { // since [start year]
-                if (yearKey > startYear || yearKey == startYear) {
-                    filteredMap.put(yearKey, yearValueMap.get(yearKey));
+            } else if (query.getStartYear() != 0 && query.getEndYear() == 0) { // since [start year]
+                if (yearKey > query.getStartYear() || yearKey == query.getStartYear()) {
+                    filteredMap.put(yearKey, query.getData().get(yearKey));
                 }
-            } else if (startYear == 0 && endYear == 0) {
-                filteredMap.put(yearKey, yearValueMap.get(yearKey));
+            } else if (query.getStartYear() == 0 && query.getEndYear() == 0) {
+                filteredMap.put(yearKey, query.getData().get(yearKey));
             }
         }
 
         return filteredMap;
     }
-
+    
     /**
-     * Gets the data results for Indicator Name passed in.
+     * Parses JSON string to usable data, and filters out user-requested year range.
      *
-     * Make country code 'null' to get for All Countries
+     * @param   query           query object holding data about query made by the user
+     * @param   rawData         unprocessed requested data in JSON string format
+     */
+    private static void parse(Query query, String rawData) {
+        JSONArray array = new JSONArray(rawData).getJSONArray(1);
+        
+        for (int i = 0; i < array.length(); ++i) {
+            JSONObject object = array.getJSONObject(i);
+            try {
+                Integer year = Integer.parseInt(object.getString("date"));
+                Double value = Double.parseDouble(object.getString("value"));
+                query.add(year, value);
+            } catch (JSONException e) {
+                // do nothing, the entry is not inserted into tree map
+            }
+        }
+    }
+    
+    /**
+     * Main query-process procedure: 
+     * validate input, fetches data, parses and filter data and more.
+     *
+     * @param   query   query object holding data about query made by the user
+     * @return  map     final processed version of the data.
+     */
+    private static Map<Integer, Double> process(Query query) {
+        if (!isValid(query)) return null;
+        String rawData = fetch(query); // can be null
+        if (rawData != null) {
+            //TODO check this
+            parse(query, rawData);
+            return filter(query);
+        }
+        return null;
+    }
+    
+    //TODO possibly review parameters cases
+    //TODO rewrite javadocs
+    /**
+     * Returns requested data.
+     *
+     * Make country code 'null' to get for All Countries    // <- SHOULD BE WORLD?
      * Make Start Year 0 to get all data till the End year
      * Make End Year 0 to get all data from the Start year
      * Make Start and End Year both 0 to get All the data from 1961 to present
      *
-     * @param indicatorName The Economic Indicator Name in English words e.g. "Consumer Price Inflation"
-     * @param countryName The Country Name you want to find data for (null to get for All countries)
-     * @param startYear The start year you want to find data for (0 to get data for just end year)
-     * @param endYear The end year you want to find data for
-     * @return Map with year and GDP value in US Dollars (Trillion)
+     * @param indicatorName     Economic Indicator Name in English words e.g. "Consumer Price Inflation"
+     * @param countryName       Country Name you want to find data for (null to get for All countries)
+     * @param startYear         requested start year of the query. (0 to get data for just end year)
+     * @param endYear           end year you want to find data for
+     * @return                  map with year and GDP value in US Dollars (Trillion)
      */
     public static Map<Integer, Double> query(String indicatorName, String countryName, int startYear, int endYear) {
-
-        String indicatorCode = IndicatorCodes.getIndicatorCode(indicatorName);
-        String countryCode = Country.getCountryCode(countryName);
-
-        if (!isValid(indicatorCode, countryCode, startYear, endYear)) {
-            return null;
-        }
-
-        String rawData = fetch(indicatorCode, countryCode); // can be null
-
-        //if the data returned says that the parameter was not valid, then return null
-        if(rawData.contains("parameter value is not valid")) return null;
-
-        Map<Integer, Double> yearValueMap = new HashMap<>();
-
-        if (rawData != null) {
-
-            JSONArray array = new JSONArray(rawData).getJSONArray(1);
-
-            for (int i = 0; i < array.length(); ++i) {
-                JSONObject object = array.getJSONObject(i);
-                try {
-                    Integer year = Integer.parseInt(object.getString("date"));
-                    Double value = Double.parseDouble(object.getString("value"));
-                    yearValueMap.put(year, value);
-                } catch (JSONException e) {
-                    // do nothing, the entry is not inserted into tree map
-                }
-            }
-
-            return filter(yearValueMap, startYear, endYear);
-
-        }
-        
-        return null;
+        Query query = new Query(IndicatorCodes.getIndicatorCode(indicatorName), Country.getCountryCode(countryName), startYear, endYear, new Date());
+        System.out.println(query);
+        return process(query);
     }
+    
+//    public static void main(String[] args) {
+//      Query query = new Query("indicator code", "GB", 5430, 2015, new Date());
+//      System.out.println("CURRENT QUERY -> " + query);
+//      cache(query, "JSOOOOOOOON");
+//      query("GDP", "Latvia", 2000, 2015);
+//  }
+
 }
