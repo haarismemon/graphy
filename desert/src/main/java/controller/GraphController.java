@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.event.EventHandler;
 import javafx.scene.input.InputEvent;
+import main.java.api.Query;
 
 /**
  * The controller of the graph view
@@ -31,7 +32,14 @@ private MainView mainView;
 	public void assignActionHandlers(){
 		EventHandler<CreateEvent> handler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
-		    	System.out.println(event.getTitle());
+		    	
+		    	Map<Integer, Double> dataMap = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
+		    	System.out.println(dataMap);
+		    	if(dataMap != null){
+		    		mainView.addGraph(event.getTitle(),"Bar Chart",dataMap);
+		    	} else {
+		    		System.out.println("NO DATA");
+		    	}
 		        event.consume();
 		    }
 		  };

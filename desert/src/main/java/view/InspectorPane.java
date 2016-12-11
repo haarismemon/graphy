@@ -23,6 +23,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import main.java.controller.CreateEvent;
+import java.util.Arrays;
+import main.java.api.Country;
+import main.java.api.IndicatorCodes;
 
 
 /**
@@ -39,9 +42,8 @@ public class InspectorPane extends BorderPane{
 	
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar ","Pie chart","Line chart");
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
-	final ObservableList<String> graphCountries = FXCollections.observableArrayList("Italy ","United Kingdom","Russia","France",
-			"Romania","Greece","Sweden","Spain");
-	final ObservableList<String> graphIndicators = FXCollections.observableArrayList("Deflation","Inflation","Income","GDP");
+	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getCountries()));
+	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(IndicatorCodes.getAllIndicatorNames()));
 	
 	//Graph title
 	private TextField titleField;
@@ -82,7 +84,7 @@ public class InspectorPane extends BorderPane{
 		updateButton = new Button("Create");
 		
 		updateButton.setOnAction((event) -> {
-			createButtonAction.get().handle(new CreateEvent(titleField.getText()));
+			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 		});	
 		
 		updateButton.getStyleClass().add("button");
@@ -192,11 +194,11 @@ public class InspectorPane extends BorderPane{
 		                    Image icon;
 		                    try {
 		                        int iconNumber = this.getIndex() + 1;
-		                        String iconPath = "./main/java/view/images/color" + iconNumber + ".png";
+		                        String iconPath = "images/color" + iconNumber + ".png";
 		                        icon = new Image(iconPath);
 		                    } catch(NullPointerException ex) {
 		                        // in case the above image doesn't exist, use a default one
-		                        String iconPath = "./main/java/view/images/color1.png";
+		                        String iconPath = "images/color1.png";
 		                        icon = new Image(iconPath);
 		                    }
 		                    ImageView iconImageView = new ImageView(icon);
@@ -244,7 +246,14 @@ public class InspectorPane extends BorderPane{
 	public String getIndicator(){
 		return indicatorComboBox.getSelectionModel().getSelectedItem().toString();
 	}
-	
+
+	/**
+	 * @return the graph type of the currently shown graph
+	 */
+	public String getGraphType(){
+		return graphTypeComboBox.getSelectionModel().getSelectedItem().toString();
+	}
+
 	/**
 	 * @return the country represented in the graph
 	 */

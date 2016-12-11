@@ -106,6 +106,7 @@ public class MainView extends Stage {
 		
 		GridPane graphContainer = new GridPane();
 		graphContainer.getStyleClass().add("graph-container");
+		root.setCenter(graphContainer);
 		
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
@@ -187,7 +188,7 @@ public class MainView extends Stage {
 		Graph centralGraph = new Graph("graphName");
 		centralGraph.addSeries("My Serie", graphMap);
 		centralGraph.switchGraph("LineGraph");
-		graphContainer.add(centralGraph.getGraph(),0,0);
-		System.out.println("GRAPH ADDED");
+		System.out.println(centralGraph.getGraph());
+		// graphContainer.add(centralGraph.getGraph(),0,0);
 	}
 }
