@@ -8,8 +8,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,8 +25,8 @@ public class WorldBankAPI {
      * Makes a decision whether to download the data from online or load from cache.
      * i.e. if cache unable to provide the requested data then download data from online.
      *
-     * @param   query   query object holding data about query made by the user
-     * @return          unprocessed requested data in JSON string format
+     * @param  query   query object holding data about query made by the user
+     * @return unprocessed requested data in JSON string format
      */
     private static String fetch(Query query) {
         String fetchOffline = CacheAPI.fetchOffline(query);
@@ -45,8 +43,8 @@ public class WorldBankAPI {
     /**
      * Builds URL which is used to request data from api.worldbank.org
      *
-     * @param   query   query object holding data about query made by the user
-     * @return  URL     link to request data from api.worldbank.org
+     * @param  query   query object holding data about query made by the user
+     * @return URL     link to request data from api.worldbank.org
      */
     private static URL buildURL(Query query) {
         URL assemledURL = null;
@@ -66,8 +64,8 @@ public class WorldBankAPI {
     /**
      * Validates the obtained data from api.worldbank.org
      *
-     * @param   response    obtained data from api.worldbank.org in JSON string format
-     * @return              {@code true} if the response is valid, and {@code false} otherwise.
+     * @param  response    obtained data from api.worldbank.org in JSON string format
+     * @return {@code true} if the response is valid, and {@code false} otherwise.
      */
     private static boolean isResponseValid(String response) {
         //TODO more checks?
@@ -89,7 +87,7 @@ public class WorldBankAPI {
             reader.close();
             
             if (isResponseValid(response)) { // cache only valid response
-                CacheAPI.cache(query, response);
+                CacheAPI.cacheQuery(query, response);
             } else {
                 System.out.println("=> Log.fetch: INVALID RETURNED JSON thus NOT CACHED");
             }
@@ -123,44 +121,12 @@ public class WorldBankAPI {
 
         return true;
     }
-
-    /**
-     * Filters out the user-requested year range.
-     *
-     * @param   query           query object holding data about query made by the user
-     * @return  filteredMap     containing only required year range list
-     */
-    private static Map<Integer, Double> filter(Query query) {
-
-        Map<Integer, Double> filteredMap = new HashMap<>();
-
-        for (Integer yearKey : query.getData().keySet()) {
-            //case in which both start and end year is given
-            if (query.getStartYear() != 0 && query.getEndYear() != 0) {   // "between [start year] to [end year]"
-                if ((yearKey >= query.getStartYear() && yearKey <= query.getEndYear() )) {
-                    filteredMap.put(yearKey, query.getData().get(yearKey));
-                }
-            } else if (query.getStartYear() == 0 && query.getEndYear() != 0) { // "until [end year]"
-                if(yearKey <= query.getEndYear()) {
-                    filteredMap.put(yearKey, query.getData().get(yearKey));
-                }
-            } else if (query.getStartYear() != 0 && query.getEndYear() == 0) { // since [start year]
-                if (yearKey > query.getStartYear() || yearKey == query.getStartYear()) {
-                    filteredMap.put(yearKey, query.getData().get(yearKey));
-                }
-            } else if (query.getStartYear() == 0 && query.getEndYear() == 0) {
-                filteredMap.put(yearKey, query.getData().get(yearKey));
-            }
-        }
-
-        return filteredMap;
-    }
     
     /**
      * Parses JSON string to usable data, and filters out user-requested year range.
      *
-     * @param   query           query object holding data about query made by the user
-     * @param   rawData         unprocessed requested data in JSON string format
+     * @param query		query object holding data about query made by the user
+     * @param rawData	unprocessed requested data in JSON string format
      */
     private static void parse(Query query, String rawData) {
         JSONArray array = new JSONArray(rawData).getJSONArray(1);
@@ -182,45 +148,38 @@ public class WorldBankAPI {
      * validate input, fetches data, parses and filter data and more.
      *
      * @param   query   query object holding data about query made by the user
-     * @return  map     final processed version of the data.
+     * @return  query   final processed version of the data to be used in the application
+     * 					or null if it is not valid
      */
-    private static Map<Integer, Double> process(Query query) {
+    private static Query process(Query query) {
         if (!isValid(query)) return null;
         String rawData = fetch(query); // can be null
         if (rawData != null) {
-            //TODO check this
             parse(query, rawData);
-            return filter(query);
+            query.filter();
+            return query;
         }
         return null;
     }
-    
-    //TODO possibly review parameters cases
-    //TODO rewrite javadocs
+
     /**
-     * Returns requested data.
+     * Returns queried data.
      *
-     * Make country code 'null' to get for All Countries    // <- SHOULD BE WORLD?
-     * Make Start Year 0 to get all data till the End year
-     * Make End Year 0 to get all data from the Start year
-     * Make Start and End Year both 0 to get All the data from 1961 to present
-     *
-     * @param indicatorName     Economic Indicator Name in English words e.g. "Consumer Price Inflation"
-     * @param countryName       Country Name you want to find data for (null to get for All countries)
-     * @param startYear         requested start year of the query. (0 to get data for just end year)
-     * @param endYear           end year you want to find data for
-     * @return                  map with year and GDP value in US Dollars (Trillion)
+     * @param indicatorName     indicator name to be queried e.g. GDP
+     * @param countryName       country name to be queried, input null to query all world i.e. all countries
+     * @param startYear         start year of the data range, input 0 to start with the most oldest possible year
+     * @param endYear           end year of the data range, input 0 to end at current year
+     * @return query that store all the details about the query
      */
-    public static Map<Integer, Double> query(String indicatorName, String countryName, int startYear, int endYear) {
-        Query query = new Query(IndicatorCodes.getIndicatorCode(indicatorName), Country.getCountryCode(countryName), startYear, endYear, new Date());
-        System.out.println(query);
+    public static Query query(String indicatorName, String countryName, int startYear, int endYear) {
+        Query query = new Query(Indicator.getCode(indicatorName), Country.getCode(countryName), startYear, endYear, new Date());
         return process(query);
     }
 
     /**
-     * Check if there is a internet connection and can connect to the web API.
-     *
-     * @return true if there is a connection
+     * Checks Internet and api.worldbank.org connection.
+     * 
+     * @return {@code true} if connection exists, and {@code false} otherwise.
      */
     public static boolean checkConnectionStatus() {
         try {
@@ -234,16 +193,10 @@ public class WorldBankAPI {
             return false;
         }
     }
-    
-//    public static void main(String[] args) {
-//      Query query = new Query("indicator code", "GB", 5430, 2015, new Date());
-//      System.out.println("CURRENT QUERY -> " + query);
-//      cache(query, "JSOOOOOOOON");
-//      query("GDP", "Latvia", 2000, 2015);
-//  }
 
 //    public static void main(String[] args) {
-//        System.out.println(checkConnectionStatus());
+//    	Query q = query("GDP", "Latvia", 2000, 2015);
+//    	System.out.println(q.getData());
 //    }
 
 }
