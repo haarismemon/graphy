@@ -1,4 +1,4 @@
-package main.java.api;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,13 +17,13 @@ public class Query {
      * Indicator code e.g. in the following format: "NY.GDP.MKTP.KD.ZG"
      * 
      */
-	private String indicatorCode;
+	private final String indicatorCode;
 	
 	/**
      * Country code e.g. in the following format: "LV"
      * 
      */
-	private String countryCode;
+	private final String countryCode;
 	
 	/**
      * Requested start year of the query.
@@ -47,7 +47,13 @@ public class Query {
      * Map of pairs (year and value), containing all years for the query.
      * 
      */
-	Map<Integer, Double> yearValue = new HashMap<>();
+	private Map<Integer, Double> yearValue = new HashMap<>();
+	
+	/**
+     * Map of pairs (year and value), containing all years for the query.
+     * 
+     */
+	private Map<Integer, Double> yearValueFiltered = new HashMap<>();
 	
 	/**
      * Creates a query object holding.
@@ -81,7 +87,7 @@ public class Query {
 	 * @return indicator name
 	 */
 	public String getIndicatorName() {
-		return IndicatorCodes.getIndicatorName(this.indicatorCode);
+		return Indicator.getName(this.indicatorCode);
 	}
 	
 	/**
@@ -99,7 +105,7 @@ public class Query {
 	 * @return country name
 	 */
 	public String getCountryName() {
-		return Country.getCountryName(this.countryCode);
+		return Country.getName(this.countryCode);
 	}
 	
 	/**
@@ -120,7 +126,66 @@ public class Query {
 		return endYear;
 	}
 	
-	// TODO SET start and end year!!! possibly will require to recache
+	/**
+	 * Sets/Updates start year of the query.
+	 * 
+	 */
+	private void setStartYear(int startYear) {
+		this.startYear = startYear;
+	}
+	
+	/**
+	 * Sets/Updates end year of the query.
+	 * 
+	 */
+	private void setEndYear(int endYear) {
+		this.endYear = endYear;
+	}
+	
+	/**
+	 * Updates year range of the query.
+	 * 
+	 * @param startYear	start year to update
+	 * @param endYear	end year to update
+	 * @return list containing only required year range
+	 */
+	protected void updateRange(int startYear, int endYear) {
+		setStartYear(startYear);
+		setEndYear(endYear);
+		filter();
+	}
+
+	/**
+     * Filters out the user-requested year range.
+     *
+     * @param   query           query object holding data about query made by the user
+     * @return  filteredMap     containing only required year range list
+     */
+    protected void filter() {
+
+        Map<Integer, Double> filteredMap = new HashMap<>();
+
+        for (Integer yearKey : getRawData().keySet()) {
+            //case in which both start and end year is given
+            if (getStartYear() != 0 && getEndYear() != 0) {   // "between [start year] to [end year]"
+                if ((yearKey >= getStartYear() && yearKey <= getEndYear() )) {
+                    filteredMap.put(yearKey, getRawData().get(yearKey));
+                }
+            } else if (getStartYear() == 0 && getEndYear() != 0) { // "until [end year]"
+                if(yearKey <= getEndYear()) {
+                    filteredMap.put(yearKey, getRawData().get(yearKey));
+                }
+            } else if (getStartYear() != 0 && getEndYear() == 0) { // since [start year]
+                if (yearKey > getStartYear() || yearKey == getStartYear()) {
+                    filteredMap.put(yearKey, getRawData().get(yearKey));
+                }
+            } else if (getStartYear() == 0 && getEndYear() == 0) {
+                filteredMap.put(yearKey, getRawData().get(yearKey));
+            }
+        }
+
+        yearValueFiltered = filteredMap;
+    }
 	
 	/**
 	 * Converts date in String type to Date type.
@@ -183,12 +248,40 @@ public class Query {
 	}
 	
 	/**
-	 * Return a map of pairs (year and value) for all the query's years
+	 * Return a map of pairs (year and value) for all year range
 	 * 
-	 * @return yearValue	map containing pairs (year and value)
+	 * @return yearValue	map of unprocessed data containing pairs (year and value)
+	 */
+	private Map<Integer, Double> getRawData() {
+		return yearValue;
+	}
+	
+	/**
+	 * Return a map of pairs (year and value) for requested year range
+	 * 
+	 * @return yearValue	map of filtered data containing pairs (year and value)
+	 * 						only requested year range
 	 */
 	public Map<Integer, Double> getData() {
-		return yearValue;
+		return yearValueFiltered;
+	}
+	
+	/**
+	 * Returns indicator data unit, e.g. US Trillion Dollars ($)
+	 * 
+	 * @return indicator unit or null if indicator not found
+	 */
+	public String getUnit() {
+		return Indicator.getUnit(getIndicatorName());
+	}
+	
+	/**
+	 * Returns description of the indicator.
+	 * 
+	 * @return indicator description
+	 */
+	public String getInfo() {
+		return Indicator.getInfo(getIndicatorName());
 	}
 
 	public String toString() {
