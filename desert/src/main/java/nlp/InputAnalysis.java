@@ -23,7 +23,20 @@ public class InputAnalysis {
 	static String[] toIgnore = new String[]{
 			"in", "between", "from", "since", "at", "-", "to", "till"
 	};
-	
+
+
+    /**
+     * Takes string input, and returns query information in a List.
+     *
+     * If no indicator found, method returns null.
+     * If no country found, country will be "all".
+     * If no dates found, start and end year will be 0.
+     * If one date found, one of start or end year will be 0, depending on query.
+     * Else bothd dates will be given.
+     *
+     * @param input String input from the search bar
+     * @return List of Strings with query information. [Indicator Name, Country Name, Start Year, End Year]
+     */
 	public static List<String> isValidCommand(String input){
 		String indicator = "";
 		String country;
@@ -39,10 +52,12 @@ public class InputAnalysis {
 		
 		indicator = getIndicator(input);
 		country = getCountry(input);
+
+		if(country == null) country = "all";
 		
 		int[] dates = getDates(words);
 		
-		if(indicator != null && country != null && dates.length != 0) {
+		if(indicator != null) {
 			if(dates.length == 1) {
 				if(wordsContain(words, "since")) {
 				    return Arrays.asList(indicator, country, "" + dates[0], "0");
@@ -55,6 +70,9 @@ public class InputAnalysis {
                     return Arrays.asList(indicator, country, "" + dates[0], "" + dates[0]);
                 }
 			}
+            if(dates.length == 0) {
+                return Arrays.asList(indicator, country, "0", "0");
+            }
 
             return Arrays.asList(indicator, country, "" + dates[0], "" + dates[1]);
 		} else {
@@ -224,9 +242,9 @@ public class InputAnalysis {
 		System.out.println(isValidCommand("gdp in brazil since 2004"));
 		System.out.println(isValidCommand("gdp growth in united kingdom till 2007"));
 		System.out.println(isValidCommand("gdp per capita in spain in 2006"));
-		System.out.println(isValidCommand("gdp per capita growth in italy between 2010 and 2015"));
-		System.out.println(isValidCommand("consumer price inflation in australia between 2010 and 2015"));
-		System.out.println(isValidCommand("unemployment total in united states between 2010 and 2015"));
+		System.out.println(isValidCommand("gdp per capita growth in italy"));
+		System.out.println(isValidCommand("consumer price inflation"));
+		System.out.println(isValidCommand("Hello my name is Haaris"));
 		System.out.println(isValidCommand("unemployment male in canada between 2010 and 2015"));
 		System.out.println(isValidCommand("unemployment young male in brazil between 2010 and 2015"));
 		System.out.println(isValidCommand("unemployment female in brazil between 2010 and 2015"));
