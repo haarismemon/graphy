@@ -25,7 +25,7 @@ public class CacheAPI {
      *
      * @return cache cache file or null if cache file does not exist
      */
-    public static File getCacheFile() {
+    private static File getCacheFile() {
         File cache = new File("cache.txt");
         if (!cache.exists() && !cache.isDirectory()) { // file does not exist i.e. no cached data
             System.out.println("=> Log.fetchOffline: NO CACHED DATA");
@@ -66,7 +66,7 @@ public class CacheAPI {
      * @param   query   query object holding data about query made by the user
      * @return          {@code true} if query not expired, and {@code false} otherwise.
      */
-    public static boolean isExpired(Query query) {
+    private static boolean isExpired(Query query) {
         String currectDate = new SimpleDateFormat("MM.yyyy").format(new Date());
         if (query.getMonthYear().equals(currectDate)) { // data must be cached in the same month to be valid
             System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE");
@@ -163,7 +163,7 @@ public class CacheAPI {
      * If number of records equals to 30 then delete the oldest query.
      * 
      */
-    public static void checkLimit() {
+    private static void checkLimit() {
         if (cacheSize() == 30) { // limit of 30 queries to be store in the cache file
             deleteOldestQuery();
         }
@@ -173,7 +173,7 @@ public class CacheAPI {
      * Deletes the oldest query in the cache.
      * 
      */
-    public static void deleteOldestQuery() {
+    private static void deleteOldestQuery() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(getCacheFile()));
             String[] values = reader.readLine().split("/");
@@ -191,7 +191,7 @@ public class CacheAPI {
      * @param indicatorCode     indicator code of the query
      * @param countryCode       country code of the query
      */
-    public static void deleteQuery(String indicatorCode, String countryCode) throws IOException {
+    private static void deleteQuery(String indicatorCode, String countryCode) throws IOException {
         File cache = getCacheFile();
         if (cache == null) System.out.println("=> Log.deleteQuery: ERROR IS GOOD, JUST NEED TO HANDLE THIS TODO");
         File temp = new File("temp.txt");
