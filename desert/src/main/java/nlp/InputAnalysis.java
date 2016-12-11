@@ -7,18 +7,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import main.java.api.IndicatorCodes;
-import main.java.api.Query;
-import main.java.nlp.QueryData;
+import main.java.api.Indicator;
 import main.java.api.Country;
 
 public class InputAnalysis {
 	
 	
-	static String[] indicators = IndicatorCodes.getAllIndicatorNames();
+	final static String[] indicators = Indicator.getAllNames();
 	
 	//Get a complete list of all the countries
-	final static String[] countries = Country.getCountries();
+	final static String[] countries = Country.getAllNames();
 	
 	static String[] toIgnore = new String[]{
 			"in", "between", "from", "since", "at", "-", "to", "till"
