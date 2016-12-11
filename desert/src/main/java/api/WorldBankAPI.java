@@ -3,7 +3,9 @@ package main.java.api;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -214,6 +216,24 @@ public class WorldBankAPI {
         System.out.println(query);
         return process(query);
     }
+
+    /**
+     * Check if there is a internet connection and can connect to the web API.
+     *
+     * @return true if there is a connection
+     */
+    public static boolean checkConnectionStatus() {
+        try {
+            final URL url = new URL("http://api.worldbank.org/countries/");
+            final URLConnection conn = url.openConnection();
+            conn.connect();
+            return true;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            return false;
+        }
+    }
     
 //    public static void main(String[] args) {
 //      Query query = new Query("indicator code", "GB", 5430, 2015, new Date());
@@ -221,5 +241,9 @@ public class WorldBankAPI {
 //      cache(query, "JSOOOOOOOON");
 //      query("GDP", "Latvia", 2000, 2015);
 //  }
+
+    public static void main(String[] args) {
+        System.out.println(checkConnectionStatus());
+    }
 
 }
