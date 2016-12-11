@@ -3,6 +3,7 @@ package main.java.api;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Converts indicator name or indicator code to opposite format
@@ -58,6 +59,15 @@ public class IndicatorCodes {
                 return entry.getKey().toString();
         }
         return null;
+    }
+
+    /**
+     * Get all the Indicator Names in the application
+     * @return String array of all countries in the application
+     */
+    public static String[] getAllIndicatorNames() {
+        Set<String> keys = indicatorQueryMap.keySet();
+        return keys.toArray(new String[keys.size()]);
     }
 
     // EXAMPLE:
