@@ -52,7 +52,10 @@ public class CacheAPI {
                                 + query.getStartYear() + "/" 
                                     + query.getEndYear() + "/" 
                                         + query.getDateOriginal() + "/" 
-                                            + rawData);
+                                            + rawData + "/"
+            									+ query.getTitle() + "/"
+            										+ query.getColour()
+            );
             writer.close();
             System.out.println("=> Log.cache: DATA CACHED");
         } catch (IOException e) {
@@ -242,6 +245,8 @@ public class CacheAPI {
 //                  System.out.println("NEW " + newEndYear);
                     line = line.replace(values[2], newStartYear);
                     line = line.replace(values[3], newEndYear);
+                    line = line.replace(values[6], title);
+                    line = line.replace(values[7], colour);
                     System.out.println(line);
                 }//TODO
                 writer1.println(line);
@@ -289,10 +294,14 @@ public class CacheAPI {
     }
 
     public static void main(String[] args) throws IOException {
-    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 1990, 2001, new Date());
-    	System.out.println(cacheSize());
+    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 0000, 0000, new Date());
+//    	q.setTitle("gaqqqqqqq1");
+//    	q.setColour("GREEN");
+//    	cacheQuery(q, "rawData bla bla");
+//    	q.updateCache();
+//    	System.out.println(cacheSize());
 //    	updateCache(q);
-    	System.out.println(cacheSize());
+//    	System.out.println(cacheSize());
     	
     	
     }

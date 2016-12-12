@@ -41,7 +41,7 @@ public class Query {
      * The date and time when the query was made.
      * 
      */
-	private Date queryDate;
+	private final Date queryDate;
 	
 	/**
      * The title of the query.
@@ -101,7 +101,7 @@ public class Query {
 	 * @return indicator name
 	 */
 	public String getIndicatorName() {
-		return Indicator.getName(this.indicatorCode);
+		return Indicator.getName(indicatorCode);
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class Query {
 	 * @return country name
 	 */
 	public String getCountryName() {
-		return Country.getName(this.countryCode);
+		return Country.getName(countryCode);
 	}
 	
 	/**
