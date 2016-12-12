@@ -16,12 +16,12 @@ import javafx.scene.Node;
 import main.java.controller.CreateEvent;
 
 
-public class CachePan extends BorderPane {
+public class CachePane extends BorderPane {
 
 	//Queries container
 	private VBox container;
 
-	public CachePan(){
+	public CachePane(){
 		super();
 		this.getStylesheets().add("css/cache-pane.css");
 		this.getStyleClass().add("inspector-pane");
@@ -79,10 +79,17 @@ public class CachePan extends BorderPane {
 	}
 
 	public void listQueryItems(){
-		container.getChildren().clear();	
+		container.getChildren().clear();
+//		for(Node q : container.getChildren()){
+//				System.out.println(q);
+//		}
+		container.getChildren().clear();
 		for(Query query : CacheAPI.listCache()){
 			CachedQueryPane q = new CachedQueryPane(query);
 			container.getChildren().add(q);
 		}
+//		for(Node q : container.getChildren()){
+//				System.out.println(q);
+//		}
 	}
 }
