@@ -233,6 +233,7 @@ public class InspectorPane extends BorderPane{
 	 * Set the create button to UPDATE mode
 	 */
 	public void setUpdate(){
+		System.out.println("CRAETE");
 		updateButton.setText("Update");
 	}
 	

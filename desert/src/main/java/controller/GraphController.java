@@ -55,7 +55,7 @@ private MainView mainView;
 		    		mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
 		    		mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
 		    		mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
-
+		    		mainView.getInspectorPane().setUpdate();
 		        	event.consume();
 		    		}
 		 		 };

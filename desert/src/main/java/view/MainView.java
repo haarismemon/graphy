@@ -88,6 +88,7 @@ public class MainView extends Stage {
 
 		// Top bar containing the search bar
 		HBox topBar = new HBox();
+		topBar.setStyle("-fx-padding: 30 0 0 0;");
 		topBar.setAlignment(Pos.BOTTOM_CENTER);
 		topBar.setPrefHeight(80);
 		
