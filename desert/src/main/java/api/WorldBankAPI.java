@@ -136,7 +136,7 @@ public class WorldBankAPI {
             try {
                 Integer year = Integer.parseInt(object.getString("date"));
                 Double value = Double.parseDouble(object.getString("value"));
-                query.add(year, value);
+                query.addToYearValue(year, value);
             } catch (JSONException e) {
                 // do nothing, the entry is not inserted into tree map
             }
@@ -181,7 +181,7 @@ public class WorldBankAPI {
      * 
      * @return {@code true} if connection exists, and {@code false} otherwise.
      */
-    public static boolean checkConnectionStatus() {
+    public static boolean connectionPresent() {
         try {
             final URL url = new URL("http://api.worldbank.org/countries/");
             final URLConnection conn = url.openConnection();

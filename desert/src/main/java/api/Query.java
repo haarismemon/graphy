@@ -50,7 +50,7 @@ public class Query {
 	private Map<Integer, Double> yearValue = new HashMap<>();
 	
 	/**
-     * Map of pairs (year and value), containing all years for the query.
+     * Map of pairs (year and value), containing requested year range for the query.
      * 
      */
 	private Map<Integer, Double> yearValueFiltered = new HashMap<>();
@@ -242,7 +242,7 @@ public class Query {
 	 * @param year	key - specific year 
 	 * @param value	value - value that maps to the year
 	 */
-	public void add(int year, double value) {
+	public void addToYearValue(int year, double value) {
 		yearValue.put(year, value);
 	}
 	
@@ -282,10 +282,28 @@ public class Query {
 	public String getInfo() {
 		return Indicator.getInfo(getIndicatorName());
 	}
-
+	
+//	public String update() {
+//		CacheAPI.updateCache();
+		//TODO
+//	}
+	
+	/**
+	 * Deletes this query from cache.
+	 * 
+	 */
+	public void delete() {
+		CacheAPI.deleteQuery(indicatorCode, countryCode);
+	}
+ 
 	public String toString() {
 		return indicatorCode + " " + countryCode + " " + startYear + " " + endYear + " " + queryDate;
 	}
+
+	@Override
+    public boolean equals(Object query) {
+        return this.indicatorCode.equals(countryCode) && this.countryCode.equals(countryCode);
+    }
 
 //	 public static void main(String[] args) {
 //		 String date = "Mon Dec 12 01:22:00 GMT 2005";	 
