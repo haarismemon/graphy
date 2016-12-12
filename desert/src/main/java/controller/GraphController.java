@@ -92,6 +92,8 @@ private MainView mainView;
 		  };
 
 		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
+		 
+		 mainView.getCachePane().setCreateQueryHandlers(addGrapEndler);
 	}
 
 }

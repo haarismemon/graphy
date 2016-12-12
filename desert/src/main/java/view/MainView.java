@@ -245,6 +245,7 @@ public class MainView extends Stage {
 	 *@param query - the query representing the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
+		System.out.println("ADD NEW GRAPH");
 		Graph centralGraph = new Graph(graphName);
 		centralGraph.addSeries("My Serie", query);
 		centralGraph.switchGraph(graphType);

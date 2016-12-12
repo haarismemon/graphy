@@ -13,6 +13,8 @@ import main.java.api.CacheAPI;
 import main.java.controller.DeleteCachedQuery;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import main.java.controller.CreateEvent;
+
 
 public class CachePan extends BorderPane {
 
@@ -66,6 +68,13 @@ public class CachePan extends BorderPane {
 		for(Node q : container.getChildren()){
 			CachedQueryPane p = (CachedQueryPane)q;
 			p.deleteCachedQueryHandler(handler);
+		}
+	}
+
+	public void setCreateQueryHandlers(EventHandler<CreateEvent> handler){
+		for(Node q : container.getChildren()){
+			CachedQueryPane p = (CachedQueryPane)q;
+			p.createCachedQueryButton(handler);
 		}
 	}
 
