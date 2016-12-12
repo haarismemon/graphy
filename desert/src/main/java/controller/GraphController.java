@@ -13,6 +13,8 @@ import java.util.Map;
 import javafx.event.EventHandler;
 import javafx.scene.input.InputEvent;
 import main.java.api.Query;
+import main.java.api.CacheAPI;
+import java.io.IOException;
 
 /**
  * The controller of the graph view
@@ -57,6 +59,23 @@ private MainView mainView;
 		  };
 
 		 mainView.getInspectorPane().deleteButtonHandler(deleteGraphHandler);
+
+		 //Delete graph from the main view
+		 EventHandler<DeleteCachedQuery> deleteCachedQueryHandler = new EventHandler<DeleteCachedQuery>() {
+		    public void handle(DeleteCachedQuery event) {
+		    	System.out.println("DELETED CACHED QUERY");
+		    	try {
+		    		System.out.println(CacheAPI.cacheSize());
+		    		CacheAPI.deleteQuery(event.getQuery().getIndicatorName(), event.getQuery().getCountryName());
+		    		System.out.println(CacheAPI.cacheSize());
+		    	} catch(Exception e){
+		    		System.out.println("THE QUERY CAN NOT BE DELETED");
+		    	}
+		        event.consume();
+		    }
+		  };
+
+		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
 	}
 
 }

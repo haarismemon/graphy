@@ -118,7 +118,7 @@ public class CacheAPI {
      *
      * @return  number of cached queries in the file
      */
-    private static int cacheSize() {
+    public static int cacheSize() {
         try {
             LineNumberReader lnr = new LineNumberReader(new FileReader(getCacheFile()));
             int size = 0;
@@ -166,7 +166,7 @@ public class CacheAPI {
      * @param indicatorCode     indicator code of the query
      * @param countryCode       country code of the query
      */
-    private static void deleteQuery(String indicatorCode, String countryCode) throws IOException {
+    public static void deleteQuery(String indicatorCode, String countryCode) throws IOException {
         File cache = getCacheFile();
         if (cache == null) System.out.println("=> Log.deleteQuery: ERROR IS GOOD, JUST NEED TO HANDLE THIS TODO");
         File temp = new File("temp.txt");
