@@ -241,12 +241,12 @@ public class MainView extends Stage {
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
 		Graph centralGraph = new Graph(graphName);
-		centralGraph.addSeries("My Serie", query);
+		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
 		printGraphs();
-		System.out.println(graphs.toString());
-		System.out.println("ADD NEW GRAPH");
+//		System.out.println(graphs.toString());
+//		System.out.println("ADD NEW GRAPH");
 
 	}
 }

@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import main.java.graph.Graph;
 import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
 
@@ -18,13 +19,14 @@ import java.io.IOException;
 
 /**
  * The controller of the graph view
- * @author pietrocalzini
  *
+ * @author pietrocalzini
+ * @author Haaris Memon
  */
-public class GraphController{
+public class GraphController {
 
-//View
-private MainView mainView;
+	//View
+	private MainView mainView;
 
 	public GraphController(MainView m){
 		mainView = m;
@@ -48,15 +50,15 @@ private MainView mainView;
 		    	//UPDATE SELECTROS Select graph from the workspace
 		 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
 		    		public void handle(SelectEvent event) {
-
-		    		mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
-		    		mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
-		    		mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
-		    		mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
-		    		mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
-		    		mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
-		    		mainView.getInspectorPane().setUpdate();
-		        	event.consume();
+						mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
+						mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
+						mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
+						mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
+						mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
+						mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
+						mainView.getInspectorPane().setUpdate();
+						mainView.getInspectorPane().setSelectedGraph(event.getGraph());
+						event.consume();
 		    		}
 		 		 };
 
@@ -79,15 +81,15 @@ private MainView mainView;
 
 		 //Delete cached query from the history
 		 EventHandler<DeleteCachedQuery> deleteCachedQueryHandler = new EventHandler<DeleteCachedQuery>() {
-		    public void handle(DeleteCachedQuery event) {
-		    	try {
-		    		event.getQuery().delete();
-		    		mainView.getCachePane().removeCachePane(event.getQuery());
-		    	} catch(Exception e){
-		    		System.out.println("THE QUERY CAN NOT BE DELETED");
-		    	}
-		        event.consume();
-		    }
+			public void handle(DeleteCachedQuery event) {
+				try {
+					event.getQuery().delete();
+					mainView.getCachePane().removeCachePane(event.getQuery());
+				} catch(Exception e){
+					System.out.println("THE QUERY CAN NOT BE DELETED");
+				}
+				event.consume();
+			}
 		  };
 
 		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
