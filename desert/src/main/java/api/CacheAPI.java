@@ -1,7 +1,6 @@
 package main.java.api;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -283,6 +282,8 @@ public class CacheAPI {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split("/");
                 Query query = new Query(values[0], values[1], Integer.parseInt(values[2]), Integer.parseInt(values[3]), Query.convertToDate(values[4]));
+                query.setTitle(values[6]);
+                query.setColour(values[7]);
                 queries.add(query);
             }
             reader.close();
@@ -293,16 +294,14 @@ public class CacheAPI {
         return queries;
     }
 
-    public static void main(String[] args) throws IOException {
-    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 0000, 0000, new Date());
+//    public static void main(String[] args) throws IOException {
+//    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 0000, 0000, new Date());
 //    	q.setTitle("gaqqqqqqq1");
 //    	q.setColour("GREEN");
 //    	cacheQuery(q, "rawData bla bla");
 //    	q.updateCache();
 //    	System.out.println(cacheSize());
 //    	updateCache(q);
-//    	System.out.println(cacheSize());
-    	
-    	
-    }
+//    	System.out.println(cacheSize());	
+//    }
 }
