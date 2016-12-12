@@ -18,7 +18,11 @@ import main.java.controller.GraphController;
 import main.java.view.CachePan;
 import main.java.api.Query;
 import java.util.List;
+import javafx.event.EventHandler;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import java.util.ArrayList;
+import main.java.controller.SelectEvent;
 
 
 /**
@@ -220,9 +224,18 @@ public class MainView extends Stage {
 		}
 	}
 
-	
+	/**
+	 * create handler for the graph selection
+	 */
+	public void selectGraphHandlers(EventHandler<SelectEvent> handler) {
+		for(Graph g : graphs){
+			g.selectGraphHandler(handler);
+		}
+	}
+
 	public void deleteGraph(Graph g){
 		graphs.remove(g);
+		printGraphs();
 	}
 
 	/**
@@ -232,6 +245,7 @@ public class MainView extends Stage {
 	 *@param query - the query representing the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
+		System.out.println("ADD NEW GRAPH");
 		Graph centralGraph = new Graph(graphName);
 		centralGraph.addSeries("My Serie", query);
 		centralGraph.switchGraph(graphType);

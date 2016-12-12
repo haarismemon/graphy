@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import main.java.controller.CreateEvent;
 
 public class CachedQueryPane extends HBox {
 
@@ -26,7 +27,9 @@ public class CachedQueryPane extends HBox {
 
 	//Delete a cached query action
 	private ObjectProperty<EventHandler<DeleteCachedQuery>> deleteCachedQueryAction = new SimpleObjectProperty<EventHandler<DeleteCachedQuery>>();
-
+	//Create a new graph based on cached query
+	private ObjectProperty<EventHandler<CreateEvent>> createCachedQueryButton = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+	
 	public CachedQueryPane(Query q){
 
 		super(8);
@@ -35,6 +38,10 @@ public class CachedQueryPane extends HBox {
 		getStylesheets().add("css/cache-query-pane.css");
 		getStyleClass().add("query-container");
 		
+		this.setOnMouseClicked((event) -> {
+			createCachedQueryButton.get().handle(new CreateEvent("TITLE TO CHANGE", query.getIndicatorName(), query.getCountryName(), "BarChart", "Red", "" +query.getStartYear(), "" +query.getEndYear()));
+		});	
+
 		deleteButton = new Pane();
 		deleteButton.setOnMouseClicked((event) -> {
 			deleteCachedQueryAction.get().handle(new DeleteCachedQuery(query));
@@ -65,5 +72,12 @@ public class CachedQueryPane extends HBox {
 	 */
 	public void deleteCachedQueryHandler(EventHandler<DeleteCachedQuery> handler) {
 		deleteCachedQueryAction.set(handler);
+	}
+
+	/**
+	 * create handler to create a new graph from a cached quety
+	 */
+	public void createCachedQueryButton(EventHandler<CreateEvent> handler) {
+		createCachedQueryButton.set(handler);
 	}
 }

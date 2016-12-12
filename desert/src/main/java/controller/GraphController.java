@@ -44,6 +44,23 @@ private MainView mainView;
 		    		}
 		    		mainView.addGraph(title,event.getGraphType(),query);
 		    	}
+
+		    	//UPDATE SELECTROS Select graph from the workspace
+		 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
+		    		public void handle(SelectEvent event) {
+
+		    		mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
+		    		mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
+		    		mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
+		    		mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
+		    		mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
+		    		mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
+
+		        	event.consume();
+		    		}
+		 		 };
+
+		 		mainView.selectGraphHandlers(selectGraphHandler);
 		        event.consume();
 		    }
 		  };
@@ -60,14 +77,13 @@ private MainView mainView;
 
 		 mainView.getInspectorPane().deleteButtonHandler(deleteGraphHandler);
 
-		 //Delete graph from the main view
+		 //Delete cached query from the history
 		 EventHandler<DeleteCachedQuery> deleteCachedQueryHandler = new EventHandler<DeleteCachedQuery>() {
 		    public void handle(DeleteCachedQuery event) {
-		    	System.out.println("DELETED CACHED QUERY");
 		    	try {
-		    		System.out.println(CacheAPI.cacheSize());
-		    		CacheAPI.deleteQuery(event.getQuery().getIndicatorName(), event.getQuery().getCountryName());
-		    		System.out.println(CacheAPI.cacheSize());
+		    		//IN THE FUTURE USE event.getQuery().delete();
+		    		CacheAPI.deleteQuery(event.getQuery().getIndicatorCode(), event.getQuery().getCountryCode());
+		    		mainView.getCachePane().listQueryItems();
 		    	} catch(Exception e){
 		    		System.out.println("THE QUERY CAN NOT BE DELETED");
 		    	}
@@ -76,6 +92,8 @@ private MainView mainView;
 		  };
 
 		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
+		 
+		 mainView.getCachePane().setCreateQueryHandlers(addGrapEndler);
 	}
 
 }
