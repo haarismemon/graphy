@@ -274,24 +274,27 @@ public class CacheAPI {
      */
     public static List<Query> listCache() {
         File cache = getCacheFile(); // if null then file does not exists
-        if (cache == null) System.out.println("=> Log.deleteQuery: ERROR IS GOOD, JUST NEED TO HANDLE THIS TODO");
-        List<Query> queries = new ArrayList<Query>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(cache));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split("/");
-                Query query = new Query(values[0], values[1], Integer.parseInt(values[2]), Integer.parseInt(values[3]), Query.convertToDate(values[4]));
-                query.setTitle(values[6]);
-                query.setColour(values[7]);
-                queries.add(query);
+        if (cache == null) return null;
+        else {
+            List<Query> queries = new ArrayList<Query>();
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(cache));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    String[] values = line.split("/");
+                    Query query = new Query(values[0], values[1], Integer.parseInt(values[2]), Integer.parseInt(values[3]), Query.convertToDate(values[4]));
+                    query.setTitle(values[6]);
+                    query.setColour(values[7]);
+                    queries.add(query);
+                }
+                reader.close();
+            } catch (IOException e) {
+                System.out.println("=> Log.fetchOffline: ERROR");
             }
-            reader.close();
-        } catch (IOException e) {
-            System.out.println("=> Log.fetchOffline: ERROR");
+
+            return queries;
         }
 
-        return queries;
     }
 
 //    public static void main(String[] args) throws IOException {

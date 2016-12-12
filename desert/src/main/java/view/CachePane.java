@@ -15,6 +15,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import main.java.controller.CreateEvent;
 
+import java.util.List;
+
 
 public class CachePane extends BorderPane {
 
@@ -90,9 +92,12 @@ public class CachePane extends BorderPane {
 	public void listQueryItems(){
 		container.getChildren().clear();
 		container.getChildren().clear();
-		for(Query query : CacheAPI.listCache()){
-			CachedQueryPane q = new CachedQueryPane(query);
-			container.getChildren().add(q);
+		List<Query> listOfQueries = CacheAPI.listCache();
+		if(listOfQueries != null) {
+			for(Query query : listOfQueries){
+				CachedQueryPane q = new CachedQueryPane(query);
+				container.getChildren().add(q);
+			}
 		}
 	}
 }
