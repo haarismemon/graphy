@@ -14,12 +14,12 @@ import main.java.controller.DeleteCachedQuery;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 
-public class CachePan extends BorderPane {
+public class CachePane extends BorderPane {
 
 	//Queries container
 	private VBox container;
 
-	public CachePan(){
+	public CachePane(){
 		super();
 		this.getStylesheets().add("css/cache-pane.css");
 		this.getStyleClass().add("inspector-pane");
@@ -71,15 +71,15 @@ public class CachePan extends BorderPane {
 
 	public void listQueryItems(){
 		container.getChildren().clear();
-		for(Node q : container.getChildren()){
-				System.out.println(q);
-		}
+//		for(Node q : container.getChildren()){
+//				System.out.println(q);
+//		}
 		for(Query query : CacheAPI.listCache()){
 			CachedQueryPane q = new CachedQueryPane(query);
 			container.getChildren().add(q);
 		}
-		for(Node q : container.getChildren()){
-				System.out.println(q);
-		}
+//		for(Node q : container.getChildren()){
+//				System.out.println(q);
+//		}
 	}
 }

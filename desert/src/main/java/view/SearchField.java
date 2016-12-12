@@ -30,7 +30,6 @@ public class SearchField extends BorderPane {
 	public SearchField(){
 		super();
 
-
 		comboBox = new ComboBox();
 		comboBox.setPrefSize(540, 55);
 		comboBox.setPromptText("GDP in Italy between 2010 to 2015");
@@ -76,8 +75,10 @@ public class SearchField extends BorderPane {
 					else {
 						comboBox.setValue("");
 						comboBox.hide();
-						searchQuery(input);
-						updateComboBox("");
+						List<String> queryInfo = InputAnalysis.isValidCommand(input);
+						searchQuery(queryInfo);
+						List<String> autoCompleteIndicators = Indicator.getAutocomplete("");
+						updateComboBox(autoCompleteIndicators);
 					}
 				} catch(Exception e) {
 
@@ -93,11 +94,9 @@ public class SearchField extends BorderPane {
 				else comboBox.show();
 				comboBox.getItems().removeAll(comboBox.getItems());
 
-				if (!Indicator.getAutocomplete(s).isEmpty()) {
-//					for (String string : autocompleteIndicators) {
-//						comboBox.getItems().add(string);
-//					}
-					updateComboBox(s);
+				List<String> autoCompleteIndicators = Indicator.getAutocomplete(s);
+				if (!autoCompleteIndicators.isEmpty()) {
+					updateComboBox(autoCompleteIndicators);
 				} else {
 					comboBox.hide();
 				}
@@ -108,7 +107,6 @@ public class SearchField extends BorderPane {
 			@Override
 			public void handle(KeyEvent event) {
 				if (textField.getText().equals("")) {
-//                    textField.clear();
 					comboBox.getEditor().clear();
 					pane.getChildren().remove(textField);
 					pane.getChildren().add(comboBox);
@@ -124,8 +122,10 @@ public class SearchField extends BorderPane {
 				String input = textField.getText();
 				textField.setText("");
 				comboBox.hide();
-				searchQuery(input);
-				updateComboBox(textField.getText());
+				List<String> queryInfo = InputAnalysis.isValidCommand(input);
+				searchQuery(queryInfo);
+				List<String> autocompleteIndicators = Indicator.getAutocomplete(textField.getText());
+				updateComboBox(autocompleteIndicators);
 			}
 		});
 
@@ -133,25 +133,22 @@ public class SearchField extends BorderPane {
 		
 	}
 
-	private void updateComboBox(String input) {
-		List<String> autocompleteIndicators = Indicator.getAutocomplete(input);
+	private void updateComboBox(List<String> autocompleteIndicators) {
 		comboBox.getItems().clear();
 		for (String string : autocompleteIndicators) {
 			comboBox.getItems().add(string);
 		}
 	}
 
-	private void searchQuery(String input) {
-		List<String> queryInfo = InputAnalysis.isValidCommand(input);
-		Query query;
+	private Query searchQuery(List<String> queryInfo) {
 		if(queryInfo != null) {
 			String indicatorCode = Indicator.getCode(queryInfo.get(0));
 			String countryCode = Country.getCode(queryInfo.get(1));
 			int startYear = Integer.parseInt(queryInfo.get(2));
 			int endYear = Integer.parseInt(queryInfo.get(3));
-			query = new Query(indicatorCode, countryCode, startYear, endYear, new Date());
-			System.out.println(query);
-		}
+			Query query = new Query(indicatorCode, countryCode, startYear, endYear, new Date());
+			return query;
+		} else return null;
 	}
 	
 	/**

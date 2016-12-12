@@ -1,9 +1,5 @@
 package main.java.view;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,7 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.java.graph.Graph;
 import main.java.controller.GraphController;
-import main.java.view.CachePan;
 import main.java.api.Query;
 import java.util.List;
 import java.util.ArrayList;
@@ -34,7 +29,7 @@ public class MainView extends Stage {
 	//Inspector panel
 	private InspectorPane inspector;
 	//Cache panel
-	private CachePan cachePane;
+	private CachePane cachePane;
 	//Main graph + inspector container
 	private HBox container;
 	//Initial message
@@ -60,7 +55,7 @@ public class MainView extends Stage {
  	*/
 	public void assignController(GraphController controller){
 		this.controller = controller;
-		System.out.println(controller);
+//		System.out.println(controller);
 	}
 
 	public void drawWidgets() {
@@ -76,7 +71,7 @@ public class MainView extends Stage {
 		superContainer.getChildren().add(container);
 		
 		//Cache history
-		cachePane = new CachePan();
+		cachePane = new CachePane();
 		cachePane.setPrefWidth(200);
 		cachePane.setMaxWidth(250);
 		superContainer.setAlignment(cachePane, Pos.CENTER_LEFT);
@@ -182,7 +177,7 @@ public class MainView extends Stage {
 		return inspector;
 	}
 
-	public CachePan getCachePane(){
+	public CachePane getCachePane(){
 		return cachePane;
 	}
 	
