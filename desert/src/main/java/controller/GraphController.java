@@ -15,6 +15,8 @@ import javafx.scene.input.InputEvent;
 import main.java.api.Query;
 import main.java.api.CacheAPI;
 import java.io.IOException;
+import main.java.api.Indicator;
+import main.java.api.Country;
 
 /**
  * The controller of the graph view
@@ -49,14 +51,15 @@ private MainView mainView;
 		 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
 		    		public void handle(SelectEvent event) {
 
-		    		mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
-		    		mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
-		    		mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
-		    		mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
-		    		mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
-		    		mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
-		    		mainView.getInspectorPane().setUpdate();
-		        	event.consume();
+		    			mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
+		    			mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
+		    			mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
+		    			mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
+		    			mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
+		    			mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
+		    			mainView.getInspectorPane().setUpdate();
+		        		event.consume();
+
 		    		}
 		 		 };
 
@@ -71,6 +74,10 @@ private MainView mainView;
 		 EventHandler<DeleteEvent> deleteGraphHandler = new EventHandler<DeleteEvent>() {
 		    public void handle(DeleteEvent event) {
 		    	System.out.println("DELETED");
+		    	System.out.println(Indicator.getCode(event.getIndicator()));
+		    	System.out.println(Country.getCode(event.getCountry()));
+
+		    	mainView.deleteGraph(new Query(Indicator.getCode(event.getIndicator()),Country.getCode(event.getCountry()),0,0,null));
 		        event.consume();
 		    }
 		  };

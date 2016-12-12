@@ -103,11 +103,12 @@ public class MainView extends Stage {
 		graphSpace.setStyle("-fx-background-color: white");
 		graphSpace.setAlignment(Pos.CENTER);
 		
-//		//Label displayed when the application is launched and no graphs are shown
-//		beginningLabel = new Label("Start searching for one indicator or add a new graph");
-//		beginningLabel.getStyleClass().add("beginning-label");
-//		graphSpace.getChildren().add(beginningLabel);
-//		root.setCenter(graphSpace);
+		//Label displayed when the application is launched and no graphs are shown
+		beginningLabel = new Label("Start searching for one indicator or add a new graph");
+		beginningLabel.getStyleClass().add("beginning-label");
+		graphSpace.getChildren().add(beginningLabel);
+		root.setCenter(graphSpace);
+
 		graphContainer.setAlignment(Pos.CENTER);
 		graphContainer.getStyleClass().add("graph-container");
 		root.setCenter(graphContainer);
@@ -229,8 +230,14 @@ public class MainView extends Stage {
 		}
 	}
 
-	public void deleteGraph(Graph g){
-		graphs.remove(g);
+	public void deleteGraph(Query q){
+		for(Graph g : graphs){			
+			System.out.println(g.getQuery().getIndicatorCode());
+			System.out.println(g.getQuery().getCountryCode());
+			if(g.getQuery().equals(q)){
+				graphs.remove(g);
+			}
+		}
 		printGraphs();
 	}
 

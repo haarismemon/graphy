@@ -84,7 +84,7 @@ public class InspectorPane extends BorderPane{
 		deleteButton = new Button("Delete");
 
 		deleteButton.setOnAction((event) -> {
-			deleteButtonAction.get().handle(new DeleteEvent());
+			deleteButtonAction.get().handle(new DeleteEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 		});	
 
 		deleteButton.getStyleClass().add("button");
@@ -294,14 +294,20 @@ public class InspectorPane extends BorderPane{
 	 * @return get the start year of the graph
 	 */
 	public String getStartYear(){
-		return startYearComboBox.getText();
+		if(startYearComboBox.getText().isEmpty())
+			return "0";
+		else
+		  	return startYearComboBox.getText();
 	}
 	
 	/**
 	 * @return get the start end of the graph
 	 */
 	public String getEndYear(){
-		return endYearComboBox.getText();
+		if(endYearComboBox.getText().isEmpty())
+			return "0";
+		else
+		  	return endYearComboBox.getText();
 	}
 	
 	
