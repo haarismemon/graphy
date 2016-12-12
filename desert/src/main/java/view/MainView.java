@@ -92,7 +92,7 @@ public class MainView extends Stage {
 		topBar.setPrefHeight(80);
 		
 		//Add search field to the view
-		SearchField searchField = new SearchField();
+		SearchField searchField = new SearchField(this);
 		topBar.getChildren().add(searchField);
 				
 		root.setTop(topBar);
@@ -240,11 +240,13 @@ public class MainView extends Stage {
 	 *@param query - the query representing the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
-		System.out.println("ADD NEW GRAPH");
 		Graph centralGraph = new Graph(graphName);
 		centralGraph.addSeries("My Serie", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
 		printGraphs();
+		System.out.println(graphs.toString());
+		System.out.println("ADD NEW GRAPH");
+
 	}
 }

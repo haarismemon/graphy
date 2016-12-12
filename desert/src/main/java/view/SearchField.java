@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import main.java.api.Country;
 import main.java.api.Indicator;
 import main.java.api.Query;
+import main.java.api.WorldBankAPI;
 import main.java.nlp.InputAnalysis;
 
 import java.util.Date;
@@ -23,12 +24,14 @@ import java.util.List;
 public class SearchField extends BorderPane {
 
 	private ComboBox comboBox;
+	private MainView mainView;
 
 	/**
 	 * Create a custom search field
 	 */
-	public SearchField(){
+	public SearchField(MainView mainView){
 		super();
+		this.mainView = mainView;
 
 		comboBox = new ComboBox();
 		comboBox.setPrefSize(540, 55);
@@ -51,14 +54,14 @@ public class SearchField extends BorderPane {
 		comboBox.getStyleClass().add("search-field");
 
 
-		comboBox.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if(!Indicator.getAutocomplete(comboBox.getEditor().getText()).isEmpty()) {
-					comboBox.show();
-				}
-			}
-		});
+//		comboBox.setOnMouseEntered(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				if(!Indicator.getAutocomplete(comboBox.getEditor().getText()).isEmpty()) {
+//					comboBox.show();
+//				}
+//			}
+//		});
 
 		comboBox.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -77,9 +80,11 @@ public class SearchField extends BorderPane {
 						comboBox.setValue("");
 						comboBox.hide();
 						List<String> queryInfo = InputAnalysis.isValidCommand(input);
-						searchQuery(queryInfo);
 						List<String> autoCompleteIndicators = Indicator.getAutocomplete("");
 						updateComboBox(autoCompleteIndicators);
+
+						//make search
+						searchQuery(queryInfo);
 					}
 				} catch(Exception e) {
 
@@ -124,9 +129,11 @@ public class SearchField extends BorderPane {
 				textField.setText("");
 				comboBox.hide();
 				List<String> queryInfo = InputAnalysis.isValidCommand(input);
-				searchQuery(queryInfo);
 				List<String> autocompleteIndicators = Indicator.getAutocomplete(textField.getText());
 				updateComboBox(autocompleteIndicators);
+
+				//make search
+				searchQuery(queryInfo);
 			}
 		});
 
@@ -141,15 +148,21 @@ public class SearchField extends BorderPane {
 		}
 	}
 
-	private Query searchQuery(List<String> queryInfo) {
+	private void searchQuery(List<String> queryInfo) {
 		if(queryInfo != null) {
-			String indicatorCode = Indicator.getCode(queryInfo.get(0));
-			String countryCode = Country.getCode(queryInfo.get(1));
+			String indicatorName = queryInfo.get(0);
+			String countryName = queryInfo.get(1);
 			int startYear = Integer.parseInt(queryInfo.get(2));
 			int endYear = Integer.parseInt(queryInfo.get(3));
-			Query query = new Query(indicatorCode, countryCode, startYear, endYear, new Date());
-			return query;
-		} else return null;
+//			Query query = new Query(indicatorCode, countryCode, startYear, endYear, new Date());
+//			return query;
+			Query queryResult = WorldBankAPI.query(indicatorName, countryName, startYear, endYear);
+			System.out.println(queryResult);
+			if(queryResult != null){
+				mainView.addGraph(queryResult.getTitle(), "BarChart", queryResult);
+			}
+		}
+//		else return null;
 	}
 	
 	/**
