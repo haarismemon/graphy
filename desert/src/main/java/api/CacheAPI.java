@@ -1,4 +1,4 @@
-package main.java.api;
+//package main.java.api;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -121,7 +121,7 @@ public class CacheAPI {
      *
      * @return  number of cached queries in the file
      */
-    public static int cacheSize() {
+    private static int cacheSize() {
         try {
             LineNumberReader lnr = new LineNumberReader(new FileReader(getCacheFile()));
             int size = 0;
@@ -220,8 +220,8 @@ public class CacheAPI {
         File file = new File("cache.txt");
         file.delete();
     }
-    
-    public static void updateCache(Query query) {
+
+    protected static void updateCache(String indicatorCode, String countryCode, int startYear, int endYear, String title, String colour) {
         try {
             File cache = getCacheFile(); 
             File temp = new File("temp.txt");
@@ -232,12 +232,12 @@ public class CacheAPI {
             String line = null;
             while ((line = reader1.readLine()) != null) {
                 String[] values = line.split("/");
-                if (values[0].equalsIgnoreCase(query.getIndicatorCode()) 
-                        && values[1].equalsIgnoreCase(query.getCountryCode())) {
+                if (values[0].equalsIgnoreCase(indicatorCode) 
+                        && values[1].equalsIgnoreCase(countryCode)) {
 //                  System.out.println("FOUND " + values[0] + values[1]);
 //                  System.out.println(line);
-                    String newStartYear = Integer.toString(query.getStartYear());
-                    String newEndYear = Integer.toString(query.getEndYear());
+                    String newStartYear = Integer.toString(startYear);
+                    String newEndYear = Integer.toString(endYear);
 //                  System.out.println("NEW " + newStartYear);
 //                  System.out.println("NEW " + newEndYear);
                     line = line.replace(values[2], newStartYear);
@@ -291,7 +291,7 @@ public class CacheAPI {
     public static void main(String[] args) throws IOException {
     	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 1990, 2001, new Date());
     	System.out.println(cacheSize());
-    	updateCache(q);
+//    	updateCache(q);
     	System.out.println(cacheSize());
     	
     	
