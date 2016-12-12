@@ -69,6 +69,23 @@ public class GraphController {
 
 		 mainView.getInspectorPane().createButtonHandler(addGrapEndler);
 
+		EventHandler<CreateEvent> updateGraphHandler = new EventHandler<CreateEvent>() {
+			public void handle(CreateEvent event) {
+				Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
+				if(query != null){
+					String title = event.getTitle();
+					System.out.println(title.isEmpty());
+					if(title.isEmpty()) {
+						title = event.getIndicator() + " in " + event.getCountry();
+					}
+//					mainView.addGraph(title,event.getGraphType(),query);
+					Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
+					mainView.updateGraph(oldGraph, title,event.getGraphType(),query);
+				}
+			}
+		};
+		mainView.getInspectorPane().updateButtonHandler(updateGraphHandler);
+
 		 //Delete graph from the main view
 		 EventHandler<DeleteEvent> deleteGraphHandler = new EventHandler<DeleteEvent>() {
 		    public void handle(DeleteEvent event) {

@@ -249,4 +249,25 @@ public class MainView extends Stage {
 //		System.out.println("ADD NEW GRAPH");
 
 	}
+
+	/**
+	 * Update a graph in the graph area
+	 * @param newGraphName - the name of the graph
+	 * @param newGraphType - the type of the graph
+	 * @param newQuery - the query representing the data to be plotted in the graph
+	 */
+	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery){
+		Graph centralGraph = new Graph(newGraphName);
+		centralGraph.addSeries("My Series", newQuery);
+		centralGraph.switchGraph(newGraphType);
+		int indexOfOldGraph = graphs.indexOf(oldGraph);
+		if(indexOfOldGraph != -1) {
+			graphs.remove(graphs.indexOf(oldGraph));
+			graphs.add(indexOfOldGraph, centralGraph);
+			printGraphs();
+		}
+//		System.out.println(graphs.toString());
+//		System.out.println("ADD NEW GRAPH");
+
+	}
 }
