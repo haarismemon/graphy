@@ -14,7 +14,9 @@ public class CachedQueryPane extends HBox {
 	private Pane deleteButton;
 	
 	public CachedQueryPane(Query q){
+
 		super(8);
+		
 		setAlignment(Pos.CENTER);
 		getStylesheets().add("css/cache-query-pane.css");
 		getStyleClass().add("query-container");

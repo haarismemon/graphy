@@ -16,6 +16,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseEvent;
+import main.java.controller.CreateEvent;
+import main.java.controller.DeleteEvent;
+import java.util.Arrays;
+import main.java.api.Country;
+import main.java.api.IndicatorCodes;
+
 
 /**
  * This class represents the inspector pane, containing all the options to change graph parameters
@@ -28,13 +40,16 @@ public class InspectorPane extends BorderPane{
 	private Button deleteButton;
 	//Update/create button
 	private Button updateButton;
-	
-	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar ","Pie chart","Line chart");
+
+	//List of supported graph types
+	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
+	//List of supported graph colors and tints
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
-	final ObservableList<String> graphCountries = FXCollections.observableArrayList("Italy ","United Kingdom","Russia","France",
-			"Romania","Greece","Sweden","Spain");
-	final ObservableList<String> graphIndicators = FXCollections.observableArrayList("Deflation","Inflation","Income","GDP");
-	
+	//List of all supoorted countries
+	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getAllNames()));
+	//List of all supported indicators (full names)
+	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(IndicatorCodes.getAllIndicatorNames()));
+
 	//Graph title
 	private TextField titleField;
 	//IndicatorCodes
@@ -49,7 +64,12 @@ public class InspectorPane extends BorderPane{
 	private TextField endYearComboBox;
 	//Colors
 	private ComboBox<String> colorComboBox;
-	
+
+	//Create a new graph action
+	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+	//Delete graph action
+	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
+
 	public InspectorPane(){
 		super();
 		this.getStylesheets().add("css/inspector-pane.css");
@@ -65,22 +85,20 @@ public class InspectorPane extends BorderPane{
 		buttonPane.setSpacing(60.0);
 		
 		deleteButton = new Button("Delete");
+
+		deleteButton.setOnAction((event) -> {
+			deleteButtonAction.get().handle(new DeleteEvent());
+		});	
+
 		deleteButton.getStyleClass().add("button");
 		deleteButton.getStyleClass().add("delete");
 		buttonPane.getChildren().add(deleteButton);
 		
 		updateButton = new Button("Create");
 		
-		//////TEST///////////
 		updateButton.setOnAction((event) -> {
-			System.out.println(this.getIndicator());
-			System.out.println(this.getCountry());
-			System.out.println(this.getTitle());
-			System.out.println(this.getColor());
-			System.out.println(this.getStartYear());
-			System.out.println(this.getEndYear());
+			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 		});	
-		//////TEST///////////
 		
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
@@ -189,11 +207,11 @@ public class InspectorPane extends BorderPane{
 		                    Image icon;
 		                    try {
 		                        int iconNumber = this.getIndex() + 1;
-		                        String iconPath = "./main/java/view/images/color" + iconNumber + ".png";
+		                        String iconPath = "images/color" + iconNumber + ".png";
 		                        icon = new Image(iconPath);
 		                    } catch(NullPointerException ex) {
 		                        // in case the above image doesn't exist, use a default one
-		                        String iconPath = "./main/java/view/images/color1.png";
+		                        String iconPath = "images/color1.png";
 		                        icon = new Image(iconPath);
 		                    }
 		                    ImageView iconImageView = new ImageView(icon);
@@ -241,7 +259,18 @@ public class InspectorPane extends BorderPane{
 	public String getIndicator(){
 		return indicatorComboBox.getSelectionModel().getSelectedItem().toString();
 	}
-	
+
+	/**
+	 * @return the graph type of the currently shown graph
+	 */
+	public String getGraphType(){
+		switch(graphTypeComboBox.getSelectionModel().getSelectedItem().toString()) {
+		case "Bar Chart": return "BarChart";
+		case "Pie Chart": return "PieChart";
+		case "Line Graph": return "LineGraph";
+		default: return "LineGraph";
+		}	}
+
 	/**
 	 * @return the country represented in the graph
 	 */
@@ -258,7 +287,7 @@ public class InspectorPane extends BorderPane{
 		case "Yellow": return "#FFEF58";
 		case "Blue": return "#29B7F7";
 		case "Orange": return "#FFA826";
-		default: return null;
+		default: return "#F05350";
 		}
 	}
 	
@@ -323,4 +352,19 @@ public class InspectorPane extends BorderPane{
 	public void setEndYear(String year){
 		endYearComboBox.setText(year);
 	}
+
+	/**
+	 * create handler for the 'create graph' button
+	 */
+	public void createButtonHandler(EventHandler<CreateEvent> handler) {
+		createButtonAction.set(handler);
+	}
+
+	/**
+	 * create handler for the 'delete graph' button
+	 */
+	public void deleteButtonHandler(EventHandler<DeleteEvent> handler) {
+		deleteButtonAction.set(handler);
+	}
+
 }

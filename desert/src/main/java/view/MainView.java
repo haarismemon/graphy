@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import main.java.graph.Graph;
 import main.java.controller.GraphController;
 import main.java.view.CachePan;
+import main.java.api.Query;
 
 /**
  * This class represents the main view with all its components
@@ -44,6 +45,7 @@ public class MainView extends Stage {
 	
 	public MainView(){
 		super();
+		drawWidgets();
 	}
 
 	/**
@@ -56,7 +58,7 @@ public class MainView extends Stage {
 		System.out.println(controller);
 	}
 
-	public void start() {
+	public void drawWidgets() {
 		setTitle("Graphy");
 
 		// Set minimum size of the window
@@ -105,6 +107,7 @@ public class MainView extends Stage {
 		
 		GridPane graphContainer = new GridPane();
 		graphContainer.getStyleClass().add("graph-container");
+		root.setCenter(graphContainer);
 		
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
@@ -137,9 +140,12 @@ public class MainView extends Stage {
 
 		setScene(scene);
 		setResizable(true);
-		show();
 	}
 	
+	public void start(){
+		show();
+	}
+
 	/**
 	 * Remove initial message from the graph space
 	 */
@@ -169,17 +175,20 @@ public class MainView extends Stage {
 		}
 	}
 
+	public InspectorPane getInspectorPane(){
+		return inspector;
+	}
+
 	/**
 	 * Add a new graph in the graph area
 	 *@param graphName - the name of the graph
 	 *@param graphType - the type of the graph
-	 *@param graphMap - the map that contains the data to be plotted in the graph
+	 *@param query - the query representing the data to be plotted in the graph
 	 */
-	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
-		Graph centralGraph = new Graph("graphName");
-		centralGraph.addSeries("My Serie", graphMap);
-		centralGraph.switchGraph("LineGraph");
-		graphContainer.add(centralGraph.getGraph(),0,0);
-		System.out.println("GRAPH ADDED");
+	public void addGraph(String graphName, String graphType, Query query){
+		Graph centralGraph = new Graph(graphName);
+		centralGraph.addSeries("My Serie", query);
+		centralGraph.switchGraph(graphType);
+		root.setCenter(centralGraph.getGraph());
 	}
 }
