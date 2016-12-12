@@ -46,7 +46,7 @@ public class InspectorPane extends BorderPane{
 	//List of supported graph colors and tints
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
 	//List of all supoorted countries
-	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getCountries()));
+	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getAllNames()));
 	//List of all supported indicators (full names)
 	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(IndicatorCodes.getAllIndicatorNames()));
 

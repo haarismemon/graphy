@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import main.java.graph.Graph;
 import main.java.controller.GraphController;
 import main.java.view.CachePan;
+import main.java.api.Query;
 
 /**
  * This class represents the main view with all its components
@@ -182,11 +183,11 @@ public class MainView extends Stage {
 	 * Add a new graph in the graph area
 	 *@param graphName - the name of the graph
 	 *@param graphType - the type of the graph
-	 *@param graphMap - the map that contains the data to be plotted in the graph
+	 *@param query - the query representing the data to be plotted in the graph
 	 */
-	public void addGraph(String graphName, String graphType, Map<Integer, Double> graphMap){
+	public void addGraph(String graphName, String graphType, Query query){
 		Graph centralGraph = new Graph(graphName);
-		centralGraph.addSeries("My Serie", graphMap);
+		centralGraph.addSeries("My Serie", query);
 		centralGraph.switchGraph(graphType);
 		root.setCenter(centralGraph.getGraph());
 	}

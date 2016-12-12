@@ -33,14 +33,14 @@ private MainView mainView;
 		//Add a new graph to the main view
 		EventHandler<CreateEvent> addGrapEndler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
-		    	Map<Integer, Double> dataMap = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-		    	if(dataMap != null){
+		    	Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
+		    	if(query != null){
 		    		String title = event.getTitle();
 		    		System.out.println(title.isEmpty());
 		    		if(title.isEmpty()) {
 		    			title = event.getIndicator() + " in " + event.getCountry();
 		    		}
-		    		mainView.addGraph(title,event.getGraphType(),dataMap);
+		    		mainView.addGraph(title,event.getGraphType(),query);
 		    	}
 		        event.consume();
 		    }

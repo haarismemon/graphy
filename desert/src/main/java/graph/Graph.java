@@ -9,12 +9,14 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import main.java.api.Query;
 
 public class Graph {
-    LineChart lineChart;
-    BarChart barChart;
-    PieChart pieChart;
-    StackPane pane;
+
+    private LineChart lineChart;
+    private BarChart barChart;
+    private PieChart pieChart;
+    private StackPane pane;
 
     /**
      * Graph constructor: Creates the graph object that contains all three graphType of the same data.
@@ -61,9 +63,12 @@ public class Graph {
     /**
      * Adds a data to the Graphs in form of series. Each series represent a query.
      * @param seriesName name of series for the query to show in legend
-     * @param series Map of data representing the series
+     * @param the query to be plotted in the graph
      */
-    public void addSeries(String seriesName, Map<Integer, Double> series){
+    public void addSeries(String seriesName, Query query){
+
+        Map<Integer, Double> series = query.getData();
+        System.out.println(series);
         XYChart.Series line = new XYChart.Series();
         XYChart.Series bar = new XYChart.Series();
         line.setName(seriesName);
