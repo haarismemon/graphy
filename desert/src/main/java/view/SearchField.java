@@ -29,7 +29,7 @@ public class SearchField extends BorderPane {
 	 */
 	public SearchField(){
 		super();
-
+		
 		comboBox = new ComboBox();
 		comboBox.setPrefSize(540, 55);
 		comboBox.setPromptText("GDP in Italy between 2010 to 2015");
@@ -151,7 +151,7 @@ public class SearchField extends BorderPane {
 			return query;
 		} else return null;
 	}
-	
+
 	/**
 	 * Change search field style for not found queries
 	 */

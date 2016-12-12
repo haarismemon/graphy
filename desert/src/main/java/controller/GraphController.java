@@ -82,7 +82,7 @@ private MainView mainView;
 		    public void handle(DeleteCachedQuery event) {
 		    	try {
 		    		event.getQuery().delete();
-		    		mainView.getCachePane().listQueryItems();
+		    		mainView.getCachePane().removeCachePane(event.getQuery());
 		    	} catch(Exception e){
 		    		System.out.println("THE QUERY CAN NOT BE DELETED");
 		    	}

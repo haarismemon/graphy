@@ -36,11 +36,7 @@ public class CachedQueryPane extends HBox {
 		this.query = q;
 		setAlignment(Pos.CENTER);
 		getStylesheets().add("css/cache-query-pane.css");
-		getStyleClass().add("query-container");
-		
-		this.setOnMouseClicked((event) -> {
-			createCachedQueryButton.get().handle(new CreateEvent(query.getTitle(), query.getIndicatorName(), query.getCountryName(), "BarChart", query.getColour(), "" +query.getStartYear(), "" +query.getEndYear()));
-		});	
+		getStyleClass().add("query-container");	
 
 		deleteButton = new Pane();
 		deleteButton.setOnMouseClicked((event) -> {
@@ -50,6 +46,10 @@ public class CachedQueryPane extends HBox {
 		deleteButton.getStyleClass().add("delete-query-button");
 
 		VBox queryDetails = new VBox(4);
+
+		queryDetails.setOnMouseClicked((event) -> {
+			createCachedQueryButton.get().handle(new CreateEvent(query.getTitle(), query.getIndicatorName(), query.getCountryName(), "BarChart", query.getColour(), "" +query.getStartYear(), "" +query.getEndYear()));
+		});
 
 		String cachedStringIndicator = (q.getIndicatorName() + " in " + q.getCountryName());
 
@@ -66,6 +66,10 @@ public class CachedQueryPane extends HBox {
 		this.getChildren().add(deleteButton);
 
 	} 
+
+	public Query getQuery(){
+		return query;
+	}
 
 	/**
 	 * create handler to delete cached query
