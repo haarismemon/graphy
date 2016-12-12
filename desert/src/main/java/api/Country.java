@@ -21,7 +21,7 @@ public class Country {
      * @param 	countryName		country name
      * @return 	2-letter country code or null if country not found
      */
-	static String getCode(String countryName) {
+	public static String getCode(String countryName) {
 		for (String code : countries) {
 			if (countryName.toLowerCase().equals(new Locale("en", code).getDisplayCountry().toLowerCase())) 
 				return code;
