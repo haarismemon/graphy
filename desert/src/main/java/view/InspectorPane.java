@@ -24,11 +24,13 @@ import main.java.controller.CreateEvent;
 import main.java.controller.DeleteEvent;
 import java.util.Arrays;
 import main.java.api.Country;
+import main.java.graph.Graph;
 
 
 /**
  * This class represents the inspector pane, containing all the options to change graph parameters
  * @author pietrocalzini
+ * @author Haaris Memon
  */
 public class InspectorPane extends BorderPane{
 	//Option Pane
@@ -66,6 +68,9 @@ public class InspectorPane extends BorderPane{
 	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
 	//Delete graph action
 	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
+
+	//The selected graph object is stored.
+	private Graph selectedGraph;
 
 	public InspectorPane(){
 		super();
@@ -377,4 +382,19 @@ public class InspectorPane extends BorderPane{
 		deleteButtonAction.set(handler);
 	}
 
+	/**
+	 * Gets the graph that is selected and stored in the Inspector Pane
+	 * @return The selected graph object
+	 */
+	public Graph getSelectedGraph() {
+		return selectedGraph;
+	}
+
+	/**
+	 * Set and store the graph object that is selected
+	 * @param selectedGraph - Graph object that is selected in the main view
+	 */
+	public void setSelectedGraph(Graph selectedGraph) {
+		this.selectedGraph = selectedGraph;
+	}
 }

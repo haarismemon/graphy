@@ -14,8 +14,6 @@ import main.java.controller.GraphController;
 import main.java.api.Query;
 import java.util.List;
 import javafx.event.EventHandler;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import java.util.ArrayList;
 import main.java.controller.SelectEvent;
 
@@ -24,6 +22,7 @@ import main.java.controller.SelectEvent;
  * This class represents the main view with all its components
  * 
  * @author pietrocalzini
+ * @author Haaris Memon
  */
 
 public class MainView extends Stage {
