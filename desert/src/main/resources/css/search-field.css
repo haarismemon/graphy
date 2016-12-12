@@ -10,10 +10,56 @@
   	 -fx-background-position: left 13 center;
   	 -fx-padding: 0 0 0 45;
 }
+
 .search-field-not-found {
 	 -fx-border: 2;
 	 -fx-border-color: #F05350;
 }
+
 .text-field {
     -fx-prompt-text-fill: rgba(111,111,111,0.51);
+}
+
+.combo-box-base .text-field{
+    -fx-background-color: #E6E6E6;
+}
+
+.combo-box .arrow, .combo-box .arrow-button{
+    -fx-background-color: transparent;
+}
+.combo-box .list-view .list-cell {
+	 -fx-font-size: 20;
+}
+.scroll-bar {
+    
+    //scrollbar width
+    -fx-min-width: 4px;
+    -fx-max-width: 4px;
+    -fx-pref-width: 4px;
+    
+    -fx-padding: 0;
+    -fx-background-insets: 0, 0, 0, 0, 0;
+}
+.scroll-bar > .increment-button {
+  visibility: hidden;
+}
+.combo-box-popup .list-view 
+{
+    -fx-background-radius: 0 0 5 5;
+	-fx-box-border: transparent;
+    -fx-background-insets: 0, 1;
+    -fx-effect: none;
+}   
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover 
+{
+    -fx-background: -fx-accent;
+    -fx-background-color: #EBEBEB;
+    -fx-text-fill: #242424;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover 
+{
+    -fx-background-color: #EBEBEB;
+    -fx-text-fill: #242424;
 }

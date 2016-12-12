@@ -39,7 +39,7 @@ public class CachedQueryPane extends HBox {
 		getStyleClass().add("query-container");
 		
 		this.setOnMouseClicked((event) -> {
-			createCachedQueryButton.get().handle(new CreateEvent("TITLE TO CHANGE", query.getIndicatorName(), query.getCountryName(), "BarChart", "Red", "" +query.getStartYear(), "" +query.getEndYear()));
+			createCachedQueryButton.get().handle(new CreateEvent(query.getTitle(), query.getIndicatorName(), query.getCountryName(), "BarChart", query.getColour(), "" +query.getStartYear(), "" +query.getEndYear()));
 		});	
 
 		deleteButton = new Pane();

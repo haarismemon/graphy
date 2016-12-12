@@ -60,12 +60,14 @@
 .combo-box-base:focused {
     -fx-background-radius: 5 5 0 0;
 }
+
 .combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover 
 {
     -fx-background: -fx-accent;
     -fx-background-color: #EBEBEB;
     -fx-text-fill: #242424;
 }
+
 .combo-box-base {
     -fx-background-radius: 5 5 5 5;
 }
