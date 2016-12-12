@@ -158,7 +158,6 @@ public class Query {
 	/**
      * Filters out the user-requested year range.
      *
-     * @param   query           query object holding data about query made by the user
      * @return  filteredMap     containing only required year range list
      */
     protected void filter() {

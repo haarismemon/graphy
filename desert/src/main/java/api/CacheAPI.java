@@ -58,7 +58,7 @@ public class CacheAPI {
             System.out.println("=> Log.cache: ERROR");
         }
     }
-    
+
     /**
      * Loads raw data from cache.
      *
@@ -91,9 +91,9 @@ public class CacheAPI {
     }
     
     /**
-     * Validates whether the query is valid or not, 
+     * Validates whether the query is valid or not,
      * i.e. not out-dated/query must be made in the same month and year to be valid
-     * 
+     *
      * @param   query   query object holding data about query made by the user
      * @return          {@code true} if query not expired, and {@code false} otherwise.
      */
@@ -107,7 +107,7 @@ public class CacheAPI {
             try {
                 deleteQuery(query.getIndicatorCode(), query.getCountryCode()); // delete outdated data from cache file
             } catch (IOException e){
-                
+
             }
             return true;
         }
@@ -216,7 +216,7 @@ public class CacheAPI {
     public static void updateCache(Query query) {
     	// TODO
     }
-    
+
     /**
      * Lists all cached queries.
      *
@@ -238,10 +238,10 @@ public class CacheAPI {
         } catch (IOException e) {
             System.out.println("=> Log.fetchOffline: ERROR");
         }
-        
+
         return queries;
     }
-    
+
 //  public static void main(String[] args) {
 //  Query query = new Query("indicator code", "GB", 5430, 2015, new Date());
 //  System.out.println("CURRENT QUERY -> " + query);
