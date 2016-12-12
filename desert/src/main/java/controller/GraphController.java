@@ -81,8 +81,7 @@ private MainView mainView;
 		 EventHandler<DeleteCachedQuery> deleteCachedQueryHandler = new EventHandler<DeleteCachedQuery>() {
 		    public void handle(DeleteCachedQuery event) {
 		    	try {
-		    		//IN THE FUTURE USE event.getQuery().delete();
-		    		CacheAPI.deleteQuery(event.getQuery().getIndicatorCode(), event.getQuery().getCountryCode());
+		    		event.getQuery().delete();
 		    		mainView.getCachePane().listQueryItems();
 		    	} catch(Exception e){
 		    		System.out.println("THE QUERY CAN NOT BE DELETED");
