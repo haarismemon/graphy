@@ -35,6 +35,7 @@ public class SearchField extends BorderPane {
 		comboBox.setPromptText("GDP in Italy between 2010 to 2015");
 		comboBox.setFocusTraversable(false);
 		comboBox.setEditable(true);
+
 		for(String s : Indicator.getAllNames()) {
 			comboBox.getItems().add(s);
 		}
@@ -46,9 +47,9 @@ public class SearchField extends BorderPane {
 
 		//Link CSS file search-field.css
 		getStylesheets().add("/css/search-field.css");
-		getStyleClass().add("search-field");
+		textField.getStyleClass().add("search-field");
+		comboBox.getStyleClass().add("search-field");
 
-//		setNotFound();
 
 		comboBox.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
