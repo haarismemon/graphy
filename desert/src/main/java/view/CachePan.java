@@ -10,9 +10,15 @@ import javafx.scene.layout.VBox;
 import main.java.view.CachedQueryPane;
 import main.java.api.Query;
 import main.java.api.CacheAPI;
-
+import main.java.controller.DeleteCachedQuery;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
 
 public class CachePan extends BorderPane {
+
+	//Queries container
+	private VBox container;
+
 	public CachePan(){
 		super();
 		this.getStylesheets().add("css/cache-pane.css");
@@ -32,16 +38,13 @@ public class CachePan extends BorderPane {
 		setTop(topPane);
 		
 		ScrollPane scrollContainer = new ScrollPane();
-		
-		VBox container = new VBox(12);
+
+		container = new VBox(12);
 		container.getStyleClass().add("query-container");
-		container.setAlignment(Pos.CENTER);
-		
-		
-		for(Query query : CacheAPI.listCache()){
-			CachedQueryPane q = new CachedQueryPane(query);
-			container.getChildren().add(q);
-		}
+		container.setAlignment(Pos.CENTER_LEFT);
+
+		//Display all the queries
+		listQueryItems();
 		
 		scrollContainer.setContent(container);
 		setCenter(scrollContainer);
@@ -58,6 +61,25 @@ public class CachePan extends BorderPane {
 		setBottom(buttonPane);
 		
 	}
-	
-	
+
+	public void setQueryHandlers(EventHandler<DeleteCachedQuery> handler){
+		for(Node q : container.getChildren()){
+			CachedQueryPane p = (CachedQueryPane)q;
+			p.deleteCachedQueryHandler(handler);
+		}
+	}
+
+	public void listQueryItems(){
+		container.getChildren().clear();
+		for(Node q : container.getChildren()){
+				System.out.println(q);
+		}
+		for(Query query : CacheAPI.listCache()){
+			CachedQueryPane q = new CachedQueryPane(query);
+			container.getChildren().add(q);
+		}
+		for(Node q : container.getChildren()){
+				System.out.println(q);
+		}
+	}
 }

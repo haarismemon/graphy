@@ -39,7 +39,7 @@ public class MainView extends Stage {
 	//Controller
 	private GraphController controller;
 	//GraphContainer
-	private GridPane graphContainer;
+	private GridPane graphContainer = new GridPane();
 	//Graph view
 	private BorderPane root;
 	
@@ -75,7 +75,6 @@ public class MainView extends Stage {
 		cachePane.setPrefWidth(200);
 		cachePane.setMaxWidth(250);
 		superContainer.setAlignment(cachePane, Pos.CENTER_LEFT);
-//		superContainer.getChildren().add(cachePane);
 		
 		//Root pane
 		root = new BorderPane();
@@ -104,8 +103,7 @@ public class MainView extends Stage {
 //		beginningLabel.getStyleClass().add("beginning-label");
 //		graphSpace.getChildren().add(beginningLabel);
 //		root.setCenter(graphSpace);
-		
-		GridPane graphContainer = new GridPane();
+		graphContainer.setAlignment(Pos.CENTER);
 		graphContainer.getStyleClass().add("graph-container");
 		root.setCenter(graphContainer);
 		
@@ -179,6 +177,17 @@ public class MainView extends Stage {
 		return inspector;
 	}
 
+	public CachePan getCachePane(){
+		return cachePane;
+	}
+	
+	/**
+	 * Method used to get the number of graphs in the central space
+	 */
+	private int getGraphNumber(){
+		return root.getChildren().size() - 2;
+	}
+
 	/**
 	 * Add a new graph in the graph area
 	 *@param graphName - the name of the graph
@@ -189,6 +198,7 @@ public class MainView extends Stage {
 		Graph centralGraph = new Graph(graphName);
 		centralGraph.addSeries("My Serie", query);
 		centralGraph.switchGraph(graphType);
-		root.setCenter(centralGraph.getGraph());
+		System.out.println("CONTAINER: " + graphContainer);
+		graphContainer.add(centralGraph.getGraph(),0,0);
 	}
 }
