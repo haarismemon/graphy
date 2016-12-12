@@ -25,7 +25,7 @@ public class CachePane extends BorderPane {
 		super();
 		this.getStylesheets().add("css/cache-pane.css");
 		this.getStyleClass().add("inspector-pane");
-		this.setStyle("-fx-background-color: #E7E7E7");
+		this.setStyle("-fx-background-color: rgba(231,231,231,0.85)");
 		drawWidgets();
 	}
 
