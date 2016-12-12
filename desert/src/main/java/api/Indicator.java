@@ -104,7 +104,7 @@ public class Indicator {
 	 * @param indicatorName		indicator name
 	 * @return indicator code or null if indicator not found
 	 */
-	static String getCode(String indicatorName) {
+	public static String getCode(String indicatorName) {
 		for (String name : indicatorsNameCode.keySet()) {
 			if (name.toLowerCase().equals(indicatorName.toLowerCase()))
 				return indicatorsNameCode.get(name);
@@ -181,5 +181,21 @@ public class Indicator {
 		}
 		return similar;
 	}
+
+	/**
+ 	 * Checks if there is an Indicator that matches the input.
+ 	 *
+ 	 * @param input - input from the searchbar to check if it is a indicator.
+ 	 * @return true if an indicator exists that is the same as the input.
+ 	 */
+ 	public static boolean hasIndicator(String input) {
+ 		for(String indicator : getAllNames()) {
+ 			if(indicator.toLowerCase().equals(input.toLowerCase())) {
+ 				return true;
+ 			}
+ 		}
+ 
+ 		return false;
+ 	}
 
 }
