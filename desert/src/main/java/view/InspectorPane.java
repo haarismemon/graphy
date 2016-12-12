@@ -16,17 +16,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.MouseEvent;
+import main.java.api.Indicator;
 import main.java.controller.CreateEvent;
 import main.java.controller.DeleteEvent;
 import java.util.Arrays;
 import main.java.api.Country;
-import main.java.api.IndicatorCodes;
 
 
 /**
@@ -48,11 +45,11 @@ public class InspectorPane extends BorderPane{
 	//List of all supoorted countries
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getAllNames()));
 	//List of all supported indicators (full names)
-	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(IndicatorCodes.getAllIndicatorNames()));
+	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(Indicator.getAllNames()));
 
 	//Graph title
 	private TextField titleField;
-	//IndicatorCodes
+	//Indicator Names
 	private ComboBox<String> indicatorComboBox;
 	//Countries
 	private ComboBox<String> countryComboBox;
