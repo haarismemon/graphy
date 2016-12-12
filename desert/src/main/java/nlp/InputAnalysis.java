@@ -61,7 +61,7 @@ public class InputAnalysis {
 				    return Arrays.asList(indicator, country, "" + dates[0], "0");
 
 				}
-				else if(wordsContain(words, "till")) {
+				else if(wordsContain(words, "till") || wordsContain(words, "until")) {
                     return Arrays.asList(indicator, country, "0", "" + dates[0]);
 				}
 				else {
