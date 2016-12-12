@@ -1,9 +1,7 @@
 package main.java.api;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Gives access to indicator name, code 
@@ -166,6 +164,22 @@ public class Indicator {
 	public static String[] getAllNames() {
 		Set<String> keys = indicatorsNameCode.keySet();
 		return keys.toArray(new String[keys.size()]);
+	}
+
+	/**
+	 * Gets all Indicator names that are similar to the input string.
+	 *
+	 * @param input - String that is the input by the user in the textfield.
+	 * @return List of Indicator name Strings that are similar to the input.
+	 */
+	public static List<String> getAutocomplete(String input) {
+		List<String> similar = new ArrayList<>();
+		for(String string : getAllNames()) {
+			if(string.toLowerCase().contains(input.toLowerCase())) {
+				similar.add(string);
+			}
+		}
+		return similar;
 	}
 
 }

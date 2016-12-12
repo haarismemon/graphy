@@ -121,7 +121,7 @@ public class CacheAPI {
      *
      * @return  number of cached queries in the file
      */
-    private static int cacheSize() {
+    public static int cacheSize() {
         try {
             LineNumberReader lnr = new LineNumberReader(new FileReader(getCacheFile()));
             int size = 0;
@@ -180,9 +180,9 @@ public class CacheAPI {
      * @param countryCode       country code of the query
      */
     protected static void deleteQuery(String indicatorCode, String countryCode) {
-    	try {
-    		File cache = getCacheFile(); 
-    		File temp = new File("temp.txt");
+        try {
+            File cache = getCacheFile(); 
+            File temp = new File("temp.txt");
 
             BufferedReader reader1 = new BufferedReader(new FileReader(cache));
             PrintWriter writer1 = new PrintWriter(new FileWriter(temp, true));
@@ -191,7 +191,7 @@ public class CacheAPI {
             while ((line = reader1.readLine()) != null) {
                 String[] values = line.split("/");
                 if (values[0].equalsIgnoreCase(indicatorCode) 
-                		&& values[1].equalsIgnoreCase(countryCode)) continue; // countryCode AND indicatorCode FOUND, skip
+                        && values[1].equalsIgnoreCase(countryCode)) continue; // countryCode AND indicatorCode FOUND, skip
                 writer1.println(line);
             }
             writer1.close(); reader1.close();
@@ -206,9 +206,9 @@ public class CacheAPI {
             temp.delete();
 
             System.out.println("=> Log.deleteQuery: QUERY REMOVED");
-    	} catch (IOException e) {
-    		System.out.println("=> Log.deleteQuery: ERROR");
-    	}
+        } catch (IOException e) {
+            System.out.println("=> Log.deleteQuery: ERROR");
+        }
         
     }
 
@@ -222,9 +222,9 @@ public class CacheAPI {
     }
     
     public static void updateCache(Query query) {
-    	try {
-    		File cache = getCacheFile(); 
-    		File temp = new File("temp.txt");
+        try {
+            File cache = getCacheFile(); 
+            File temp = new File("temp.txt");
 
             BufferedReader reader1 = new BufferedReader(new FileReader(cache));
             PrintWriter writer1 = new PrintWriter(new FileWriter(temp, true));
@@ -233,16 +233,16 @@ public class CacheAPI {
             while ((line = reader1.readLine()) != null) {
                 String[] values = line.split("/");
                 if (values[0].equalsIgnoreCase(query.getIndicatorCode()) 
-                		&& values[1].equalsIgnoreCase(query.getCountryCode())) {
-//                	System.out.println("FOUND " + values[0] + values[1]);
-//                	System.out.println(line);
-                	String newStartYear = Integer.toString(query.getStartYear());
-                	String newEndYear = Integer.toString(query.getEndYear());
-//                	System.out.println("NEW " + newStartYear);
-//                	System.out.println("NEW " + newEndYear);
-                	line = line.replace(values[2], newStartYear);
-                	line = line.replace(values[3], newEndYear);
-                	System.out.println(line);
+                        && values[1].equalsIgnoreCase(query.getCountryCode())) {
+//                  System.out.println("FOUND " + values[0] + values[1]);
+//                  System.out.println(line);
+                    String newStartYear = Integer.toString(query.getStartYear());
+                    String newEndYear = Integer.toString(query.getEndYear());
+//                  System.out.println("NEW " + newStartYear);
+//                  System.out.println("NEW " + newEndYear);
+                    line = line.replace(values[2], newStartYear);
+                    line = line.replace(values[3], newEndYear);
+                    System.out.println(line);
                 }//TODO
                 writer1.println(line);
             }
@@ -258,28 +258,9 @@ public class CacheAPI {
             temp.delete();
 
             System.out.println("=> Log.deleteQuery: QUERY UPDATED");
-    	} catch (IOException e) {
-    		System.out.println("=> Log.deleteQuery: ERROR");
-    	}
-    	
-    	
-    	// Open a temporary file to write to.
-//    	PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("d:\\book.temp")));
-//
-//    	// ... then inside your loop ...
-//    	while ((line = br.readLine()) != null) {
-//    	    if (request.getParameter("hname").equals(line)) {
-//    	        line = line.replace(request.getParameter("hname"), request.getParameter("book"));
-//    	    }
-//    	    // Always write the line, whether you changed it or not.
-//    	    writer.println(line);
-//    	}
-//
-//    	// ... and finally ...
-//
-//    	File realName = new File("d:\\book.txt");
-//    	realName.delete(); // remove the old file
-//    	new File("d:\\book.temp").renameTo(realName); // Rename temp file
+        } catch (IOException e) {
+            System.out.println("=> Log.deleteQuery: ERROR");
+        }
     }
 
     /**
