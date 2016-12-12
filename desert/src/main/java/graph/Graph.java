@@ -10,6 +10,10 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import main.java.api.Query;
+import javafx.event.EventHandler;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import main.java.controller.SelectEvent;
 
 public class Graph {
 
@@ -18,6 +22,11 @@ public class Graph {
     private PieChart pieChart;
     private StackPane pane;
     private Query query;
+    private String title;
+    private String graphType;
+
+    //Select graph action
+    private ObjectProperty<EventHandler<SelectEvent>> selectGraphAction = new SimpleObjectProperty<EventHandler<SelectEvent>>();
 
     /**
      * Graph constructor: Creates the graph object that contains all three graphType of the same data.
@@ -47,6 +56,9 @@ public class Graph {
 
         setGraphName(graphName);
         pane = new StackPane();
+        pane.setOnMouseClicked((event) -> {
+            selectGraphAction.get().handle(new SelectEvent(this));
+        }); 
         switchGraph("LineGraph");
 
     }
@@ -56,9 +68,14 @@ public class Graph {
      * @param name name of the graph
      */
     public void setGraphName(String name){
+        this.title = name;
         lineChart.setTitle(name);
         barChart.setTitle(name);
         pieChart.setTitle(name);
+    }
+
+    public String getTitle(){
+        return title;
     }
 
     /**
@@ -95,12 +112,17 @@ public class Graph {
      * @param graphName Graph type name(one of three values : LineGraph   BarChart    PieChart)
      */
     public void switchGraph(String graphName){
+        this.graphType = graphName;
         pane.getChildren().clear();
         switch(graphName) {
             case "LineGraph": pane.getChildren().add(lineChart);break;
             case "BarChart": pane.getChildren().add(barChart);break;
             case "PieChart": pane.getChildren().add(pieChart);break;
         }
+    }
+
+    public String getGraphType(){
+        return graphType;
     }
 
     /**
@@ -124,6 +146,12 @@ public class Graph {
         return query;
     }
 
+    /**
+     * create handler to select a graph
+     */
+    public void selectGraphHandler(EventHandler<SelectEvent> handler) {
+        selectGraphAction.set(handler);
+    }
     /**
      * HoverNode Class is class for the lineChart.
      * Creates Hovering Node to show the value of data on the graph rounded to two significant figure

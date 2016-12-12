@@ -266,7 +266,8 @@ public class InspectorPane extends BorderPane{
 		case "Pie Chart": return "PieChart";
 		case "Line Graph": return "LineGraph";
 		default: return "LineGraph";
-		}	}
+		}	
+	}
 
 	/**
 	 * @return the country represented in the graph
@@ -334,20 +335,31 @@ public class InspectorPane extends BorderPane{
 		colorComboBox.setValue(color);
 	}
 	
+	/**
+	 * @return the title of the text field
+	 */
+	public void setGraphType(String type){
+		switch(type) {
+		case "BarChart": graphTypeComboBox.setValue("Bar Chart"); break;
+		case "PieChart": graphTypeComboBox.setValue("Pie Chart"); break;
+		case "LineGraph": graphTypeComboBox.setValue("Line Graph"); break;
+		default: graphTypeComboBox.setValue("Line Graph");
+		}	
+	}
 	
 	/**
 	 * @param year - year to be displayed on the start year text field
 	 */
-	public void setStartYear(String year){
-		startYearComboBox.setText(year);
+	public void setStartYear(int year){
+		startYearComboBox.setText("" + year);
 	}
 	
 	
 	/**
 	 * @param year - year to be displayed on the end year text field
 	 */
-	public void setEndYear(String year){
-		endYearComboBox.setText(year);
+	public void setEndYear(int year){
+		endYearComboBox.setText("" + year);
 	}
 
 	/**

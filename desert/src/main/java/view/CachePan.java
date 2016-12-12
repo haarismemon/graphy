@@ -70,16 +70,10 @@ public class CachePan extends BorderPane {
 	}
 
 	public void listQueryItems(){
-		container.getChildren().clear();
-		for(Node q : container.getChildren()){
-				System.out.println(q);
-		}
+		container.getChildren().clear();	
 		for(Query query : CacheAPI.listCache()){
 			CachedQueryPane q = new CachedQueryPane(query);
 			container.getChildren().add(q);
-		}
-		for(Node q : container.getChildren()){
-				System.out.println(q);
 		}
 	}
 }
