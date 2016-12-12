@@ -17,6 +17,7 @@ public class Graph {
     private BarChart barChart;
     private PieChart pieChart;
     private StackPane pane;
+    private Query query;
 
     /**
      * Graph constructor: Creates the graph object that contains all three graphType of the same data.
@@ -66,7 +67,7 @@ public class Graph {
      * @param the query to be plotted in the graph
      */
     public void addSeries(String seriesName, Query query){
-
+        this.query = query;
         Map<Integer, Double> series = query.getData();
         System.out.println(series);
         XYChart.Series line = new XYChart.Series();
@@ -117,6 +118,10 @@ public class Graph {
         lineChart.getData().clear();
         barChart.getData().clear();
         pieChart.getData().clear();
+    }
+
+    public Query getQuery(){
+        return query;
     }
 
     /**
