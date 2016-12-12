@@ -14,8 +14,6 @@ import main.java.controller.GraphController;
 import main.java.api.Query;
 import java.util.List;
 import javafx.event.EventHandler;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import java.util.ArrayList;
 import main.java.controller.SelectEvent;
 
@@ -24,6 +22,7 @@ import main.java.controller.SelectEvent;
  * This class represents the main view with all its components
  * 
  * @author pietrocalzini
+ * @author Haaris Memon
  */
 
 public class MainView extends Stage {
@@ -249,12 +248,33 @@ public class MainView extends Stage {
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
 		Graph centralGraph = new Graph(graphName);
-		centralGraph.addSeries("My Serie", query);
+		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
 		printGraphs();
-		System.out.println(graphs.toString());
-		System.out.println("ADD NEW GRAPH");
+//		System.out.println(graphs.toString());
+//		System.out.println("ADD NEW GRAPH");
+
+	}
+
+	/**
+	 * Update a graph in the graph area
+	 * @param newGraphName - the name of the graph
+	 * @param newGraphType - the type of the graph
+	 * @param newQuery - the query representing the data to be plotted in the graph
+	 */
+	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery){
+		Graph centralGraph = new Graph(newGraphName);
+		centralGraph.addSeries("My Series", newQuery);
+		centralGraph.switchGraph(newGraphType);
+		int indexOfOldGraph = graphs.indexOf(oldGraph);
+		if(indexOfOldGraph != -1) {
+			graphs.remove(graphs.indexOf(oldGraph));
+			graphs.add(indexOfOldGraph, centralGraph);
+			printGraphs();
+		}
+//		System.out.println(graphs.toString());
+//		System.out.println("ADD NEW GRAPH");
 
 	}
 }

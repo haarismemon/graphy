@@ -5,21 +5,19 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import main.java.api.Country;
 import main.java.api.Indicator;
 import main.java.api.Query;
 import main.java.api.WorldBankAPI;
 import main.java.nlp.InputAnalysis;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * This class represents the search field 
  * @author pietrocalzini
+ * @author Haaris Memon
  */
 public class SearchField extends BorderPane {
 
