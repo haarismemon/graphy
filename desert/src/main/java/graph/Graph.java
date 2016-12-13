@@ -56,6 +56,7 @@ public class Graph {
         setGraphName(graphName);
         pane = new StackPane();
         pane.setOnMouseClicked((event) -> {
+            System.out.println("ACTION: " + selectGraphAction);
             selectGraphAction.get().handle(new SelectEvent(this));
         }); 
         switchGraph("LineGraph");
@@ -109,7 +110,7 @@ public class Graph {
         pieChart.getData().add(new PieChart.Data(seriesName,last));
     }
 
-    private void changeColor(String colorCode) {
+    public void changeColor(String colorCode) {
         lineChart.setStyle("CHART_COLOR_1: " + colorCode +";");
         barChart.setStyle("CHART_COLOR_1: " + colorCode +";");
         pieChart.setStyle("CHART_COLOR_1: " + colorCode +";");

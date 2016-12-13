@@ -81,9 +81,25 @@ public class GraphController {
 					if(title.isEmpty()) {
 						title = event.getIndicator() + " in " + event.getCountry();
 					}
-//					mainView.addGraph(title,event.getGraphType(),query);
 					Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
-					mainView.updateGraph(oldGraph, title,event.getGraphType(),query);
+					mainView.updateGraph(oldGraph, title,event.getGraphType(),query, event.getColor());
+
+				//UPDATE SELECTORS Select graph from the workspace
+		 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
+		    		public void handle(SelectEvent event) {
+						mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
+						mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
+						mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
+						mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
+						mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
+						mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
+						mainView.getInspectorPane().setUpdate();
+						mainView.getInspectorPane().setSelectedGraph(event.getGraph());
+						event.consume();
+		    		}
+		 		 };
+
+		 		mainView.selectGraphHandlers(selectGraphHandler);
 				}
 			}
 		};

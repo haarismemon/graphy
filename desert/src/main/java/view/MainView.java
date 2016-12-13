@@ -256,10 +256,11 @@ public class MainView extends Stage {
 	 * @param newGraphType - the type of the graph
 	 * @param newQuery - the query representing the data to be plotted in the graph
 	 */
-	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery){
+	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery, String color){
 		Graph centralGraph = new Graph(newGraphName);
 		centralGraph.addSeries("My Series", newQuery);
 		centralGraph.switchGraph(newGraphType);
+		centralGraph.changeColor(color);
 		int indexOfOldGraph = graphs.indexOf(oldGraph);
 		if(indexOfOldGraph != -1) {
 			graphs.remove(graphs.indexOf(oldGraph));
