@@ -40,32 +40,21 @@ public class GraphController {
 		EventHandler<CreateEvent> addGrapEndler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
 		    	Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-		    	query.setColour(event.getColor());
 		    	if(query != null){
-		    		String title = event.getTitle();
+					query.setColour(event.getColor());
+					String title = event.getTitle();
 		    		System.out.println(title.isEmpty());
 		    		if(title.isEmpty()) {
 		    			title = event.getIndicator() + " in " + event.getCountry();
 		    		}
 		    		mainView.addGraph(title,event.getGraphType(),query);
-		    	}
+		    	} else {
+		    		mainView.getSearchField().setNotFound();
+				}
 
 		    	//UPDATE SELECTROS Select graph from the workspace
-		 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
-		    		public void handle(SelectEvent event) {
-						mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
-						mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
-						mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
-						mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
-						mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
-						mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
-						mainView.getInspectorPane().setUpdate();
-						mainView.getInspectorPane().setSelectedGraph(event.getGraph());
-						event.consume();
-		    		}
-		 		 };
+				createEventHandler(mainView);
 
-		 		mainView.selectGraphHandlers(selectGraphHandler);
 		        event.consume();
 		    }
 		  };
@@ -75,31 +64,17 @@ public class GraphController {
 		EventHandler<CreateEvent> updateGraphHandler = new EventHandler<CreateEvent>() {
 			public void handle(CreateEvent event) {
 				Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-				if(query != null){
+				if(query != null) {
 					String title = event.getTitle();
 					System.out.println(title.isEmpty());
-					if(title.isEmpty()) {
+					if (title.isEmpty()) {
 						title = event.getIndicator() + " in " + event.getCountry();
 					}
 					Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
-					mainView.updateGraph(oldGraph, title,event.getGraphType(),query, event.getColor());
+					mainView.updateGraph(oldGraph, title, event.getGraphType(), query, event.getColor());
 
-				//UPDATE SELECTORS Select graph from the workspace
-		 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
-		    		public void handle(SelectEvent event) {
-						mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
-						mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
-						mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
-						mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
-						mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
-						mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
-						mainView.getInspectorPane().setUpdate();
-						mainView.getInspectorPane().setSelectedGraph(event.getGraph());
-						event.consume();
-		    		}
-		 		 };
 
-		 		mainView.selectGraphHandlers(selectGraphHandler);
+					createEventHandler(mainView);
 				}
 			}
 		};
@@ -132,6 +107,25 @@ public class GraphController {
 		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
 		 
 		 mainView.getCachePane().setCreateQueryHandlers(addGrapEndler);
+	}
+
+	private void createEventHandler(MainView currentMainView) {
+		//UPDATE SELECTORS Select graph from the workspace
+		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
+			public void handle(SelectEvent event) {
+				currentMainView.getInspectorPane().setTitle(event.getGraph().getTitle());
+				currentMainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
+				currentMainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
+				currentMainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
+				currentMainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
+				currentMainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
+				currentMainView.getInspectorPane().setUpdate();
+				currentMainView.getInspectorPane().setSelectedGraph(event.getGraph());
+				event.consume();
+			}
+		};
+
+		mainView.selectGraphHandlers(selectGraphHandler);
 	}
 
 }

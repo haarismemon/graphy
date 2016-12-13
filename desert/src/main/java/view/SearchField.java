@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import main.java.api.Indicator;
 import main.java.api.Query;
 import main.java.api.WorldBankAPI;
+import main.java.controller.SelectEvent;
 import main.java.nlp.InputAnalysis;
 
 import java.util.List;
@@ -138,12 +139,30 @@ public class SearchField extends BorderPane {
 		if(queryInfo != null) {
 			String indicatorName = queryInfo.get(0);
 			String countryName = queryInfo.get(1);
+			if(countryName.equals("all")) countryName = "world";
 			int startYear = Integer.parseInt(queryInfo.get(2));
 			int endYear = Integer.parseInt(queryInfo.get(3));
+//			System.out.println(indicatorName + ", " + countryName + ", " + startYear + ", " + endYear);
 			Query queryResult = WorldBankAPI.query(indicatorName, countryName, startYear, endYear);
-			System.out.println(queryResult);
+//			System.out.println(queryResult);
 			if(queryResult != null){
 				mainView.addGraph(queryResult.getTitle(), "BarChart", queryResult);
+
+				EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
+					public void handle(SelectEvent event) {
+						mainView.getInspectorPane().setTitle(event.getGraph().getTitle());
+						mainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
+						mainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
+						mainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
+						mainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
+						mainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
+						mainView.getInspectorPane().setUpdate();
+						mainView.getInspectorPane().setSelectedGraph(event.getGraph());
+						event.consume();
+					}
+				};
+
+				mainView.selectGraphHandlers(selectGraphHandler);
 			}
 		}
 	}

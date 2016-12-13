@@ -45,6 +45,7 @@ public class MainView extends Stage {
 	private BorderPane root;
 	//List of al the graphs
 	private List<Graph> graphs = new ArrayList<Graph>();
+	private SearchField searchField;
 
 	public MainView(){
 		super();
@@ -93,7 +94,7 @@ public class MainView extends Stage {
 		topBar.setPrefHeight(80);
 		
 		//Add search field to the view
-		SearchField searchField = new SearchField(this);
+		searchField = new SearchField(this);
 		topBar.getChildren().add(searchField);
 				
 		root.setTop(topBar);
@@ -181,6 +182,10 @@ public class MainView extends Stage {
 
 	public InspectorPane getInspectorPane(){
 		return inspector;
+	}
+
+	public SearchField getSearchField() {
+		return searchField;
 	}
 
 	public CachePane getCachePane(){
