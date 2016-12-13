@@ -147,7 +147,7 @@ public class Indicator {
 	 * @param indicatorName		indicator name
 	 * @return indicator description
 	 */
-	static String getInfo(String indicatorName) {
+	public static String getInfo(String indicatorName) {
 		for (String indicator : indicatorsNameInfo.keySet()) {
 			if (indicator.toLowerCase().equals(indicatorName.toLowerCase())) {
 				return indicatorsNameInfo.get(indicator);
