@@ -122,19 +122,22 @@ public class InspectorPane extends BorderPane{
 		deleteButton.getStyleClass().add("delete");
 		buttonPane.getChildren().add(deleteButton);
 
-		createButton = new Button("create");
+		createButton = new Button("Create");
 		//TODO need to change button action for create button and upate button
 		createButton.setOnAction((event) -> {
 			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
+			mainView.hideCachePane();
+//			mainView.hideInspectorPane();
 		});
 
 		createButton.getStyleClass().add("button");
 		createButton.getStyleClass().add("update");
 		buttonPane.getChildren().add(createButton);
 
-		updateButton = new Button("update");
+		updateButton = new Button("Update");
 		updateButton.setOnAction((event) -> {
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
+//			mainView.hideInspectorPane();
 		});
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
@@ -332,7 +335,7 @@ public class InspectorPane extends BorderPane{
 	/**
 	 * Set the create button to CREATE mode
 	 */
-	public void setADD(){
+	public void setAdd(){
 //		updateButton.setText("Create");
 		buttonPane.getChildren().clear();
 		buttonPane.getChildren().addAll(deleteButton, createButton);

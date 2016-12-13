@@ -124,6 +124,7 @@ public class MainView extends Stage {
 		Button addButton = new Button("");
 		addButton.setOnAction((event) -> {
 			toggleCachePane();
+			showInspectorPane(true);
 		});			
 		addButton.getStyleClass().add("button-add");
 		addButton.setPrefSize(18, 18);
@@ -132,9 +133,11 @@ public class MainView extends Stage {
 		root.setBottom(bottomBar);
 		root.setMinWidth(900);
 		container.setCenter(root);
-		
+
+		inspector = new InspectorPane(this);
+		inspector.setPrefWidth(300);
 		//Inspector
-		newInspectorPane();
+		showInspectorPane(true);
 
 		Scene scene = new Scene(superContainer);
 
@@ -163,15 +166,13 @@ public class MainView extends Stage {
 			superContainer.getChildren().add(cachePane);
 		}
 	}
-	
+
 	/**
-	 * Method used to hide and show the inspector
+	 * Method used to hide the cache pane
 	 */
-	public void toggleInspector() {
-		if(container.getChildren().contains(inspector)){
-			container.getChildren().remove(inspector);
-		} else {
-			container.getChildren().add(inspector);
+	public void hideCachePane() {
+		if(superContainer.getChildren().contains(cachePane)){
+			superContainer.getChildren().remove(cachePane);
 		}
 	}
 
@@ -244,7 +245,7 @@ public class MainView extends Stage {
 	 *@param query - the query representing the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
-		Graph centralGraph = new Graph(graphName);
+		Graph centralGraph = new Graph(this, graphName);
 		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
@@ -258,7 +259,7 @@ public class MainView extends Stage {
 	 * @param newQuery - the query representing the data to be plotted in the graph
 	 */
 	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery, String color){
-		Graph centralGraph = new Graph(newGraphName);
+		Graph centralGraph = new Graph(this, newGraphName);
 		centralGraph.addSeries("My Series", newQuery);
 		centralGraph.switchGraph(newGraphType);
 		centralGraph.changeColor(color);
@@ -274,9 +275,13 @@ public class MainView extends Stage {
 		container.setRight(null);
 	}
 
-	public void newInspectorPane() {
-		inspector = new InspectorPane(this);
-		inspector.setPrefWidth(300);
+	public void showInspectorPane(Boolean isAdd) {
+//		inspector = new InspectorPane(this);
+//		inspector.setPrefWidth(300);
+		if(isAdd == true) inspector.setAdd();
+		else  inspector.setUpdate();
+		inspector.setSelectedGraph(null);
+//		inspector.setAdd();
 		container.setRight(inspector);
 	}
 }

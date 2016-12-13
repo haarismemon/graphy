@@ -13,6 +13,7 @@ import main.java.api.Query;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import main.java.controller.SelectEvent;
+import main.java.view.MainView;
 
 public class Graph {
 
@@ -23,6 +24,7 @@ public class Graph {
     private Query query;
     private String title;
     private String graphType;
+    private MainView mainView;
 
     //Select graph action
     private ObjectProperty<EventHandler<SelectEvent>> selectGraphAction = new SimpleObjectProperty<EventHandler<SelectEvent>>();
@@ -31,8 +33,8 @@ public class Graph {
      * Graph constructor: Creates the graph object that contains all three graphType of the same data.
      * @param graphName
      */
-    public Graph(String graphName){
-
+    public Graph(MainView mainView, String graphName){
+        this.mainView = mainView;
         lineChart = new LineChart(new NumberAxis(),new NumberAxis());
         lineChart.setLegendVisible(false);
         barChart = new BarChart(new CategoryAxis(),new NumberAxis());
@@ -58,6 +60,7 @@ public class Graph {
         pane.setOnMouseClicked((event) -> {
             System.out.println("ACTION: " + selectGraphAction);
             selectGraphAction.get().handle(new SelectEvent(this));
+            mainView.showInspectorPane(false);
         }); 
         switchGraph("LineGraph");
 
