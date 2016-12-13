@@ -45,7 +45,7 @@ public class InspectorPane extends BorderPane{
 	//List of supported graph types
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
 	//List of supported graph colors and tints
-	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
+	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow", "Orange", "Green", "Purple", "Black");
 	//List of all supoorted countries
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getAllNames()));
 	//List of all supported indicators (full names)
@@ -305,11 +305,14 @@ public class InspectorPane extends BorderPane{
 	 */
 	public String getColor(){
 		switch(colorComboBox.getSelectionModel().getSelectedItem().toString()) {
-		case "Red": return "#F05350";
-		case "Yellow": return "#FFEF58";
-		case "Blue": return "#29B7F7";
-		case "Orange": return "#FFA826";
-		default: return "#F05350";
+			case "Red": return "#F05350";
+			case "Yellow": return "#FFEF58";
+			case "Blue": return "#29B7F7";
+			case "Orange": return "#FFA826";
+			case "Green": return "#009b0f";
+			case "Purple": return "#7800c4";
+			case "Black": return "#000000";
+			default: return "#F05350";
 		}
 	}
 	

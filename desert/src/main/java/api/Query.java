@@ -306,7 +306,7 @@ public class Query {
 	 * Sets the title of the graph for the query.
 	 * 
 	 */
-	protected void setTitle(String title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 	
@@ -314,7 +314,7 @@ public class Query {
 	 * Sets the colour of the line in the graph for the query.
 	 * 
 	 */
-	protected void setColour(String colour) {
+	public void setColour(String colour) {
 		this.colour = colour;
 	}
 	

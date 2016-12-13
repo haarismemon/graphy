@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import main.java.api.Query;
-import javafx.event.EventHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import main.java.controller.SelectEvent;
@@ -85,6 +84,10 @@ public class Graph {
      */
     public void addSeries(String seriesName, Query query){
         this.query = query;
+
+        changeColor(query.getColour());
+        System.out.println("query color: " + query.getColour());
+
         Map<Integer, Double> series = query.getData();
         System.out.println(series);
         XYChart.Series line = new XYChart.Series();
@@ -104,6 +107,12 @@ public class Graph {
         lineChart.getData().add(line);
         barChart.getData().add(bar);
         pieChart.getData().add(new PieChart.Data(seriesName,last));
+    }
+
+    private void changeColor(String colorCode) {
+        lineChart.setStyle("CHART_COLOR_1: " + colorCode +";");
+        barChart.setStyle("CHART_COLOR_1: " + colorCode +";");
+        pieChart.setStyle("CHART_COLOR_1: " + colorCode +";");
     }
 
     /**
