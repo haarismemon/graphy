@@ -12,6 +12,7 @@ import main.java.view.MainView;
 
 import main.java.controller.GraphController;
 
+import main.java.api.CacheAPI;
 
 /**
  * This class represents the entry point of the whole application
@@ -27,10 +28,16 @@ public class Main extends Application {
 
     @Override
 	public void start(Stage primaryStage) throws Exception {
+		CacheAPI.loadFromFile();
 		MainView m = new MainView();
 		GraphController gc = new GraphController(m);
 		m.assignController(gc);
 		m.start();
 	}
 
+	@Override
+	public void stop(){
+    System.out.println("Stage is closing");
+    	CacheAPI.saveToFile();
+	}
 }

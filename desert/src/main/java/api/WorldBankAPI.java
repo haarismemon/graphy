@@ -178,7 +178,6 @@ public class WorldBankAPI {
         
         // TODO TEMP SAVE TO FILE MUST BE DONE ON PROGRAM CLOSE
         Query q = process(query);
-        CacheAPI.saveToFile();
         return q;
     }
 
@@ -200,15 +199,15 @@ public class WorldBankAPI {
         }
     }
 
-    public static void main(String[] args) {
-    	CacheAPI.loadFromFile();
-    	query("GDP", "France", 1980, 2005);
-//    	query("GDP", "Latvia", 1980, 2005);
-//    	query("GDP", "Italy", 1980, 2005);
-    	for (Query q : CacheAPI.listCache()) {
-    		System.out.println(q);
-    	}
+//     public static void main(String[] args) {
+//     	CacheAPI.loadFromFile();
+//     	query("GDP", "France", 1980, 2005);
+// //    	query("GDP", "Latvia", 1980, 2005);
+// //    	query("GDP", "Italy", 1980, 2005);
+//     	for (Query q : CacheAPI.listCache()) {
+//     		System.out.println(q);
+//     	}
 
-    }
+//     }
 
 }

@@ -279,7 +279,7 @@ public class Query {
 	 * @return yearValue	map of filtered data containing pairs (year and value)
 	 * 						only requested year range
 	 */
-	private Map<Integer, Double> getData() {
+	public Map<Integer, Double> getData() {
 		return yearValueFiltered;
 	}
 	
@@ -331,7 +331,7 @@ public class Query {
 	 * Sets the colour of the line in the graph for the query.
 	 * 
 	 */
-	protected void setColour(String colour) {
+	public void setColour(String colour) {
 		this.colour = colour;
 	}
 	
@@ -352,10 +352,10 @@ public class Query {
 	 * @param colour	colour to set/update
 	 * @return the new list containing only required year range
 	 */
-	public Map<Integer, Double> getNewRange(int startYear, int endYear, String title, String colour) {
+	public Query getNewRange(int startYear, int endYear, String title, String colour) {
 		setStartYear(startYear); setEndYear(endYear); setTitle(title); setColour(colour);
 		filter();
-		return getData();
+		return this;
 	}
 	
 	/**

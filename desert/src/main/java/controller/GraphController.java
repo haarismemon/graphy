@@ -58,25 +58,30 @@ public class GraphController {
 
 		EventHandler<CreateEvent> updateGraphHandler = new EventHandler<CreateEvent>() {
 			public void handle(CreateEvent event) {
-				Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-				if(query != null && !query.getData().isEmpty()) {
-					String title = event.getTitle();
-					System.out.println(title.isEmpty());
-					if (title.isEmpty()) {
-						title = event.getIndicator() + " in " + event.getCountry();
-					}
-					Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
-					mainView.updateGraph(oldGraph, title, event.getGraphType(), query, event.getColor());
-
-
-					createEventHandler(mainView);
+				Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
+				if(oldGraph.getQuery().getIndicatorCode().equals(event.getIndicator()) &&
+					oldGraph.getQuery().getCountryName().equals(event.getCountry())) {
+					System.out.println("UPDATE RANGE");
 				} else {
-					Alert alert = new Alert(Alert.AlertType.INFORMATION);
-					alert.setTitle("Information Dialog");
-					alert.setHeaderText("Invalid Search ");
-					alert.setContentText("The search you have made does not return a result.");
+					System.out.println("UPDATE NOT RANGE");
+					Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
+						if(query != null && !query.getData().isEmpty()) {
+							String title = event.getTitle();
+							System.out.println(title.isEmpty());
+							if (title.isEmpty()) {
+								title = event.getIndicator() + " in " + event.getCountry();
+							}
+					
+						mainView.updateGraph(oldGraph, title, event.getGraphType(), query, event.getColor());
+						createEventHandler(mainView);
+					} else {
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+						alert.setTitle("Information Dialog");
+						alert.setHeaderText("Invalid Search ");
+						alert.setContentText("The search you have made does not return a result.");
 
-					alert.showAndWait();
+						alert.showAndWait();
+					}
 				}
 			}
 		};
