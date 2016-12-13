@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 import main.java.graph.Graph;
 import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
-
+import main.java.api.Indicator;
 import main.java.api.Query;
 
 /**
@@ -37,7 +37,7 @@ public class GraphController {
 		    		if(title.isEmpty()) {
 		    			title = event.getIndicator() + " in " + event.getCountry();
 		    		}
-		    		mainView.addGraph(title,event.getGraphType(),query,Indicator.indicatorsNameUnit(event.getIndicator()));
+		    		mainView.addGraph(title,event.getGraphType(),query);
 		    	} else {
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setTitle("Information Dialog");
@@ -66,7 +66,7 @@ public class GraphController {
 						title = event.getIndicator() + " in " + event.getCountry();
 					}
 					Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
-					mainView.updateGraph(oldGraph, title, event.getGraphType(), query, event.getColor(),Indicator.indicatorsNameUnit(event.getIndicator()));
+					mainView.updateGraph(oldGraph, title, event.getGraphType(), query, event.getColor());
 
 
 					createEventHandler(mainView);

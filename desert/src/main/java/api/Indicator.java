@@ -142,7 +142,7 @@ public class Indicator {
 	 * @param indicatorName		indicator name
 	 * @return indicator unit or null if indicator not found
 	 */
-	static String getUnit(String indicatorName) {
+	public static String getUnit(String indicatorName) {
 		for (String indicator : indicatorsNameUnit.keySet()) {
 			if (indicator.toLowerCase().equals(indicatorName.toLowerCase())) {
 				return indicatorsNameUnit.get(indicator);
