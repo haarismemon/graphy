@@ -173,7 +173,9 @@ public class Indicator {
 	 */
 	public static String[] getAllNames() {
 		Set<String> keys = indicatorsNameCode.keySet();
-		return keys.toArray(new String[keys.size()]);
+		String[] indicatorArray = keys.toArray(new String[keys.size()]);
+		Arrays.sort(indicatorArray);
+		return indicatorArray;
 	}
 
 	/**

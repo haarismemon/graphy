@@ -1,5 +1,6 @@
 package main.java.api;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -62,6 +63,7 @@ public class Country {
 			Locale locale = new Locale("en", countries[countryCode]);
 			countryNames[countryCode] = locale.getDisplayCountry();
 		}
+		Arrays.sort(countryNames);
 		return countryNames;
 	}
 }
