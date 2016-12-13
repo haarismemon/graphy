@@ -50,16 +50,6 @@ public class SearchField extends BorderPane {
 		textField.getStyleClass().add("search-field");
 		comboBox.getStyleClass().add("search-field");
 
-
-//		comboBox.setOnMouseEntered(new EventHandler<MouseEvent>() {
-//			@Override
-//			public void handle(MouseEvent event) {
-//				if(!Indicator.getAutocomplete(comboBox.getEditor().getText()).isEmpty()) {
-//					comboBox.show();
-//				}
-//			}
-//		});
-
 		comboBox.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -118,7 +108,6 @@ public class SearchField extends BorderPane {
 
 		});
 
-
 		textField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -151,15 +140,12 @@ public class SearchField extends BorderPane {
 			String countryName = queryInfo.get(1);
 			int startYear = Integer.parseInt(queryInfo.get(2));
 			int endYear = Integer.parseInt(queryInfo.get(3));
-//			Query query = new Query(indicatorCode, countryCode, startYear, endYear, new Date());
-//			return query;
 			Query queryResult = WorldBankAPI.query(indicatorName, countryName, startYear, endYear);
 			System.out.println(queryResult);
 			if(queryResult != null){
 				mainView.addGraph(queryResult.getTitle(), "BarChart", queryResult);
 			}
 		}
-//		else return null;
 	}
 
 	/**

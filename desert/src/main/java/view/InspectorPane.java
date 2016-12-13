@@ -270,14 +270,17 @@ public class InspectorPane extends BorderPane{
 			public void handle(ActionEvent event) {
 				inspectorContents.getChildren().clear();
 				inspectorContents.getChildren().add(optionPane);
+				searchButton.getStyleClass().add("toggle-button-selected");
+				infoButton.getStyleClass().remove("toggle-button-selected");
+
 			}
 		});
 
 		infoButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				infoButton.setStyle("-fx-base: #979797;");
-				searchButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+				infoButton.getStyleClass().add("toggle-button-selected");
+				searchButton.getStyleClass().remove("toggle-button-selected");
 
 				inspectorContents.getChildren().clear();
 				Label titleLabel = new Label(indicatorComboBox.getSelectionModel().getSelectedItem());

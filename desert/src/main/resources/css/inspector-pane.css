@@ -86,5 +86,9 @@
 }
 .toggle-button {
 	-fx-background-color: #DADADA;
-	-fx-border-radius: 4 0 0 4;
+	-fx-text-fill: #242424;
+}
+
+.toggle-button-selected {
+	-fx-background-color: #A6A6A6;
 }
