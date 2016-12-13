@@ -92,10 +92,7 @@ public class GraphController {
 		 EventHandler<DeleteEvent> deleteGraphHandler = new EventHandler<DeleteEvent>() {
 		    public void handle(DeleteEvent event) {
 		    	System.out.println("DELETED");
-		    	System.out.println(Indicator.getCode(event.getIndicator()));
-		    	System.out.println(Country.getCode(event.getCountry()));
-
-		    	mainView.deleteGraph(new Query(Indicator.getCode(event.getIndicator()),Country.getCode(event.getCountry()),0,0,null));
+		    	mainView.deleteGraph(event.getGraph());
 		        event.consume();
 		    }
 		  };

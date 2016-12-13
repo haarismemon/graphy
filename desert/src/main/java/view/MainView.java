@@ -194,7 +194,9 @@ public class MainView extends Stage {
 	}
 
 	public void printGraphs(){
+		System.out.println(graphs.toString());
 		switch(getGraphNumber()){
+			case 0: root.setCenter(null); break;
 			case 1: root.setCenter(graphs.get(0).getGraph()); break;
 			case 2: 
 				HBox graphC2 = new HBox();
@@ -229,14 +231,8 @@ public class MainView extends Stage {
 		}
 	}
 
-	public void deleteGraph(Query q){
-		for(Graph g : graphs){			
-			System.out.println(g.getQuery().getIndicatorCode());
-			System.out.println(g.getQuery().getCountryCode());
-			if(g.getQuery().equals(q)){
-				graphs.remove(g);
-			}
-		}
+	public void deleteGraph(Graph g){
+		graphs.remove(g);
 		printGraphs();
 	}
 
@@ -252,9 +248,6 @@ public class MainView extends Stage {
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
 		printGraphs();
-//		System.out.println(graphs.toString());
-//		System.out.println("ADD NEW GRAPH");
-
 	}
 
 	/**
@@ -273,8 +266,5 @@ public class MainView extends Stage {
 			graphs.add(indexOfOldGraph, centralGraph);
 			printGraphs();
 		}
-//		System.out.println(graphs.toString());
-//		System.out.println("ADD NEW GRAPH");
-
 	}
 }

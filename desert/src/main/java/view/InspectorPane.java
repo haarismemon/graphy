@@ -75,7 +75,7 @@ public class InspectorPane extends BorderPane{
 	//Delete graph action
 	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
 
-	//The selected graph object is stored.
+	//The selected graph 
 	private Graph selectedGraph;
 	private HBox buttonPane;
 
@@ -96,7 +96,7 @@ public class InspectorPane extends BorderPane{
 		deleteButton = new Button("Delete");
 
 		deleteButton.setOnAction((event) -> {
-			deleteButtonAction.get().handle(new DeleteEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
+			deleteButtonAction.get().handle(new DeleteEvent(selectedGraph));
 		});	
 
 		deleteButton.getStyleClass().add("button");
@@ -108,6 +108,7 @@ public class InspectorPane extends BorderPane{
 		createButton.setOnAction((event) -> {
 			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 		});
+
 		createButton.getStyleClass().add("button");
 		createButton.getStyleClass().add("update");
 		buttonPane.getChildren().add(createButton);
