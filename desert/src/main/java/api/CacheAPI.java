@@ -199,7 +199,7 @@ public class CacheAPI {
     	str = str.substring(1, str.length() - 1);
         String[] pairs = str.split(",");
 
-        Map<Integer, Double> yearValue = new LinkedHashMap<>();
+        Map<Integer, Double> yearValue = new TreeMap<>();
 
         for (String pair : pairs) {
             String[] index = pair.split("=");
