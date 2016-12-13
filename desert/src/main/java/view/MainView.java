@@ -206,11 +206,13 @@ public class MainView extends Stage {
 			case 1: root.setCenter(graphs.get(0).getGraph()); break;
 			case 2: 
 				HBox graphC2 = new HBox();
+				graphC2.getStyleClass().add("graph-container");
 				for(Graph g : graphs) graphC2.getChildren().add(g.getGraph());
 				root.setCenter(graphC2);
 			break;
 			case 3:
 				GridPane graphC3 = new GridPane();
+				graphC3.getStyleClass().add("graph-container");
 				graphC3.add(graphs.get(0).getGraph(),0,0);
 				graphC3.add(graphs.get(1).getGraph(),0,1);
 				graphC3.add(graphs.get(2).getGraph(),1,0);
@@ -218,6 +220,7 @@ public class MainView extends Stage {
 			break;
 			case 4:
 				GridPane graphC4 = new GridPane();
+				graphC4.getStyleClass().add("graph-container");
 				graphC4.add(graphs.get(0).getGraph(),0,0);
 				graphC4.add(graphs.get(1).getGraph(),0,1);
 				graphC4.add(graphs.get(2).getGraph(),1,0);
