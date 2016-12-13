@@ -40,6 +40,9 @@ public class GraphController {
 		    			title = event.getIndicator() + " in " + event.getCountry();
 		    		}
 		    		mainView.addGraph(title,event.getGraphType(),query);
+
+		    		warningInvalidYears(query);
+
 		    	} else {
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setTitle("Information Dialog");
@@ -73,15 +76,17 @@ public class GraphController {
 
 					System.out.println("UPDATE NOT RANGE");
 					Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-						if(query != null && !query.getData().isEmpty()) {
-							String title = event.getTitle();
-							System.out.println(title.isEmpty());
-							if (title.isEmpty()) {
-								title = event.getIndicator() + " in " + event.getCountry();
-							}
-					
+					if (query != null && !query.getData().isEmpty()) {
+						String title = event.getTitle();
+						System.out.println(title.isEmpty());
+						if (title.isEmpty()) {
+							title = event.getIndicator() + " in " + event.getCountry();
+						}
+				
 						mainView.updateGraph(oldGraph, title, event.getGraphType(), query, event.getColor());
 						createEventHandler(mainView);
+
+						warningInvalidYears(query);
 					} else {
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
 						alert.setTitle("Information Dialog");
@@ -121,6 +126,19 @@ public class GraphController {
 		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
 		 
 		 mainView.getCachePane().setCreateQueryHandlers(addGrapEndler);
+	}
+
+	private void warningInvalidYears(Query query) {
+		List<Integer> invalidYears = Query.getInvalidYears();
+		if (invalidYears != null) {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Warning about missing years");
+			alert.setHeaderText("For query " + query.getIndicatorName + " " + query.getCountryName 
+				+ " for range " + query.getStartYear + " - " + query.getEndYear 
+				+ " ,there is no data for the following years in this range: ");
+			alert.setContentText(invalidYears);
+			alert.showAndWait();
+		}
 	}
 
 	private void createEventHandler(MainView currentMainView) {
