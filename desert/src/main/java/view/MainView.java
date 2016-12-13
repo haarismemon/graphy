@@ -105,8 +105,6 @@ public class MainView extends Stage {
 		//Label displayed when the application is launched and no graphs are shown
 		beginningLabel = new Label("Start searching for one indicator or add a new graph");
 		beginningLabel.getStyleClass().add("beginning-label");
-		graphSpace.getChildren().add(beginningLabel);
-		root.setCenter(graphSpace);
 
 		graphContainer.setAlignment(Pos.CENTER);
 		graphContainer.getStyleClass().add("graph-container");
@@ -201,8 +199,15 @@ public class MainView extends Stage {
 	public void printGraphs(){
 		System.out.println(graphs.toString());
 		switch(getGraphNumber()){
-			case 0: root.setCenter(null); break;
-			case 1: root.setCenter(graphs.get(0).getGraph()); break;
+			case 0: root.setCenter(beginningLabel); 
+			break;
+			case 1: 
+				HBox graphC1 = new HBox();
+				graphC1.getStyleClass().add("graph-container");
+				graphC1.setAlignment(Pos.CENTER);
+				graphC1.getChildren().add(graphs.get(0).getGraph());
+				root.setCenter(graphC1); 
+			break;
 			case 2: 
 				HBox graphC2 = new HBox();
 				graphC2.setAlignment(Pos.CENTER);

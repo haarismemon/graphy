@@ -8,6 +8,7 @@ import main.java.api.WorldBankAPI;
 import main.java.api.Indicator;
 import main.java.api.Query;
 import javafx.scene.image.Image;
+import java.util.List;
 
 
 /**
@@ -129,14 +130,18 @@ public class GraphController {
 	}
 
 	private void warningInvalidYears(Query query) {
-		List<Integer> invalidYears = Query.getInvalidYears();
+		List<Integer> invalidYears = query.getInvalidYears();
 		if (invalidYears != null) {
-			Alert alert = new Alert(AlertType.INFORMATION);
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			alert.setTitle("Warning about missing years");
-			alert.setHeaderText("For query " + query.getIndicatorName + " " + query.getCountryName 
-				+ " for range " + query.getStartYear + " - " + query.getEndYear 
+			alert.setHeaderText("For query " + query.getIndicatorName() + " " + query.getCountryName() 
+				+ " for range " + query.getStartYear() + " - " + query.getEndYear() 
 				+ " ,there is no data for the following years in this range: ");
-			alert.setContentText(invalidYears);
+			String invalidYearsString = "";
+			for(int y : invalidYears) {
+				invalidYearsString = invalidYearsString + " " + y;
+			}
+			alert.setContentText(invalidYearsString);
 			alert.showAndWait();
 		}
 	}
