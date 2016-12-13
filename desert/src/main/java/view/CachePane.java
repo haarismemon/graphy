@@ -106,7 +106,7 @@ public class CachePane extends BorderPane {
 		List<Query> listOfQueries = CacheAPI.listCache();
 		if(listOfQueries != null) {
 			for(Query query : listOfQueries){
-				CachedQueryPane q = new CachedQueryPane(query);
+				CachedQueryPane q = new CachedQueryPane(mainView, query);
 				container.getChildren().add(q);
 			}
 		}

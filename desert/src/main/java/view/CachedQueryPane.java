@@ -30,10 +30,12 @@ public class CachedQueryPane extends BorderPane {
 	private ObjectProperty<EventHandler<DeleteCachedQuery>> deleteCachedQueryAction = new SimpleObjectProperty<EventHandler<DeleteCachedQuery>>();
 	//Create a new graph based on cached query
 	private ObjectProperty<EventHandler<CreateEvent>> createCachedQueryButton = new SimpleObjectProperty<EventHandler<CreateEvent>>();
-	
-	public CachedQueryPane(Query q){
 
+	private MainView mainView;
+	
+	public CachedQueryPane(MainView mainView, Query q){
 		super();
+		this.mainView = mainView;
 		this.query = q;
 		// setAlignment(Pos.CENTER);
 		getStylesheets().add("css/cache-query-pane.css");
@@ -54,6 +56,8 @@ public class CachedQueryPane extends BorderPane {
 
 		queryDetails.setOnMouseClicked((event) -> {
 			createCachedQueryButton.get().handle(new CreateEvent(query.getTitle(), query.getIndicatorName(), query.getCountryName(), "BarChart", query.getColour(), "" +query.getStartYear(), "" +query.getEndYear()));
+			mainView.hideCachePane();
+			mainView.hideInspectorPane();
 		});
 
 		String cachedStringIndicator = (q.getIndicatorName() + " in " + q.getCountryName());
