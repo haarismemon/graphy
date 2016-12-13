@@ -1,22 +1,19 @@
 package main.java.view;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Side;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.event.EventHandler;
@@ -25,8 +22,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import main.java.api.Indicator;
 import main.java.controller.CreateEvent;
 import main.java.controller.DeleteEvent;
-
-import java.awt.*;
 import java.util.Arrays;
 import main.java.api.Country;
 import main.java.graph.Graph;
@@ -46,6 +41,9 @@ public class InspectorPane extends BorderPane{
 	private Button createButton;
 	//Update button
 	private Button updateButton;
+
+	private Button searchButton;
+	private Button infoButton;
 
 	//List of supported graph types
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
@@ -83,6 +81,7 @@ public class InspectorPane extends BorderPane{
 	//The selected graph 
 	private Graph selectedGraph;
 	private HBox buttonPane;
+	private Pane inspectorContents;
 
 	public InspectorPane(){
 		super();
@@ -93,6 +92,14 @@ public class InspectorPane extends BorderPane{
 	}
 
 	private void drawWidgets() {
+		searchButton = new Button("Search");
+		searchButton.setPrefSize(300, 40);
+		searchButton.setStyle("-fx-base: #979797;");
+		infoButton = new Button("Information");
+		infoButton.setPrefSize(300, 40);
+		infoButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+//		infoButton.setTextFill(Color.web("#000000"));
+
 		buttonPane = new HBox();
 		buttonPane.setPrefHeight(60);
 		buttonPane.setAlignment(Pos.CENTER);
@@ -103,6 +110,7 @@ public class InspectorPane extends BorderPane{
 		deleteButton.setOnAction((event) -> {
 			deleteButtonAction.get().handle(new DeleteEvent(selectedGraph));
 		});
+
 		deleteButton.getStyleClass().add("button");
 		deleteButton.getStyleClass().add("delete");
 		buttonPane.getChildren().add(deleteButton);
@@ -120,59 +128,29 @@ public class InspectorPane extends BorderPane{
 		updateButton = new Button("update");
 		updateButton.setOnAction((event) -> {
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
-		});	
+		});
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
 //		buttonPane.getChildren().add(updateButton);
-		
-		HBox topPane = new HBox();
-		topPane.setAlignment(Pos.CENTER_LEFT);
-		topPane.setPrefHeight(5);
+
+		HBox toggleButtons = new HBox(searchButton, infoButton);
+
+		BorderPane topPane = new BorderPane();
+//		topPane.setAlignment(Pos.CENTER_LEFT);
+//		topPane.setPrefHeight(5);
 		Button backButton = new Button();
 		backButton.getStyleClass().add("backButton");
-		topPane.getStyleClass().add("topPanel");
-		topPane.getChildren().add(backButton);
+//		b.getStyleClass().add("topPanel");
+//		VBox topButtons = new VBox(topPane, toggleButtons);
+//		topPane.getChildren().add(topButtons);
+		topPane.setTop(backButton);
+		topPane.setCenter(toggleButtons);
 		setTop(topPane);
 
 		optionPane = new GridPane();
 		optionPane.setVgap(16);
 		optionPane.setAlignment(Pos.TOP_CENTER);
 
-		TabPane searchTabPane = new TabPane();
-		Tab searchTab = new Tab();
-		searchTab.setStyle("-fx-focus-color: transparent;");
-		searchTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-		searchTab.setText("Search");
-		Tab informationTab = new Tab();
-		//informationTab.setStyle("-fx-background-color:#A9A9A9");
-		informationTab.setStyle("-fx-focus-color: transparent;-fx-background-color:#A9A9A9;");
-//
-//		searchTabPane.widthProperty().addListener(new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldWidth, Number newWidth) {
-//				Side side = searchTabPane.getSide();
-//				int numTabs = searchTabPane.getTabs().size();
-//
-//				searchTabPane.setTabMinWidth(newWidth.intValue() / numTabs);
-//				searchTabPane.setTabMaxWidth(newWidth.intValue() / numTabs);
-//			}
-//		});
-//
-//		searchTabPane.heightProperty().addListener(new ChangeListener<Number>() {
-//			@Override public void changed(ObservableValue<? extends Number> value, Number oldHeight, Number newHeight) {
-//				Side side = searchTabPane.getSide();
-//				int numTabs = searchTabPane.getTabs().size();
-//
-//					searchTabPane.setTabMinWidth(newHeight.intValue() / numTabs - (5));
-//					searchTabPane.setTabMaxWidth(newHeight.intValue() / numTabs - (5));
-//
-//			}
-//		});
-
-
-		informationTab.setText("Information");
-
-		// =============================
 		VBox titleBox = new VBox();
 		Label titleLabel = new Label("Graph title");
 		titleLabel.getStyleClass().add("title-label");
@@ -181,7 +159,7 @@ public class InspectorPane extends BorderPane{
 		titleField.setPromptText("Graph title");
 		titleField.getStyleClass().add("options");
 		titleBox.getChildren().add(titleField);
-		//optionPane.add(titleBox,0,1);
+		optionPane.add(titleBox,0,1);
 
 		VBox indicatorBox = new VBox();
 		Label indicatorLabel = new Label("Indicator");
@@ -191,8 +169,7 @@ public class InspectorPane extends BorderPane{
 		indicatorComboBox.getSelectionModel().selectFirst();
 		indicatorComboBox.getStyleClass().add("options");
 		indicatorBox.getChildren().add(indicatorComboBox);
-		//optionPane.add(indicatorBox,0,2);
-		//optionPane.add(searchTabPane,0,0);
+		optionPane.add(indicatorBox,0,2);
 
 		VBox countryBox = new VBox();
 		Label countryLabel = new Label("Country");
@@ -202,7 +179,7 @@ public class InspectorPane extends BorderPane{
 		countryComboBox.getStyleClass().add("options");
 		countryComboBox.getSelectionModel().selectFirst();
 		countryBox.getChildren().add(countryComboBox);
-		//optionPane.add(countryBox,0,3);
+		optionPane.add(countryBox,0,3);
 
 		VBox graphTypeBox = new VBox();
 		Label graphTypeLabel = new Label("Graph Type");
@@ -213,7 +190,7 @@ public class InspectorPane extends BorderPane{
 		graphTypeComboBox.getSelectionModel().selectFirst();
 		graphTypeComboBox.getStyleClass().add("options");
 		graphTypeBox.getChildren().add(graphTypeComboBox);
-		//optionPane.add(graphTypeBox,0,4);
+		optionPane.add(graphTypeBox,0,4);
 
 		HBox yearBox = new HBox(10);
 
@@ -242,7 +219,7 @@ public class InspectorPane extends BorderPane{
 		yearBox.getChildren().add(leftBox);
 		yearBox.getChildren().add(rightBox);
 
-		//optionPane.add(yearBox,0,5);
+		optionPane.add(yearBox,0,5);
 
 		VBox colorBox = new VBox();
 		Label colorLabel = new Label("Color");
@@ -282,51 +259,59 @@ public class InspectorPane extends BorderPane{
 		});
 		colorComboBox.getStyleClass().add("options");
 		colorBox.getChildren().add(colorComboBox);
-		//optionPane.add(colorBox,0,6);
+		optionPane.add(colorBox,0,6);
 
-		searchTabPane.getTabs().add(searchTab);
-		searchTabPane.getTabs().add(informationTab);
+		inspectorContents = new Pane(optionPane);
 
-		VBox checking = new VBox();
+		optionPane.setPadding(new Insets(0,0,0,25));
 
-		checking.getChildren().addAll(
-				titleLabel,titleBox,
-				indicatorLabel,indicatorBox,
-				countryLabel,countryBox,
-				graphTypeLabel,graphTypeBox,
-				yearBox,colorBox
+//		setTop(toggleButtons);
 
-		);
-
-
-
-		searchTab.setContent(checking);
-
-		TextArea t = new TextArea();
-		t.setStyle("-fx-background-color:#A9A9A9");
-		t.setDisable(true);
-		t.setWrapText(true);
-
-		t.setText(Indicator.getInfo(indicatorComboBox.getSelectionModel().getSelectedItem().toString()));
-		informationTab.setContent(t);
-
-		indicatorComboBox.valueProperty().addListener(new ChangeListener<String>() {
+		searchButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				t.setText(Indicator.getInfo(indicatorComboBox.getSelectionModel().getSelectedItem().toString()));
-				informationTab.setContent(t);
+			public void handle(ActionEvent event) {
+				searchButton.setStyle("-fx-base: #979797;");
+				infoButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+//				infoButton.setTextFill(Color.web("#000000"));
+				inspectorContents.getChildren().clear();
+				inspectorContents.getChildren().add(optionPane);
 			}
 		});
 
+		infoButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				infoButton.setStyle("-fx-base: #979797;");
+				searchButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+//				searchButton.setTextFill(Color.web("#000000"));
 
+				inspectorContents.getChildren().clear();
+				Label titleLabel = new Label(indicatorComboBox.getSelectionModel().getSelectedItem());
+				titleLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px; -fx-font-weight: 800");
+				titleLabel.setPadding(new Insets(15,15,0,30));
 
-		optionPane.add(searchTabPane,0,0);
+				Label informationLabel = new Label(Indicator.getInfo(indicatorComboBox.getSelectionModel().getSelectedItem()));
+				informationLabel.setPrefWidth(280);
+				informationLabel.setWrapText(true);
+				informationLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px;");
+				informationLabel.setPadding(new Insets(15,15,15,30));
+				BorderPane pane = new BorderPane();
+				pane.setTop(titleLabel);
+				pane.setCenter(informationLabel);
+				inspectorContents.getChildren().add(pane);
+			}
+		});
 
+		setCenter(inspectorContents);
 
-		setCenter(optionPane);
 
 		setBottom(buttonPane);
 	}
+
+//	private Pane putInformation(String information) {
+//		Pane pane = new Pane(new Label(information));
+//		return pane;
+//	}
 
 	/**
 	 * Set the create button to UPDATE mode
