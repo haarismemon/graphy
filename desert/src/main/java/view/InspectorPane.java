@@ -33,6 +33,9 @@ import main.java.graph.Graph;
  * @author Haaris Memon
  */
 public class InspectorPane extends BorderPane{
+
+	private MainView mainView;
+
 	//Option Pane
 	private GridPane optionPane;
 	//Delete button
@@ -41,8 +44,9 @@ public class InspectorPane extends BorderPane{
 	private Button createButton;
 	//Update button
 	private Button updateButton;
-
+	//search button
 	private Button searchButton;
+	//information button
 	private Button infoButton;
 
 	//List of supported graph types
@@ -80,11 +84,14 @@ public class InspectorPane extends BorderPane{
 
 	//The selected graph 
 	private Graph selectedGraph;
+	//panel of buttons for delete and create/update
 	private HBox buttonPane;
+	//pane that holds the inspector pane
 	private Pane inspectorContents;
 
-	public InspectorPane(){
+	public InspectorPane(MainView mainView){
 		super();
+		this.mainView = mainView;
 		this.getStylesheets().add("css/inspector-pane.css");
 		this.getStyleClass().add("inspector-pane");
 		this.setStyle("-fx-background-color: #E7E7E7");
@@ -136,13 +143,8 @@ public class InspectorPane extends BorderPane{
 		HBox toggleButtons = new HBox(searchButton, infoButton);
 
 		BorderPane topPane = new BorderPane();
-//		topPane.setAlignment(Pos.CENTER_LEFT);
-//		topPane.setPrefHeight(5);
 		Button backButton = new Button();
 		backButton.getStyleClass().add("backButton");
-//		b.getStyleClass().add("topPanel");
-//		VBox topButtons = new VBox(topPane, toggleButtons);
-//		topPane.getChildren().add(topButtons);
 		topPane.setTop(backButton);
 		topPane.setCenter(toggleButtons);
 		setTop(topPane);
@@ -264,6 +266,13 @@ public class InspectorPane extends BorderPane{
 		inspectorContents = new Pane(optionPane);
 
 		optionPane.setPadding(new Insets(0,0,0,25));
+
+		backButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				mainView.hideInspectorPane();
+			}
+		});
 
 		searchButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

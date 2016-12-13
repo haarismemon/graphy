@@ -275,7 +275,7 @@ public class MainView extends Stage {
 	}
 
 	public void newInspectorPane() {
-		inspector = new InspectorPane();
+		inspector = new InspectorPane(this);
 		inspector.setPrefWidth(300);
 		container.setRight(inspector);
 	}
