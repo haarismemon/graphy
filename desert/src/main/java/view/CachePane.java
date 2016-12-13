@@ -3,6 +3,7 @@ package main.java.view;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -22,9 +23,11 @@ public class CachePane extends BorderPane {
 
 	//Queries container
 	private VBox container;
+	private MainView mainView;
 
-	public CachePane(){
+	public CachePane(MainView mainView){
 		super();
+		this.mainView = mainView;
 		this.getStylesheets().add("css/cache-pane.css");
 		this.getStyleClass().add("inspector-pane");
 		this.setStyle("-fx-background-color: rgba(231,231,231,0.85)");
@@ -63,6 +66,13 @@ public class CachePane extends BorderPane {
 		clearCache.getStyleClass().add("button");
 		buttonPane.getChildren().add(clearCache);
 		setBottom(buttonPane);
+
+		backButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				mainView.toggleCachePane();
+			}
+		});
 		
 	}
 
