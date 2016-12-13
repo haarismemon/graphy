@@ -75,8 +75,8 @@ public class MainView extends Stage {
 		
 		//Cache history
 		cachePane = new CachePane(this);
-		cachePane.setPrefWidth(310);
-		cachePane.setMaxWidth(310);
+		cachePane.setPrefWidth(280);
+		cachePane.setMaxWidth(280);
 		superContainer.setAlignment(cachePane, Pos.CENTER_LEFT);
 		
 		//Root pane
@@ -207,12 +207,14 @@ public class MainView extends Stage {
 			case 2: 
 				HBox graphC2 = new HBox();
 				graphC2.setAlignment(Pos.CENTER);
+				graphC2.getStyleClass().add("graph-container");
 				for(Graph g : graphs) graphC2.getChildren().add(g.getGraph());
 				root.setCenter(graphC2);
 			break;
 			case 3:
 				GridPane graphC3 = new GridPane();
 				graphC3.setAlignment(Pos.CENTER);
+				graphC3.getStyleClass().add("graph-container");
 				graphC3.add(graphs.get(0).getGraph(),0,0);
 				graphC3.add(graphs.get(1).getGraph(),0,1);
 				graphC3.add(graphs.get(2).getGraph(),1,0);
@@ -221,6 +223,7 @@ public class MainView extends Stage {
 			case 4:
 				GridPane graphC4 = new GridPane();
 				graphC4.setAlignment(Pos.CENTER);
+				graphC4.getStyleClass().add("graph-container");
 				graphC4.add(graphs.get(0).getGraph(),0,0);
 				graphC4.add(graphs.get(1).getGraph(),0,1);
 				graphC4.add(graphs.get(2).getGraph(),1,0);

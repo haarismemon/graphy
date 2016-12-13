@@ -63,6 +63,7 @@ public class CachePane extends BorderPane {
 		buttonPane.setSpacing(60.0);
 		
 		Button clearCache = new Button("Clear cache history");
+		
 		clearCache.getStyleClass().add("button");
 		buttonPane.getChildren().add(clearCache);
 		setBottom(buttonPane);
