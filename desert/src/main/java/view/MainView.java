@@ -1,5 +1,6 @@
 package main.java.view;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -124,8 +125,9 @@ public class MainView extends Stage {
 		Button addButton = new Button("");
 		addButton.setOnAction((event) -> {
 			toggleCachePane();
-			showInspectorPane(true);
-		});			
+			newInspectorPane(true);
+			showInspectorPane();
+		});
 		addButton.getStyleClass().add("button-add");
 		addButton.setPrefSize(18, 18);
 		bottomBar.getChildren().add(addButton);
@@ -137,7 +139,9 @@ public class MainView extends Stage {
 		inspector = new InspectorPane(this);
 		inspector.setPrefWidth(300);
 		//Inspector
-		showInspectorPane(true);
+		//make new inspector pane and show it
+//		newInspectorPane(true);
+		showInspectorPane();
 
 		Scene scene = new Scene(superContainer);
 
@@ -275,13 +279,25 @@ public class MainView extends Stage {
 		container.setRight(null);
 	}
 
-	public void showInspectorPane(Boolean isAdd) {
-//		inspector = new InspectorPane(this);
-//		inspector.setPrefWidth(300);
+	public void newInspectorPane(Boolean isAdd) {
+		List<ObjectProperty> listOfButtonActions = inspector.getButtonActions();
+		inspector = new InspectorPane(this);
+
+		inspector.setPrefWidth(300);
 		if(isAdd == true) inspector.setAdd();
 		else  inspector.setUpdate();
-		inspector.setSelectedGraph(null);
+
+		inspector.setButtonActions(listOfButtonActions);
+
+//		inspector.clearStartYear();
+//		inspector.clearEndYear();
+//		inspector.setSelectedGraph(null);
+
 //		inspector.setAdd();
+
+	}
+
+	public void showInspectorPane() {
 		container.setRight(inspector);
 	}
 }

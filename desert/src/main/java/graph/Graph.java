@@ -60,7 +60,7 @@ public class Graph {
         pane.setOnMouseClicked((event) -> {
             System.out.println("ACTION: " + selectGraphAction);
             selectGraphAction.get().handle(new SelectEvent(this));
-            mainView.showInspectorPane(false);
+            mainView.showInspectorPane();
         }); 
         switchGraph("LineGraph");
 
@@ -84,7 +84,7 @@ public class Graph {
     /**
      * Adds a data to the Graphs in form of series. Each series represent a query.
      * @param seriesName name of series for the query to show in legend
-     * @param the query to be plotted in the graph
+     * @param query - the query to be plotted in the graph
      */
     public void addSeries(String seriesName, Query query){
         this.query = query;

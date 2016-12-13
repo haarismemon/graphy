@@ -22,7 +22,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import main.java.api.Indicator;
 import main.java.controller.CreateEvent;
 import main.java.controller.DeleteEvent;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import main.java.api.Country;
 import main.java.graph.Graph;
 
@@ -74,13 +78,13 @@ public class InspectorPane extends BorderPane{
 	private ComboBox<String> colorComboBox;
 
 	//Create a new graph action
-	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction;
 
 	//Update graph action
-	private ObjectProperty<EventHandler<CreateEvent>> updateButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+	private ObjectProperty<EventHandler<CreateEvent>> updateButtonAction;
 
 	//Delete graph action
-	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
+	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction;
 
 	//The selected graph 
 	private Graph selectedGraph;
@@ -95,6 +99,11 @@ public class InspectorPane extends BorderPane{
 		this.getStylesheets().add("css/inspector-pane.css");
 		this.getStyleClass().add("inspector-pane");
 		this.setStyle("-fx-background-color: #E7E7E7");
+
+		createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+		updateButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+		deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
+
 		drawWidgets();
 	}
 
@@ -125,9 +134,10 @@ public class InspectorPane extends BorderPane{
 		createButton = new Button("Create");
 		//TODO need to change button action for create button and upate button
 		createButton.setOnAction((event) -> {
+			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 			mainView.hideCachePane();
-//			mainView.hideInspectorPane();
+			mainView.hideInspectorPane();
 		});
 
 		createButton.getStyleClass().add("button");
@@ -136,8 +146,9 @@ public class InspectorPane extends BorderPane{
 
 		updateButton = new Button("Update");
 		updateButton.setOnAction((event) -> {
+			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
-//			mainView.hideInspectorPane();
+			mainView.hideInspectorPane();
 		});
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
@@ -367,6 +378,18 @@ public class InspectorPane extends BorderPane{
 		}
 	}
 
+	public List<ObjectProperty> getButtonActions() {
+		return new ArrayList<>(Arrays.asList(createButtonAction, updateButtonAction, deleteButtonAction));
+	}
+
+	public void setButtonActions(List<ObjectProperty> buttonActions) {
+		if(buttonActions != null && !buttonActions.isEmpty()) {
+			createButtonAction = buttonActions.get(0);
+			updateButtonAction = buttonActions.get(1);
+			deleteButtonAction = buttonActions.get(2);
+		}
+	}
+
 	/**
 	 * @return the country represented in the graph
 	 */
@@ -459,12 +482,26 @@ public class InspectorPane extends BorderPane{
 		startYearComboBox.setText("" + year);
 	}
 
+	/**
+	 * clear the year to be displayed on the start year text field
+	 */
+	public void clearStartYear(){
+		startYearComboBox.clear();
+	}
+
 
 	/**
 	 * @param year - year to be displayed on the end year text field
 	 */
 	public void setEndYear(int year){
 		endYearComboBox.setText("" + year);
+	}
+
+	/**
+	 * clear the year to be displayed on the start year text field
+	 */
+	public void clearEndYear(){
+		endYearComboBox.clear();
 	}
 
 	/**
