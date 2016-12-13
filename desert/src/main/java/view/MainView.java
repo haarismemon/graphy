@@ -77,8 +77,8 @@ public class MainView extends Stage {
 		
 		//Cache history
 		cachePane = new CachePane();
-		cachePane.setPrefWidth(310);
-		cachePane.setMaxWidth(310);
+		cachePane.setPrefWidth(280);
+		cachePane.setMaxWidth(280);
 		superContainer.setAlignment(cachePane, Pos.CENTER_LEFT);
 		
 		//Root pane

@@ -3,8 +3,9 @@ package main.java.view;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import main.java.api.Query;
 import main.java.controller.DeleteCachedQuery;
 import javafx.event.ActionEvent;
@@ -13,7 +14,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import main.java.controller.CreateEvent;
 
-public class CachedQueryPane extends HBox {
+public class CachedQueryPane extends BorderPane {
 
 	//Indicator and country of the cached query
 	private Label indicatorInfo;
@@ -32,18 +33,22 @@ public class CachedQueryPane extends HBox {
 	
 	public CachedQueryPane(Query q){
 
-		super(8);
+		super();
 		this.query = q;
-		setAlignment(Pos.CENTER);
+		// setAlignment(Pos.CENTER);
 		getStylesheets().add("css/cache-query-pane.css");
 		getStyleClass().add("query-container");	
 
+		StackPane p = new StackPane();
+		p.setStyle("-fx-padding-left: 10");
 		deleteButton = new Pane();
 		deleteButton.setOnMouseClicked((event) -> {
 			deleteCachedQueryAction.get().handle(new DeleteCachedQuery(query));
 		});	
 
 		deleteButton.getStyleClass().add("delete-query-button");
+
+		p.getChildren().add(deleteButton);
 
 		VBox queryDetails = new VBox(4);
 
@@ -61,9 +66,10 @@ public class CachedQueryPane extends HBox {
 		queryDetails.getChildren().add(indicatorInfo);		
 		queryDetails.getChildren().add(dateInfo);
 
-
-		this.getChildren().add(queryDetails);
-		this.getChildren().add(deleteButton);
+		setCenter(queryDetails);
+		setRight(p);
+		// this.getChildren().add(queryDetails);
+		// this.getChildren().add(deleteButton);
 
 	} 
 
