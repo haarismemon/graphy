@@ -254,8 +254,9 @@ public class MainView extends Stage {
 	 *@param graphType - the type of the graph
 	 *@param query - the query representing the data to be plotted in the graph
 	 */
-	public void addGraph(String graphName, String graphType, Query query){
+	public void addGraph(String graphName, String graphType, Query query,String yAxis){
 		Graph centralGraph = new Graph(this, graphName);
+		centralGraph.setYaxis(yAxis);
 		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
@@ -268,8 +269,9 @@ public class MainView extends Stage {
 	 * @param newGraphType - the type of the graph
 	 * @param newQuery - the query representing the data to be plotted in the graph
 	 */
-	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery, String color){
+	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery, String color, String yAxis){
 		Graph centralGraph = new Graph(this, newGraphName);
+		centralGraph.setYaxis(yAxis);
 		centralGraph.addSeries("My Series", newQuery);
 		centralGraph.switchGraph(newGraphType);
 		centralGraph.changeColor(color);
