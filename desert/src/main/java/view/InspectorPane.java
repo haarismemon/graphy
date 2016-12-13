@@ -2,6 +2,8 @@ package main.java.view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -11,10 +13,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.event.EventHandler;
 import javafx.beans.property.ObjectProperty;
@@ -41,6 +41,9 @@ public class InspectorPane extends BorderPane{
 	private Button createButton;
 	//Update button
 	private Button updateButton;
+
+	private Button searchButton;
+	private Button infoButton;
 
 	//List of supported graph types
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
@@ -78,6 +81,7 @@ public class InspectorPane extends BorderPane{
 	//The selected graph 
 	private Graph selectedGraph;
 	private HBox buttonPane;
+	private Pane inspectorContents;
 
 	public InspectorPane(){
 		super();
@@ -88,16 +92,24 @@ public class InspectorPane extends BorderPane{
 	}
 
 	private void drawWidgets() {
+		searchButton = new Button("Search");
+		searchButton.setPrefSize(300, 40);
+		searchButton.setStyle("-fx-base: #979797;");
+		infoButton = new Button("Information");
+		infoButton.setPrefSize(300, 40);
+		infoButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+//		infoButton.setTextFill(Color.web("#000000"));
+
 		buttonPane = new HBox();
 		buttonPane.setPrefHeight(60);
 		buttonPane.setAlignment(Pos.CENTER);
 		buttonPane.setSpacing(60.0);
-		
+
 		deleteButton = new Button("Delete");
 
 		deleteButton.setOnAction((event) -> {
 			deleteButtonAction.get().handle(new DeleteEvent(selectedGraph));
-		});	
+		});
 
 		deleteButton.getStyleClass().add("button");
 		deleteButton.getStyleClass().add("delete");
@@ -116,24 +128,29 @@ public class InspectorPane extends BorderPane{
 		updateButton = new Button("update");
 		updateButton.setOnAction((event) -> {
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
-		});	
+		});
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
 //		buttonPane.getChildren().add(updateButton);
-		
-		HBox topPane = new HBox();
-		topPane.setAlignment(Pos.CENTER_LEFT);
-		topPane.setPrefHeight(5);
+
+		HBox toggleButtons = new HBox(searchButton, infoButton);
+
+		BorderPane topPane = new BorderPane();
+//		topPane.setAlignment(Pos.CENTER_LEFT);
+//		topPane.setPrefHeight(5);
 		Button backButton = new Button();
 		backButton.getStyleClass().add("backButton");
-		topPane.getStyleClass().add("topPanel");
-		topPane.getChildren().add(backButton);
+//		b.getStyleClass().add("topPanel");
+//		VBox topButtons = new VBox(topPane, toggleButtons);
+//		topPane.getChildren().add(topButtons);
+		topPane.setTop(backButton);
+		topPane.setCenter(toggleButtons);
 		setTop(topPane);
-		
+
 		optionPane = new GridPane();
 		optionPane.setVgap(16);
 		optionPane.setAlignment(Pos.TOP_CENTER);
-		
+
 		VBox titleBox = new VBox();
 		Label titleLabel = new Label("Graph title");
 		titleLabel.getStyleClass().add("title-label");
@@ -143,7 +160,7 @@ public class InspectorPane extends BorderPane{
 		titleField.getStyleClass().add("options");
 		titleBox.getChildren().add(titleField);
 		optionPane.add(titleBox,0,1);
-		
+
 		VBox indicatorBox = new VBox();
 		Label indicatorLabel = new Label("Indicator");
 		indicatorLabel.getStyleClass().add("title-label");
@@ -153,7 +170,7 @@ public class InspectorPane extends BorderPane{
 		indicatorComboBox.getStyleClass().add("options");
 		indicatorBox.getChildren().add(indicatorComboBox);
 		optionPane.add(indicatorBox,0,2);
-		
+
 		VBox countryBox = new VBox();
 		Label countryLabel = new Label("Country");
 		countryLabel.getStyleClass().add("title-label");
@@ -163,7 +180,7 @@ public class InspectorPane extends BorderPane{
 		countryComboBox.getSelectionModel().selectFirst();
 		countryBox.getChildren().add(countryComboBox);
 		optionPane.add(countryBox,0,3);
-		
+
 		VBox graphTypeBox = new VBox();
 		Label graphTypeLabel = new Label("Graph Type");
 		graphTypeLabel.getStyleClass().add("title-label");
@@ -174,36 +191,36 @@ public class InspectorPane extends BorderPane{
 		graphTypeComboBox.getStyleClass().add("options");
 		graphTypeBox.getChildren().add(graphTypeComboBox);
 		optionPane.add(graphTypeBox,0,4);
-		
+
 		HBox yearBox = new HBox(10);
-		
+
 		VBox leftBox = new VBox();
-		
+
 		Label startYear = new Label("Start Year");
 		startYear.getStyleClass().add("title-label");
 		leftBox.getChildren().add(startYear);
-		
+
 		startYearComboBox = new TextField();
 		startYearComboBox.setPromptText("Start year");
-		startYearComboBox.getStyleClass().add("optionsYear");		
+		startYearComboBox.getStyleClass().add("optionsYear");
 		leftBox.getChildren().add(startYearComboBox);
-		
+
 		VBox rightBox = new VBox();
 
 		Label endYear = new Label("End Year");
 		endYear.getStyleClass().add("title-label");
 		rightBox.getChildren().add(endYear);
-		
+
 		endYearComboBox = new TextField();
 		endYearComboBox.setPromptText("End year");
 		endYearComboBox.getStyleClass().add("optionsYear");
 		rightBox.getChildren().add(endYearComboBox);
-		
+
 		yearBox.getChildren().add(leftBox);
 		yearBox.getChildren().add(rightBox);
 
 		optionPane.add(yearBox,0,5);
-		
+
 		VBox colorBox = new VBox();
 		Label colorLabel = new Label("Color");
 		colorLabel.getStyleClass().add("title-label");
@@ -211,44 +228,91 @@ public class InspectorPane extends BorderPane{
 		colorComboBox = new ComboBox<String>(graphColors);
 		colorComboBox.getSelectionModel().selectFirst();
 		colorComboBox.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-		    @Override
-		    public ListCell<String> call(ListView<String> p) {
-		        return new ListCell<String>() {
-		            @Override
-		            protected void updateItem(String item, boolean empty) {
-		                super.updateItem(item, empty);
-		                setText(item);
-		                if (item == null || empty) {
-		                    setGraphic(null);
-		                } else {
-		                    Image icon;
-		                    try {
-		                        int iconNumber = this.getIndex() + 1;
-		                        String iconPath = "images/color" + iconNumber + ".png";
-		                        icon = new Image(iconPath);
-		                    } catch(NullPointerException ex) {
-		                        // in case the above image doesn't exist, use a default one
-		                        String iconPath = "images/color1.png";
-		                        icon = new Image(iconPath);
-		                    }
-		                    ImageView iconImageView = new ImageView(icon);
-		                    iconImageView.setFitHeight(15);
-		                    iconImageView.setPreserveRatio(true);
-		                    setGraphic(iconImageView);
-		                }
-		            }
-		        };
-		    }
+			@Override
+			public ListCell<String> call(ListView<String> p) {
+				return new ListCell<String>() {
+					@Override
+					protected void updateItem(String item, boolean empty) {
+						super.updateItem(item, empty);
+						setText(item);
+						if (item == null || empty) {
+							setGraphic(null);
+						} else {
+							Image icon;
+							try {
+								int iconNumber = this.getIndex() + 1;
+								String iconPath = "images/color" + iconNumber + ".png";
+								icon = new Image(iconPath);
+							} catch(NullPointerException ex) {
+								// in case the above image doesn't exist, use a default one
+								String iconPath = "images/color1.png";
+								icon = new Image(iconPath);
+							}
+							ImageView iconImageView = new ImageView(icon);
+							iconImageView.setFitHeight(15);
+							iconImageView.setPreserveRatio(true);
+							setGraphic(iconImageView);
+						}
+					}
+				};
+			}
 		});
 		colorComboBox.getStyleClass().add("options");
 		colorBox.getChildren().add(colorComboBox);
 		optionPane.add(colorBox,0,6);
-		
-		setCenter(optionPane);
-		
+
+		inspectorContents = new Pane(optionPane);
+
+		optionPane.setPadding(new Insets(0,0,0,25));
+
+//		setTop(toggleButtons);
+
+		searchButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				searchButton.setStyle("-fx-base: #979797;");
+				infoButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+//				infoButton.setTextFill(Color.web("#000000"));
+				inspectorContents.getChildren().clear();
+				inspectorContents.getChildren().add(optionPane);
+			}
+		});
+
+		infoButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				infoButton.setStyle("-fx-base: #979797;");
+				searchButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
+//				searchButton.setTextFill(Color.web("#000000"));
+
+				inspectorContents.getChildren().clear();
+				Label titleLabel = new Label(indicatorComboBox.getSelectionModel().getSelectedItem());
+				titleLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px; -fx-font-weight: 800");
+				titleLabel.setPadding(new Insets(15,15,0,30));
+
+				Label informationLabel = new Label(Indicator.getInfo(indicatorComboBox.getSelectionModel().getSelectedItem()));
+				informationLabel.setPrefWidth(280);
+				informationLabel.setWrapText(true);
+				informationLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px;");
+				informationLabel.setPadding(new Insets(15,15,15,30));
+				BorderPane pane = new BorderPane();
+				pane.setTop(titleLabel);
+				pane.setCenter(informationLabel);
+				inspectorContents.getChildren().add(pane);
+			}
+		});
+
+		setCenter(inspectorContents);
+
+
 		setBottom(buttonPane);
 	}
-	
+
+//	private Pane putInformation(String information) {
+//		Pane pane = new Pane(new Label(information));
+//		return pane;
+//	}
+
 	/**
 	 * Set the create button to UPDATE mode
 	 */
@@ -258,7 +322,7 @@ public class InspectorPane extends BorderPane{
 		buttonPane.getChildren().clear();
 		buttonPane.getChildren().addAll(deleteButton, updateButton);
 	}
-	
+
 	/**
 	 * Set the create button to CREATE mode
 	 */
@@ -267,14 +331,14 @@ public class InspectorPane extends BorderPane{
 		buttonPane.getChildren().clear();
 		buttonPane.getChildren().addAll(deleteButton, createButton);
 	}
-	
+
 	/**
 	 * @return the title of the text field
 	 */
 	public String getTitle(){
 		return  titleField.getText();
 	}
-	
+
 	/**
 	 * @return indicator represented in the graph
 	 */
@@ -287,11 +351,11 @@ public class InspectorPane extends BorderPane{
 	 */
 	public String getGraphType(){
 		switch(graphTypeComboBox.getSelectionModel().getSelectedItem().toString()) {
-		case "Bar Chart": return "BarChart";
-		case "Pie Chart": return "PieChart";
-		case "Line Graph": return "LineGraph";
-		default: return "LineGraph";
-		}	
+			case "Bar Chart": return "BarChart";
+			case "Pie Chart": return "PieChart";
+			case "Line Graph": return "LineGraph";
+			default: return "LineGraph";
+		}
 	}
 
 	/**
@@ -300,7 +364,7 @@ public class InspectorPane extends BorderPane{
 	public String getCountry(){
 		return countryComboBox.getSelectionModel().getSelectedItem().toString();
 	}
-	
+
 	/**
 	 * @return get the exadecimal value for the color of the graph
 	 */
@@ -316,7 +380,7 @@ public class InspectorPane extends BorderPane{
 			default: return "#F05350";
 		}
 	}
-	
+
 	/**
 	 * @return get the start year of the graph
 	 */
@@ -325,7 +389,7 @@ public class InspectorPane extends BorderPane{
 		if(startDateString.equals("")) return "0";
 		else return startDateString;
 	}
-	
+
 	/**
 	 * @return get the start end of the graph
 	 */
@@ -334,59 +398,59 @@ public class InspectorPane extends BorderPane{
 		if(endDateString.equals("")) return "0";
 		else return endDateString;
 	}
-	
-	
+
+
 	/**
 	 * @return the title of the text field
 	 */
 	public void setTitle(String title){
 		titleField.setText(title);
 	}
-	
-	
+
+
 	/**
 	 * @param indicator - indicator to tbe displayed in the indicator comboBox
 	 */
 	public void setIndicator(String indicator){
 		indicatorComboBox.setValue(indicator);
 	}
-	
-	
+
+
 	/**
 	 * @param country - country to be displaye in the country comboBox
 	 */
 	public void setCountry(String country){
 		countryComboBox.setValue(country);
 	}
-	
-	
+
+
 	/**
 	 * @param color - color to be displayed on the color comboBox
 	 */
 	public void setColor(String color){
 		colorComboBox.setValue(color);
 	}
-	
+
 	/**
 	 * @return the title of the text field
 	 */
 	public void setGraphType(String type){
 		switch(type) {
-		case "BarChart": graphTypeComboBox.setValue("Bar Chart"); break;
-		case "PieChart": graphTypeComboBox.setValue("Pie Chart"); break;
-		case "LineGraph": graphTypeComboBox.setValue("Line Graph"); break;
-		default: graphTypeComboBox.setValue("Line Graph");
-		}	
+			case "BarChart": graphTypeComboBox.setValue("Bar Chart"); break;
+			case "PieChart": graphTypeComboBox.setValue("Pie Chart"); break;
+			case "LineGraph": graphTypeComboBox.setValue("Line Graph"); break;
+			default: graphTypeComboBox.setValue("Line Graph");
+		}
 	}
-	
+
 	/**
 	 * @param year - year to be displayed on the start year text field
 	 */
 	public void setStartYear(int year){
 		startYearComboBox.setText("" + year);
 	}
-	
-	
+
+
 	/**
 	 * @param year - year to be displayed on the end year text field
 	 */
