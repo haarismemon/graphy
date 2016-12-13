@@ -1,9 +1,11 @@
-package main.java.api;
+//package main.java.api;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,6 +64,12 @@ public class Query {
 	private Map<Integer, Double> yearValue = new HashMap<>();
 	
 	/**
+     * List of containing all invalid years for the query.
+     * 
+     */
+	private List<Integer> invalidYears = new ArrayList<>();
+	
+	/**
      * Map of pairs (year and value), containing requested year range for the query.
      * 
      */
@@ -76,7 +84,7 @@ public class Query {
      * @param endYear		requested end year
      * @param queryDate		date and time when the query is made
      */
-	public Query(String indicatorCode, String countryCode, int startYear, int endYear, Date queryDate) {
+	protected Query(String indicatorCode, String countryCode, int startYear, int endYear, Date queryDate) {
 		this.indicatorCode = indicatorCode;
 		this.countryCode = countryCode;
 		this.startYear = startYear;
@@ -144,7 +152,7 @@ public class Query {
 	 * Sets/Updates start year of the query.
 	 * 
 	 */
-	private void setStartYear(int startYear) {
+	protected void setStartYear(int startYear) {
 		this.startYear = startYear;
 	}
 	
@@ -152,19 +160,18 @@ public class Query {
 	 * Sets/Updates end year of the query.
 	 * 
 	 */
-	private void setEndYear(int endYear) {
+	protected void setEndYear(int endYear) {
 		this.endYear = endYear;
 	}
 
 	/**
      * Filters out the user-requested year range.
-     *
-     * @return  filteredMap     containing only required year range list
+     * 
      */
     protected void filter() {
 
         Map<Integer, Double> filteredMap = new HashMap<>();
-
+        
         for (Integer yearKey : getRawData().keySet()) {
             //case in which both start and end year is given
             if (getStartYear() != 0 && getEndYear() != 0) {   // "between [start year] to [end year]"
@@ -192,7 +199,7 @@ public class Query {
 	 * 
 	 * @return date in Date type
 	 */
-	public static Date convertToDate(String stringDate) {
+	protected static Date convertToDate(String stringDate) {
 		try {
 			return new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(stringDate);
 		} catch (ParseException e) {
@@ -243,8 +250,18 @@ public class Query {
 	 * @param year	key - specific year 
 	 * @param value	value - value that maps to the year
 	 */
-	public void addToYearValue(int year, double value) {
+	protected void addYearValue(int year, double value) {
 		yearValue.put(year, value);
+	}
+	
+	/**
+	 * Adds pair (year and value) to map, containing all years for the query.
+	 * 
+	 * @param year	key - specific year 
+	 * @param value	value - value that maps to the year
+	 */
+	protected void addInvalidYear(int year) {
+		invalidYears.add(year);
 	}
 	
 	/**
@@ -252,7 +269,7 @@ public class Query {
 	 * 
 	 * @return yearValue	map of unprocessed data containing pairs (year and value)
 	 */
-	private Map<Integer, Double> getRawData() {
+	protected Map<Integer, Double> getRawData() {
 		return yearValue;
 	}
 	
@@ -262,7 +279,7 @@ public class Query {
 	 * @return yearValue	map of filtered data containing pairs (year and value)
 	 * 						only requested year range
 	 */
-	public Map<Integer, Double> getData() {
+	private Map<Integer, Double> getData() {
 		return yearValueFiltered;
 	}
 	
@@ -306,7 +323,7 @@ public class Query {
 	 * Sets the title of the graph for the query.
 	 * 
 	 */
-	public void setTitle(String title) {
+	protected void setTitle(String title) {
 		this.title = title;
 	}
 	
@@ -314,8 +331,16 @@ public class Query {
 	 * Sets the colour of the line in the graph for the query.
 	 * 
 	 */
-	public void setColour(String colour) {
+	protected void setColour(String colour) {
 		this.colour = colour;
+	}
+	
+	/**
+	 * Sets the not filtered data.
+	 * 
+	 */
+	protected void setData(Map<Integer, Double> yearValue) {
+		this.yearValue = yearValue;
 	}
 	
 	/**
@@ -334,14 +359,39 @@ public class Query {
 	}
 	
 	/**
-	 * Updates the cache to ensure the latest parameter changes are saved to cache.
+	 * Returns a list of invalid years for the requested year range in this query. 
+	 * Display this list to the user to inform of missing years because no data is 
+	 * present for the following years in the api.worldbank.org. The message box should contain the following:
+	 * "For query INDICATOR COUNTRY for range STARTYEAR - ENDYEAR, there is no data for the
+	 * following years: LIST OF INVALID YEARS"
+	 * 
+	 * This way the user will be informed on why some years are missing from the graph.
+	 * 
+	 * @return the new list containing all invalid years
+	 */
+	public List<Integer> getInvalidYears() {
+		List<Integer> years = invalidYears;
+		years.removeIf( invalidYear -> {
+			return invalidYear < startYear || invalidYear > endYear;
+		});
+		
+		if (years.size() != 0) {
+			return years;
+		} else {
+			return null;
+		}
+		
+	}
+	
+	/**
+	 * Updates the query in cache to ensure the latest parameter changes are saved.
 	 * NB This must be called when graph is closed
 	 * (also call close all graphs when closing application,
 	 * each call on close graph will trigger this method)
 	 * 
 	 */
-	public void updateCache() {
-		CacheAPI.updateCache(indicatorCode, countryCode, startYear, endYear, title, colour);
+	public void update() {
+		CacheAPI.updateQuery(this);
 	}
 	
 	/**
@@ -349,17 +399,17 @@ public class Query {
 	 * 
 	 */
 	public void delete() {
-		CacheAPI.deleteQuery(indicatorCode, countryCode);
+		CacheAPI.deleteQuery(this);
 	}
 	
 	/**
-	 * FOR TESTING PURPOSE ONLY 
-	 * Prints all information about the query.
+	 * Format to print all information about the query to cache file.
 	 * 
-	 * @return indicatorCode, countryCode, startYear, endYear, queryDate, title, colour
+	 * @return indicatorCode, countryCode, startYear, endYear, queryDate, yearValue, title, colour
 	 */
 	public String toString() {
-		return indicatorCode + " " + countryCode + " " + startYear + " " + endYear + " " + queryDate + " " + title + " " + colour;
+		//TODO cache map
+		return indicatorCode + "/" + countryCode + "/" + startYear + "/" + endYear + "/" + queryDate + "/" + yearValue + "/" + title + "/" + colour;
 	}
 	
 	/**
@@ -369,14 +419,11 @@ public class Query {
 	 */
 	@Override
     public boolean equals(Object query) {
-        return this.indicatorCode.equals(countryCode) && this.countryCode.equals(countryCode);
+        if (this.indicatorCode.equals(((Query) query).getIndicatorCode()) 
+        		&& this.countryCode.equals(((Query) query).getCountryCode())) {
+        	return true;
+        }
+        return false;
     }
-
-//	 public static void main(String[] args) {
-//		 String date = "Mon Dec 12 01:22:00 GMT 2005";	 
-//		 System.out.println(convertToDate(date));
-//		 Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 1990, 2001, new Date());
-//		 System.out.println(q); 
-//	 }
 
 }

@@ -1,16 +1,17 @@
-package main.java.api;
+//package main.java.api;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Cache management: add, update and delete queries.
@@ -19,9 +20,165 @@ import java.util.List;
  * @author Haaris Memon
  */
 public class CacheAPI {
+	
+	/**
+     * List of queries in memory cache.
+     * 
+     */
+	private static List<Query> memoryCache = new ArrayList<>();
+
+    /**
+     * Adds a query to the list of memory cache.
+     *
+     */
+    protected static void addQuery(Query query) {
+    	int size = memoryCache.size();
+    	if (size > 30) {
+    		deleteOldestQuery();
+    	}
+    	memoryCache.add(query);
+    }
     
     /**
-     * Validates existence of cache.
+     * Updates a query in the list of queries in the memory cache.
+     *
+     */
+    protected static void updateQuery(Query query) {
+    	for (Query q : memoryCache) {
+            if (q.equals(query)) {
+            	int index = memoryCache.indexOf(q);
+            	memoryCache.remove(q);
+            	memoryCache.add(index, query);
+                return;
+            }
+        }
+    	System.out.println("=> Log.updateQuery: QU");
+        System.out.println("QUERY NOT FOUND");
+    }
+    
+    /**
+     * Verifies whether the query is in the list of queries in the memory cache or not.
+     *
+     * @param  query object to verify
+     * @return {@code true} if the query exists, and {@code false} otherwise.
+     */
+    private static boolean isPresent(Query query) {
+        for (Query q : memoryCache) {
+        	if (q.equals(query)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Finds the number of queries stored in the memory cache.
+     *
+     * @return  number of cached queries in the file
+     */
+    private static int cacheSize() {
+    	return memoryCache.size();
+    }
+    
+    /**
+     * Lists all queries from memory cache.
+     *
+     * @return list of queries in the memory cache.
+     */
+    public static List<Query> listCache() {
+    	return memoryCache;
+    }
+    
+    /**
+     * Deletes the oldest query in the cache.
+     * 
+     */
+    private static void deleteOldestQuery() {
+    	memoryCache.remove(cacheSize() - 1);
+    }
+    
+    /**
+     * Deletes the out-dated query in the cache
+     * i.e. a query which not queried in the same month and year
+     * 
+     */
+    private static void deleteOutdatedQuery(Query query) {
+    	deleteQuery(query);
+    }
+    
+    /**
+     * Removes a query from the list of queries in memory cache.
+     *
+     */
+    protected static void deleteQuery(Query query) {
+        for (Query q : memoryCache) {
+            if (q.equals(query)) {
+            	memoryCache.remove(q);
+                return;
+            }
+        }
+        // TODO
+        System.out.println("//////// QUERY NOT FOUND");
+    }
+    
+    /**
+     * Removes all the queries from the list of queries in memory cache.
+     * 
+     */
+    public static void clearCache() {
+        if (memoryCache.size() != 0) memoryCache.clear();
+    }
+    
+    /**
+     * Verifies whether the query is valid or not,
+     * i.e. not out-dated, query must be made in the same month and year to be valid
+     *
+     * @param  query object holding details about query made by the user
+     * @return {@code true} if query not expired, and {@code false} otherwise.
+     */
+    private static boolean isExpired(Query query) {
+        String currectDate = new SimpleDateFormat("MM.yyyy").format(new Date());
+        if (query.getMonthYear().equals(currectDate)) { // data must be cached in the same month to be valid
+            System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE");
+            return false;
+        } else {
+        	System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE BUT OUTDATED");
+        	if (WorldBankAPI.connectionPresent()) {
+        		System.out.println("=> Log.fetchOffline: CONNECTION IS PRESENT SO DATA FOUND WILL BE DELETED");
+                deleteOutdatedQuery(query);
+                return true;
+        	} else {
+        		//TODO
+        		System.out.println("//////////!!!!!!!!!!! INFORM THE USER !!!!!!!!!!!!\\\\\\\\\\\\");
+                System.out.println("=> Log.fetchOffline: CONNECTION IS !!NOT!! PRESENT SO USE OUTDATED QUERY i.e. QUERY FROM NOT THE SAME MONTH");
+        	}
+        }
+		return false;
+    }
+    
+    /**
+     * Returns query holding data with unprocessed year range from cache.
+     *
+     * @param  query object holding details about query made by the user
+     * @return query object holding data with unprocessed year range
+     */
+    protected static Query fetchOffline(Query query) {
+    	for (Query q : memoryCache) {
+            if (q.equals(query)) {
+            	if (!isExpired(q)) {
+            		q.setStartYear(query.getStartYear());
+                	q.setEndYear(query.getEndYear());
+            		return q;
+            	}
+            }
+        }
+        // TODO
+        System.out.println("//////// QUERY NOT FOUND OR DELETED BECAUSE OUTDATED");
+    	return null;
+    }
+    
+    /**
+     * Verifies existence of cache.
      *
      * @return cache cache file or null if cache file does not exist
      */
@@ -33,256 +190,46 @@ public class CacheAPI {
         }
         return cache;
     }
-
-    /**
-     * Saves the query to file.
-     *
-     * @param query   query object holding data about query made by the user
-     * @param rawData unprocessed requested data in JSON string format
-     */
-    protected static void cacheQuery(Query query, String rawData) {
-        File cache = getCacheFile();
-        if (cache == null) cache = new File("cache.txt");
-        try {
-            PrintWriter writer = new PrintWriter(new FileWriter(cache, true));
-            checkLimit();
-            writer.println(query.getIndicatorCode() + "/" 
-                            + query.getCountryCode() + "/" 
-                                + query.getStartYear() + "/" 
-                                    + query.getEndYear() + "/" 
-                                        + query.getDateOriginal() + "/" 
-                                            + rawData + "/"
-            									+ query.getTitle() + "/"
-            										+ query.getColour()
-            );
-            writer.close();
-            System.out.println("=> Log.cache: DATA CACHED");
-        } catch (IOException e) {
-            System.out.println("=> Log.cache: ERROR");
-        }
-    }
-
-    /**
-     * Loads raw data from cache.
-     *
-     * @param   query   query object holding data about query made by the user
-     * @return  rawData unprocessed requested data in JSON string format, OR null if:
-     *                  - data stored is outdated i.e it is not cached in the same month and year
-     *                  - required data is not in cache
-     */
-    protected static String fetchOffline(Query query) {
-        String rawData = null;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(getCacheFile()));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split("/");
-                if (values[0].equalsIgnoreCase(query.getIndicatorCode()) 
-                        && values[1].equalsIgnoreCase(query.getCountryCode()) ) { // countryCode AND indicator FOUND
-                    if (!isExpired(query)) rawData = values[5];
-                    break;
-                } else {
-                    System.out.println("=> Log.fetchOffline: DATA NOT FOUND IN CACHE");
-                }
-            }
-            reader.close();
-        } catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("=> Log.fetchOffline: ERROR OR NO CACHE EXIST");
-        }
-        return rawData;
-    }
     
     /**
-     * Validates whether the query is valid or not,
-     * i.e. not out-dated/query must be made in the same month and year to be valid
+     * Parses String from cache file to query's map (yearValue) of not filtered data
+     * i.e. all years for this (indicator and country)
      *
-     * @param   query   query object holding data about query made by the user
-     * @return          {@code true} if query not expired, and {@code false} otherwise.
+     * @param  query object holding details about query made by the user
+     * @return query object holding data with unprocessed year range
      */
-    private static boolean isExpired(Query query) {
-        String currectDate = new SimpleDateFormat("MM.yyyy").format(new Date());
-        if (query.getMonthYear().equals(currectDate)) { // data must be cached in the same month to be valid
-            System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE");
-            return false;
-        } else {
-        	System.out.println("=> Log.fetchOffline: DATA FOUND IN CACHE BUT OUTDATED");
-        	if (!WorldBankAPI.connectionPresent()) {
-        		System.out.println("=> Log.fetchOffline: CONNECTION IS PRESENT SO DATA FOUND WILL BE DELETED");
-                deleteOutdatedQuery(query);
-                return true;
-        	}
-        }
-        //TODO
-        System.out.println("//////////!!!!!!!!!!! INFORM THE USER !!!!!!!!!!!!\\\\\\\\\\\\");
-        System.out.println("=> Log.fetchOffline: CONNECTION IS !!NOT!! PRESENT SO USE OUTDATED QUERY");
-		return false;
-    }
+    private static Map<Integer, Double> parseStringToMap(String mapInString) {
+    	String str = mapInString;
+    	str = str.substring(1, str.length() - 1);
+        String[] pairs = str.split(",");
 
-    /**
-     * Finds the number of queries stored in the cache file.
-     *
-     * @return  number of cached queries in the file
-     */
-    private static int cacheSize() {
-        try {
-            LineNumberReader lnr = new LineNumberReader(new FileReader(getCacheFile()));
-            int size = 0;
-            while (lnr.readLine() != null) size++;
-            lnr.close();
-            return size;
-        } catch (IOException e) {
-            System.out.println("=> Log.cacheSize: ERROR");
-            return 0;
-        }
-    }
+        Map<Integer, Double> yearValue = new HashMap<>();               
 
-    /**
-     * Checks if number of cached queries is equal to 30 records.
-     * This methods makes sure the cache file is not too big.
-     * If number of records equals to 30 then delete the oldest query.
-     * 
-     */
-    private static void checkLimit() {
-        if (cacheSize() == 30) { // limit of 30 queries to be store in the cache file
-        	//TODO
-        	System.out.println("//////////!!!!!!!!!!! INFORM THE USER THAT THE query WILL BE DELETED BECAUSE THE CACHE LIMIT REACHED, THIS IS FORCED AND THE USER HAVE NO CHOICE !!!!!!!!!!!!\\\\\\\\\\\\");
-            deleteOldestQuery();
-        }
-    }
-    
-    /**
-     * Deletes the oldest query in the cache.
-     * 
-     */
-    private static void deleteOldestQuery() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(getCacheFile()));
-            String[] values = reader.readLine().split("/");
-            reader.close();
-            deleteQuery(values[0], values[1]); // delete the oldest query i.e. first
-        } catch (IOException e) {
-        	System.out.println("=> Log.deleteOldestQuery: ERROR");
-        }
-    }
-    
-    /**
-     * Deletes the out-dated query in the cache
-     * i.e. a query which not queried in the same month and year
-     * 
-     */
-    private static void deleteOutdatedQuery(Query query) {
-    	deleteQuery(query.getIndicatorCode(), query.getCountryCode());
-    }
-    
-    // TODO check that here there is no need to check if the cache null or empty
-    /**
-     * Deletes specified query from the cache file.
-     *
-     * @param indicatorCode     indicator code of the query
-     * @param countryCode       country code of the query
-     */
-    protected static void deleteQuery(String indicatorCode, String countryCode) {
-        try {
-            File cache = getCacheFile(); 
-            File temp = new File("temp.txt");
-
-            BufferedReader reader1 = new BufferedReader(new FileReader(cache));
-            PrintWriter writer1 = new PrintWriter(new FileWriter(temp, true));
-
-            String line = null;
-            while ((line = reader1.readLine()) != null) {
-                String[] values = line.split("/");
-                if (values[0].equalsIgnoreCase(indicatorCode) 
-                        && values[1].equalsIgnoreCase(countryCode)) continue; // countryCode AND indicatorCode FOUND, skip
-                writer1.println(line);
-            }
-            writer1.close(); reader1.close();
-            
-            // copy updated list from temp file to cache file, cache file is overridden
-            BufferedReader reader2 = new BufferedReader(new FileReader(temp));
-            PrintWriter writer2 = new PrintWriter(new FileWriter(cache));
-            String tempLine = null;
-            while ((tempLine = reader2.readLine()) != null) writer2.println(tempLine);
-            writer2.close(); reader2.close();
-            
-            temp.delete();
-
-            System.out.println("=> Log.deleteQuery: QUERY REMOVED");
-        } catch (IOException e) {
-            System.out.println("=> Log.deleteQuery: ERROR");
+        for (String pair : pairs) {
+            String[] index = pair.split("=");
+            String key = index[0].trim();
+            String value = index[1].trim();
+            yearValue.put(Integer.parseInt(key), Double.parseDouble(value));
         }
         
+        return yearValue;
     }
-
-    /**
-     * Deletes all queries from the cache file i.e. deletes file.
-     * 
-     */
-    private static void clearCache() {
-        File file = new File("cache.txt");
-        file.delete();
-    }
-
-    protected static void updateCache(String indicatorCode, String countryCode, int startYear, int endYear, String title, String colour) {
-        try {
-            File cache = getCacheFile(); 
-            File temp = new File("temp.txt");
-
-            BufferedReader reader1 = new BufferedReader(new FileReader(cache));
-            PrintWriter writer1 = new PrintWriter(new FileWriter(temp, true));
-
-            String line = null;
-            while ((line = reader1.readLine()) != null) {
-                String[] values = line.split("/");
-                if (values[0].equalsIgnoreCase(indicatorCode) 
-                        && values[1].equalsIgnoreCase(countryCode)) {
-//                  System.out.println("FOUND " + values[0] + values[1]);
-//                  System.out.println(line);
-                    String newStartYear = Integer.toString(startYear);
-                    String newEndYear = Integer.toString(endYear);
-//                  System.out.println("NEW " + newStartYear);
-//                  System.out.println("NEW " + newEndYear);
-                    line = line.replace(values[2], newStartYear);
-                    line = line.replace(values[3], newEndYear);
-                    line = line.replace(values[6], title);
-                    line = line.replace(values[7], colour);
-//                    System.out.println(line);
-                }//TODO
-                writer1.println(line);
-            }
-            writer1.close(); reader1.close();
-            
-            // copy updated list from temp file to cache file, cache file is overridden
-            BufferedReader reader2 = new BufferedReader(new FileReader(temp));
-            PrintWriter writer2 = new PrintWriter(new FileWriter(cache));
-            String tempLine = null;
-            while ((tempLine = reader2.readLine()) != null) writer2.println(tempLine);
-            writer2.close(); reader2.close();
-            
-            temp.delete();
-
-            System.out.println("=> Log.deleteQuery: QUERY UPDATED");
-        } catch (IOException e) {
-            System.out.println("=> Log.deleteQuery: ERROR");
-        }
-    }
-
-    /**
-     * Lists all cached queries.
+	
+	/**
+     * Loads the list of queries from the cache file. Each line contains a query.
      *
-     * @return queries list of query object i.e. list of all cached queries
      */
-    public static List<Query> listCache() {
-        File cache = getCacheFile(); // if null then file does not exists
-        if (cache == null) return null;
-        else {
-            List<Query> queries = new ArrayList<Query>();
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(cache));
+    public static void loadFromFile() {
+    	List<Query> queries = new ArrayList<Query>();
+    	
+    	File cache = getCacheFile(); // if null then file does not exists
+        if (cache != null) {
+        	try (BufferedReader reader = new BufferedReader(new FileReader(getCacheFile()))) {
                 String line = null;
                 while ((line = reader.readLine()) != null) {
                     String[] values = line.split("/");
                     Query query = new Query(values[0], values[1], Integer.parseInt(values[2]), Integer.parseInt(values[3]), Query.convertToDate(values[4]));
+                    query.setData(parseStringToMap(values[5]));
                     query.setTitle(values[6]);
                     query.setColour(values[7]);
                     queries.add(query);
@@ -291,20 +238,25 @@ public class CacheAPI {
             } catch (IOException e) {
                 System.out.println("=> Log.fetchOffline: ERROR");
             }
-
-            return queries;
         }
-
+        memoryCache = queries;
     }
-
-//    public static void main(String[] args) throws IOException {
-//    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 0000, 0000, new Date());
-//    	q.setTitle("gaqqqqqqq1");
-//    	q.setColour("GREEN");
-//    	cacheQuery(q, "rawData bla bla");
-//    	q.updateCache();
-//    	System.out.println(cacheSize());
-//    	updateCache(q);
-//    	System.out.println(cacheSize());	
-//    }
+    
+    /**
+     * Saves the list of queries in memory cache to cache file. Each line contains a query.
+     * 
+     */
+    public static void saveToFile() {
+    	File cache = getCacheFile();
+    	if (cache == null) cache = new File("cache.txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(cache))) {
+            for (Query query : memoryCache) {
+                writer.write(query.toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+        	System.out.println("saveToFile ERROR");
+        }
+    }
+    
 }
