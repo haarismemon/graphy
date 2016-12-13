@@ -73,7 +73,10 @@ public class Graph {
         barChart.setTitle(name);
         pieChart.setTitle(name);
     }
-
+public void setYaxis(String unit){
+    lineChart.getYAxis().setLabel(unit);
+    barChart.getYAxis().setLabel(unit);
+}
     public String getTitle(){
         return title;
     }
