@@ -7,6 +7,8 @@ import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
 import main.java.api.Indicator;
 import main.java.api.Query;
+import javafx.scene.image.Image;
+
 
 /**
  * The controller of the graph view
@@ -59,10 +61,16 @@ public class GraphController {
 		EventHandler<CreateEvent> updateGraphHandler = new EventHandler<CreateEvent>() {
 			public void handle(CreateEvent event) {
 				Graph oldGraph = mainView.getInspectorPane().getSelectedGraph();
-				if(oldGraph.getQuery().getIndicatorCode().equals(event.getIndicator()) &&
-					oldGraph.getQuery().getCountryName().equals(event.getCountry())) {
-					System.out.println("UPDATE RANGE");
+				System.out.println(oldGraph.getQuery().getIndicatorName().equals(event.getIndicator()));
+				System.out.println(oldGraph.getQuery().getCountryName().equals(event.getCountry()));
+
+				if(oldGraph.getQuery().getIndicatorName().equals(event.getIndicator()) &&
+					oldGraph.getQuery().getCountryName().equals(event.getCountry()) &&
+					oldGraph.getGraphType().equals(event.getGraphType())) {
+					mainView.updateGraphRange(oldGraph, oldGraph.getQuery().getNewRange(Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()), event.getTitle(), event.getColor()),event.getTitle());
+
 				} else {
+
 					System.out.println("UPDATE NOT RANGE");
 					Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
 						if(query != null && !query.getData().isEmpty()) {
@@ -79,7 +87,6 @@ public class GraphController {
 						alert.setTitle("Information Dialog");
 						alert.setHeaderText("Invalid Search ");
 						alert.setContentText("The search you have made does not return a result.");
-
 						alert.showAndWait();
 					}
 				}

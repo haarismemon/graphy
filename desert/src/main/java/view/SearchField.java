@@ -3,10 +3,13 @@ package main.java.view;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
 import main.java.api.Indicator;
 import main.java.api.Query;
@@ -33,6 +36,18 @@ public class SearchField extends BorderPane {
 	public SearchField(MainView mainView){
 		super();
 		this.mainView = mainView;
+		VBox cacheClosePane = new VBox();
+		cacheClosePane.setAlignment(Pos.CENTER);
+		cacheClosePane.getStyleClass().add("cache-button-pane");
+		Pane cacheClose = new Pane();
+		cacheClose.getStyleClass().add("cache-button");
+
+		cacheClose.setOnMouseClicked((event) -> {
+			mainView.toggleCachePane();
+		});
+		cacheClosePane.getChildren().add(cacheClose);
+		this.setLeft(cacheClosePane);
+
 		comboBox = new ComboBox();
 		comboBox.setPrefSize(540, 55);
 		comboBox.setPromptText("GDP in Italy between 2010 to 2015");

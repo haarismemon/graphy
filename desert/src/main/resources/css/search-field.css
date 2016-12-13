@@ -10,7 +10,20 @@
   	 -fx-background-position: left 13 center;
   	 -fx-padding: 0 0 0 45;
 }
-
+.cache-button-pane {
+    -fx-padding: 0 30 0 0;
+}
+.cache-button {
+    -fx-background-image: url(/images/history.png);
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;  
+    -fx-background-color: transparent;
+    -fx-background-size: 50%;
+    -fx-pref-width: 50;
+    -fx-max-width: 50;
+    -fx-pref-height: 50;
+    -fx-max-height: 50;
+}
 .search-field-not-found {
 	 -fx-border: 2;
 	 -fx-border-color: #F05350;

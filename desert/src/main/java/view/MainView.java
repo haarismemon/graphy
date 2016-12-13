@@ -88,7 +88,7 @@ public class MainView extends Stage {
 		// Top bar containing the search bar
 		HBox topBar = new HBox();
 		topBar.setStyle("-fx-padding: 30 0 0 0;");
-		topBar.setAlignment(Pos.BOTTOM_CENTER);
+		topBar.setAlignment(Pos.BASELINE_CENTER);
 		topBar.setPrefHeight(80);
 		
 		//Add search field to the view
@@ -124,7 +124,6 @@ public class MainView extends Stage {
 
 		Button addButton = new Button("");
 		addButton.setOnAction((event) -> {
-			toggleCachePane();
 			newInspectorPane(true);
 			showInspectorPane();
 		});
@@ -260,6 +259,15 @@ public class MainView extends Stage {
 		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
+		printGraphs();
+	}
+
+	//Update a graph only in the range
+	public void updateGraphRange(Graph g, Query q, String title){
+		Graph graph = graphs.get(graphs.indexOf(g));
+		graph.reset();
+		graph.setGraphName(title);
+		graph.addSeries("",q);
 		printGraphs();
 	}
 
