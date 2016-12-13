@@ -40,6 +40,7 @@ public class GraphController {
 		EventHandler<CreateEvent> addGrapEndler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
 		    	Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
+		    	query.setColour(event.getColor());
 		    	if(query != null){
 		    		String title = event.getTitle();
 		    		System.out.println(title.isEmpty());
