@@ -6,11 +6,6 @@ import main.java.graph.Graph;
 import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
 import main.java.api.Query;
-<<<<<<< HEAD
-import javafx.scene.image.Image;
-=======
-
->>>>>>> 8497f56eb558257efb46a2d15a80444d3677b1a2
 import java.util.List;
 
 

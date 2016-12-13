@@ -43,7 +43,7 @@ public class CachedQueryPane extends BorderPane {
 		getStyleClass().add("query-container");	
 
 		StackPane p = new StackPane();
-		p.setStyle("-fx-padding-left: 10");
+		p.setStyle("-fx-padding-left: 20");
 		deleteButton = new Pane();
 		deleteButton.setOnMouseClicked((event) -> {
 			deleteCachedQueryAction.get().handle(new DeleteCachedQuery(query));
