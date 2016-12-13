@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * Gives access to indicator name, code
+ * Gives access to indicator name, code 
  * and list of valid indicators codes, units and descriptions.
  *
  * @author Haaris Memon
@@ -13,7 +13,7 @@ public class Indicator {
 
 	/**
 	 * A list of all indicators, maps indicator name to indicator code.
-	 *
+	 * 
 	 */
 	private final static Map<String, String> indicatorsNameCode;
 	static {
@@ -35,7 +35,7 @@ public class Indicator {
 
 	/**
 	 * A list of all indicators, maps indicator name to indicator unit.
-	 *
+	 * 
 	 */
 	private final static Map<String, String> indicatorsNameUnit;
 	static {
@@ -57,7 +57,7 @@ public class Indicator {
 
 	/**
 	 * A list of all indicators, maps indicator name to indicator description.
-	 *
+	 * 
 	 */
 	private final static Map<String, String> indicatorsNameInfo;
 	static {
@@ -143,7 +143,7 @@ public class Indicator {
 
 	/**
 	 * Returns description of the indicator.
-	 *
+	 * 
 	 * @param indicatorName		indicator name
 	 * @return indicator description
 	 */
@@ -183,19 +183,19 @@ public class Indicator {
 	}
 
 	/**
-	 * Checks if there is an Indicator that matches the input.
-	 *
-	 * @param input - input from the searchbar to check if it is a indicator.
-	 * @return true if an indicator exists that is the same as the input.
-	 */
-	public static boolean hasIndicator(String input) {
-		for(String indicator : getAllNames()) {
-			if(indicator.toLowerCase().equals(input.toLowerCase())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+ 	 * Checks if there is an Indicator that matches the input.
+ 	 *
+ 	 * @param input - input from the searchbar to check if it is a indicator.
+ 	 * @return true if an indicator exists that is the same as the input.
+ 	 */
+ 	public static boolean hasIndicator(String input) {
+ 		for(String indicator : getAllNames()) {
+ 			if(indicator.toLowerCase().equals(input.toLowerCase())) {
+ 				return true;
+ 			}
+ 		}
+ 
+ 		return false;
+ 	}
 
 }

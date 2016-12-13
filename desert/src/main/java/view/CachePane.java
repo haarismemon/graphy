@@ -15,6 +15,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import main.java.controller.CreateEvent;
 
+import java.util.List;
+
 
 public class CachePane extends BorderPane {
 
@@ -25,7 +27,7 @@ public class CachePane extends BorderPane {
 		super();
 		this.getStylesheets().add("css/cache-pane.css");
 		this.getStyleClass().add("inspector-pane");
-		this.setStyle("-fx-background-color: #E7E7E7");
+		this.setStyle("-fx-background-color: rgba(231,231,231,0.85)");
 		drawWidgets();
 	}
 
@@ -78,18 +80,24 @@ public class CachePane extends BorderPane {
 		}
 	}
 
+	public void removeCachePane(Query query){
+		for(Node q : container.getChildren()){
+			CachedQueryPane p = (CachedQueryPane)q;
+			if(p.getQuery() == query) {
+				container.getChildren().remove(q);
+			}
+		}
+	}
+
 	public void listQueryItems(){
 		container.getChildren().clear();
-//		for(Node q : container.getChildren()){
-//				System.out.println(q);
-//		}
 		container.getChildren().clear();
-		for(Query query : CacheAPI.listCache()){
-			CachedQueryPane q = new CachedQueryPane(query);
-			container.getChildren().add(q);
+		List<Query> listOfQueries = CacheAPI.listCache();
+		if(listOfQueries != null) {
+			for(Query query : listOfQueries){
+				CachedQueryPane q = new CachedQueryPane(query);
+				container.getChildren().add(q);
+			}
 		}
-//		for(Node q : container.getChildren()){
-//				System.out.println(q);
-//		}
 	}
 }

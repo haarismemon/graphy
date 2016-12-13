@@ -2,10 +2,18 @@ package main.java.controller;
 
 import javafx.event.Event;
 import javafx.scene.input.MouseEvent;
+import main.java.graph.Graph;
 
 public class DeleteEvent extends Event {
 
-	public DeleteEvent() {
+	private Graph g;
+
+	public DeleteEvent(Graph g) {
 		super(MouseEvent.MOUSE_PRESSED);
+		this.g  = g;
+	}
+
+	public Graph getGraph(){
+		return g;
 	}
 }

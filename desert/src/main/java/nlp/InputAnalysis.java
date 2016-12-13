@@ -2,7 +2,6 @@ package main.java.nlp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +9,12 @@ import java.util.regex.Pattern;
 import main.java.api.Indicator;
 import main.java.api.Country;
 
+/**
+ * This class represents analysing the input of the search and obtaining query information.
+ *
+ * @author Thomas Medvedev
+ * @author Haaris Memon
+ */
 public class InputAnalysis {
 	
 	

@@ -1,7 +1,6 @@
 package main.java.api;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -52,7 +51,10 @@ public class CacheAPI {
                                 + query.getStartYear() + "/" 
                                     + query.getEndYear() + "/" 
                                         + query.getDateOriginal() + "/" 
-                                            + rawData);
+                                            + rawData + "/"
+            									+ query.getTitle() + "/"
+            										+ query.getColour()
+            );
             writer.close();
             System.out.println("=> Log.cache: DATA CACHED");
         } catch (IOException e) {
@@ -121,7 +123,7 @@ public class CacheAPI {
      *
      * @return  number of cached queries in the file
      */
-    public static int cacheSize() {
+    private static int cacheSize() {
         try {
             LineNumberReader lnr = new LineNumberReader(new FileReader(getCacheFile()));
             int size = 0;
@@ -220,8 +222,8 @@ public class CacheAPI {
         File file = new File("cache.txt");
         file.delete();
     }
-    
-    public static void updateCache(Query query) {
+
+    protected static void updateCache(String indicatorCode, String countryCode, int startYear, int endYear, String title, String colour) {
         try {
             File cache = getCacheFile(); 
             File temp = new File("temp.txt");
@@ -232,16 +234,18 @@ public class CacheAPI {
             String line = null;
             while ((line = reader1.readLine()) != null) {
                 String[] values = line.split("/");
-                if (values[0].equalsIgnoreCase(query.getIndicatorCode()) 
-                        && values[1].equalsIgnoreCase(query.getCountryCode())) {
+                if (values[0].equalsIgnoreCase(indicatorCode) 
+                        && values[1].equalsIgnoreCase(countryCode)) {
 //                  System.out.println("FOUND " + values[0] + values[1]);
 //                  System.out.println(line);
-                    String newStartYear = Integer.toString(query.getStartYear());
-                    String newEndYear = Integer.toString(query.getEndYear());
+                    String newStartYear = Integer.toString(startYear);
+                    String newEndYear = Integer.toString(endYear);
 //                  System.out.println("NEW " + newStartYear);
 //                  System.out.println("NEW " + newEndYear);
                     line = line.replace(values[2], newStartYear);
                     line = line.replace(values[3], newEndYear);
+                    line = line.replace(values[6], title);
+                    line = line.replace(values[7], colour);
                     System.out.println(line);
                 }//TODO
                 writer1.println(line);
@@ -270,30 +274,37 @@ public class CacheAPI {
      */
     public static List<Query> listCache() {
         File cache = getCacheFile(); // if null then file does not exists
-        if (cache == null) System.out.println("=> Log.deleteQuery: ERROR IS GOOD, JUST NEED TO HANDLE THIS TODO");
-        List<Query> queries = new ArrayList<Query>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(cache));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split("/");
-                Query query = new Query(values[0], values[1], Integer.parseInt(values[2]), Integer.parseInt(values[3]), Query.convertToDate(values[4]));
-                queries.add(query);
+        if (cache == null) return null;
+        else {
+            List<Query> queries = new ArrayList<Query>();
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(cache));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    String[] values = line.split("/");
+                    Query query = new Query(values[0], values[1], Integer.parseInt(values[2]), Integer.parseInt(values[3]), Query.convertToDate(values[4]));
+                    query.setTitle(values[6]);
+                    query.setColour(values[7]);
+                    queries.add(query);
+                }
+                reader.close();
+            } catch (IOException e) {
+                System.out.println("=> Log.fetchOffline: ERROR");
             }
-            reader.close();
-        } catch (IOException e) {
-            System.out.println("=> Log.fetchOffline: ERROR");
+
+            return queries;
         }
 
-        return queries;
     }
 
-    public static void main(String[] args) throws IOException {
-    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 1990, 2001, new Date());
-    	System.out.println(cacheSize());
-    	updateCache(q);
-    	System.out.println(cacheSize());
-    	
-    	
-    }
+//    public static void main(String[] args) throws IOException {
+//    	Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 0000, 0000, new Date());
+//    	q.setTitle("gaqqqqqqq1");
+//    	q.setColour("GREEN");
+//    	cacheQuery(q, "rawData bla bla");
+//    	q.updateCache();
+//    	System.out.println(cacheSize());
+//    	updateCache(q);
+//    	System.out.println(cacheSize());	
+//    }
 }

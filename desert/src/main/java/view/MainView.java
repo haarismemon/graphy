@@ -14,8 +14,6 @@ import main.java.controller.GraphController;
 import main.java.api.Query;
 import java.util.List;
 import javafx.event.EventHandler;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import java.util.ArrayList;
 import main.java.controller.SelectEvent;
 
@@ -24,6 +22,7 @@ import main.java.controller.SelectEvent;
  * This class represents the main view with all its components
  * 
  * @author pietrocalzini
+ * @author Haaris Memon
  */
 
 public class MainView extends Stage {
@@ -76,8 +75,8 @@ public class MainView extends Stage {
 		
 		//Cache history
 		cachePane = new CachePane();
-		cachePane.setPrefWidth(200);
-		cachePane.setMaxWidth(250);
+		cachePane.setPrefWidth(310);
+		cachePane.setMaxWidth(310);
 		superContainer.setAlignment(cachePane, Pos.CENTER_LEFT);
 		
 		//Root pane
@@ -88,11 +87,12 @@ public class MainView extends Stage {
 
 		// Top bar containing the search bar
 		HBox topBar = new HBox();
+		topBar.setStyle("-fx-padding: 30 0 0 0;");
 		topBar.setAlignment(Pos.BOTTOM_CENTER);
 		topBar.setPrefHeight(80);
 		
 		//Add search field to the view
-		SearchField searchField = new SearchField();
+		SearchField searchField = new SearchField(this);
 		topBar.getChildren().add(searchField);
 				
 		root.setTop(topBar);
@@ -102,11 +102,12 @@ public class MainView extends Stage {
 		graphSpace.setStyle("-fx-background-color: white");
 		graphSpace.setAlignment(Pos.CENTER);
 		
-//		//Label displayed when the application is launched and no graphs are shown
-//		beginningLabel = new Label("Start searching for one indicator or add a new graph");
-//		beginningLabel.getStyleClass().add("beginning-label");
-//		graphSpace.getChildren().add(beginningLabel);
-//		root.setCenter(graphSpace);
+		//Label displayed when the application is launched and no graphs are shown
+		beginningLabel = new Label("Start searching for one indicator or add a new graph");
+		beginningLabel.getStyleClass().add("beginning-label");
+		graphSpace.getChildren().add(beginningLabel);
+		root.setCenter(graphSpace);
+
 		graphContainer.setAlignment(Pos.CENTER);
 		graphContainer.getStyleClass().add("graph-container");
 		root.setCenter(graphContainer);
@@ -193,7 +194,9 @@ public class MainView extends Stage {
 	}
 
 	public void printGraphs(){
+		System.out.println(graphs.toString());
 		switch(getGraphNumber()){
+			case 0: root.setCenter(null); break;
 			case 1: root.setCenter(graphs.get(0).getGraph()); break;
 			case 2: 
 				HBox graphC2 = new HBox();
@@ -240,11 +243,28 @@ public class MainView extends Stage {
 	 *@param query - the query representing the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
-		System.out.println("ADD NEW GRAPH");
 		Graph centralGraph = new Graph(graphName);
-		centralGraph.addSeries("My Serie", query);
+		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
 		graphs.add(centralGraph);
 		printGraphs();
+	}
+
+	/**
+	 * Update a graph in the graph area
+	 * @param newGraphName - the name of the graph
+	 * @param newGraphType - the type of the graph
+	 * @param newQuery - the query representing the data to be plotted in the graph
+	 */
+	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery){
+		Graph centralGraph = new Graph(newGraphName);
+		centralGraph.addSeries("My Series", newQuery);
+		centralGraph.switchGraph(newGraphType);
+		int indexOfOldGraph = graphs.indexOf(oldGraph);
+		if(indexOfOldGraph != -1) {
+			graphs.remove(graphs.indexOf(oldGraph));
+			graphs.add(indexOfOldGraph, centralGraph);
+			printGraphs();
+		}
 	}
 }

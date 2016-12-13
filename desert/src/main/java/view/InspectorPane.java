@@ -29,24 +29,28 @@ import main.java.controller.DeleteEvent;
 import java.awt.*;
 import java.util.Arrays;
 import main.java.api.Country;
+import main.java.graph.Graph;
 
 
 /**
  * This class represents the inspector pane, containing all the options to change graph parameters
  * @author pietrocalzini
+ * @author Haaris Memon
  */
 public class InspectorPane extends BorderPane{
 	//Option Pane
 	private GridPane optionPane;
 	//Delete button
 	private Button deleteButton;
-	//Update/create button
+	//create button
+	private Button createButton;
+	//Update button
 	private Button updateButton;
 
 	//List of supported graph types
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
 	//List of supported graph colors and tints
-	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow","Orange");
+	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow", "Orange", "Green", "Purple", "Black");
 	//List of all supoorted countries
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getAllNames()));
 	//List of all supported indicators (full names)
@@ -69,8 +73,16 @@ public class InspectorPane extends BorderPane{
 
 	//Create a new graph action
 	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+
+	//Update graph action
+	private ObjectProperty<EventHandler<CreateEvent>> updateButtonAction = new SimpleObjectProperty<EventHandler<CreateEvent>>();
+
 	//Delete graph action
 	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction = new SimpleObjectProperty<EventHandler<DeleteEvent>>();
+
+	//The selected graph 
+	private Graph selectedGraph;
+	private HBox buttonPane;
 
 	public InspectorPane(){
 		super();
@@ -81,7 +93,7 @@ public class InspectorPane extends BorderPane{
 	}
 
 	private void drawWidgets() {
-		HBox buttonPane = new HBox();
+		buttonPane = new HBox();
 		buttonPane.setPrefHeight(60);
 		buttonPane.setAlignment(Pos.CENTER);
 		buttonPane.setSpacing(60.0);
@@ -89,23 +101,30 @@ public class InspectorPane extends BorderPane{
 		deleteButton = new Button("Delete");
 
 		deleteButton.setOnAction((event) -> {
-			deleteButtonAction.get().handle(new DeleteEvent());
+			deleteButtonAction.get().handle(new DeleteEvent(selectedGraph));
 		});
-
 		deleteButton.getStyleClass().add("button");
 		deleteButton.getStyleClass().add("delete");
 		buttonPane.getChildren().add(deleteButton);
 
-		updateButton = new Button("Create");
-
-		updateButton.setOnAction((event) -> {
+		createButton = new Button("create");
+		//TODO need to change button action for create button and upate button
+		createButton.setOnAction((event) -> {
 			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 		});
 
+		createButton.getStyleClass().add("button");
+		createButton.getStyleClass().add("update");
+		buttonPane.getChildren().add(createButton);
+
+		updateButton = new Button("update");
+		updateButton.setOnAction((event) -> {
+			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
+		});	
 		updateButton.getStyleClass().add("button");
 		updateButton.getStyleClass().add("update");
-		buttonPane.getChildren().add(updateButton);
-
+//		buttonPane.getChildren().add(updateButton);
+		
 		HBox topPane = new HBox();
 		topPane.setAlignment(Pos.CENTER_LEFT);
 		topPane.setPrefHeight(5);
@@ -313,14 +332,19 @@ public class InspectorPane extends BorderPane{
 	 * Set the create button to UPDATE mode
 	 */
 	public void setUpdate(){
-		updateButton.setText("Update");
+//		System.out.println("CREATE");
+//		updateButton.setText("Update");
+		buttonPane.getChildren().clear();
+		buttonPane.getChildren().addAll(deleteButton, updateButton);
 	}
 
 	/**
 	 * Set the create button to CREATE mode
 	 */
 	public void setADD(){
-		updateButton.setText("Create");
+//		updateButton.setText("Create");
+		buttonPane.getChildren().clear();
+		buttonPane.getChildren().addAll(deleteButton, createButton);
 	}
 
 	/**
@@ -365,6 +389,9 @@ public class InspectorPane extends BorderPane{
 			case "Yellow": return "#FFEF58";
 			case "Blue": return "#29B7F7";
 			case "Orange": return "#FFA826";
+			case "Green": return "#009b0f";
+			case "Purple": return "#7800c4";
+			case "Black": return "#000000";
 			default: return "#F05350";
 		}
 	}
@@ -373,14 +400,18 @@ public class InspectorPane extends BorderPane{
 	 * @return get the start year of the graph
 	 */
 	public String getStartYear(){
-		return startYearComboBox.getText();
+		String startDateString = startYearComboBox.getText();
+		if(startDateString.equals("")) return "0";
+		else return startDateString;
 	}
 
 	/**
 	 * @return get the start end of the graph
 	 */
 	public String getEndYear(){
-		return endYearComboBox.getText();
+		String endDateString = endYearComboBox.getText();
+		if(endDateString.equals("")) return "0";
+		else return endDateString;
 	}
 
 
@@ -450,10 +481,32 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
+	 * create handler for the 'update graph' button
+	 */
+	public void updateButtonHandler(EventHandler<CreateEvent> handler) {
+		updateButtonAction.set(handler);
+	}
+
+	/**
 	 * create handler for the 'delete graph' button
 	 */
 	public void deleteButtonHandler(EventHandler<DeleteEvent> handler) {
 		deleteButtonAction.set(handler);
 	}
 
+	/**
+	 * Gets the graph that is selected and stored in the Inspector Pane
+	 * @return The selected graph object
+	 */
+	public Graph getSelectedGraph() {
+		return selectedGraph;
+	}
+
+	/**
+	 * Set and store the graph object that is selected
+	 * @param selectedGraph - Graph object that is selected in the main view
+	 */
+	public void setSelectedGraph(Graph selectedGraph) {
+		this.selectedGraph = selectedGraph;
+	}
 }

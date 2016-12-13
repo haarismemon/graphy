@@ -41,7 +41,19 @@ public class Query {
      * The date and time when the query was made.
      * 
      */
-	private Date queryDate;
+	private final Date queryDate;
+	
+	/**
+     * The title of the query.
+     * 
+     */
+	private String title;
+	
+	/**
+     * The colour of the query.
+     * 
+     */
+	private String colour;
 	
 	/**
      * Map of pairs (year and value), containing all years for the query.
@@ -70,6 +82,8 @@ public class Query {
 		this.startYear = startYear;
 		this.endYear = endYear;
 		this.queryDate = queryDate;
+		this.title = getIndicatorName() + " in " + getCountryName() + " for " + startYear + " - " + endYear;
+		this.colour = "RED";
 	}
 	
 	/**
@@ -87,7 +101,7 @@ public class Query {
 	 * @return indicator name
 	 */
 	public String getIndicatorName() {
-		return Indicator.getName(this.indicatorCode);
+		return Indicator.getName(indicatorCode);
 	}
 	
 	/**
@@ -105,7 +119,7 @@ public class Query {
 	 * @return country name
 	 */
 	public String getCountryName() {
-		return Country.getName(this.countryCode);
+		return Country.getName(countryCode);
 	}
 	
 	/**
@@ -140,19 +154,6 @@ public class Query {
 	 */
 	private void setEndYear(int endYear) {
 		this.endYear = endYear;
-	}
-	
-	/**
-	 * Updates year range of the query.
-	 * 
-	 * @param startYear	start year to update
-	 * @param endYear	end year to update
-	 * @return list containing only required year range
-	 */
-	protected void updateRange(int startYear, int endYear) {
-		setStartYear(startYear);
-		setEndYear(endYear);
-		filter();
 	}
 
 	/**
@@ -283,10 +284,65 @@ public class Query {
 		return Indicator.getInfo(getIndicatorName());
 	}
 	
-//	public String update() {
-//		CacheAPI.updateCache();
-		//TODO
-//	}
+	/**
+	 * Returns title of the graph for the query.
+	 * 
+	 * @return title title of the graph
+	 */
+	public String getTitle() {
+		return title;
+	}
+	
+	/**
+	 * Returns colour of the line in the graph for the query.
+	 * 
+	 * @return colour colour of the line in the graph
+	 */
+	public String getColour() {
+		return colour;
+	}
+	
+	/**
+	 * Sets the title of the graph for the query.
+	 * 
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	/**
+	 * Sets the colour of the line in the graph for the query.
+	 * 
+	 */
+	public void setColour(String colour) {
+		this.colour = colour;
+	}
+	
+	/**
+	 * Updates year range of the query to display.
+	 * 
+	 * @param startYear	start year to update
+	 * @param endYear	end year to update
+	 * @param title		title to set/update
+	 * @param colour	colour to set/update
+	 * @return the new list containing only required year range
+	 */
+	public Map<Integer, Double> getNewRange(int startYear, int endYear, String title, String colour) {
+		setStartYear(startYear); setEndYear(endYear); setTitle(title); setColour(colour);
+		filter();
+		return getData();
+	}
+	
+	/**
+	 * Updates the cache to ensure the latest parameter changes are saved to cache.
+	 * NB This must be called when graph is closed
+	 * (also call close all graphs when closing application,
+	 * each call on close graph will trigger this method)
+	 * 
+	 */
+	public void updateCache() {
+		CacheAPI.updateCache(indicatorCode, countryCode, startYear, endYear, title, colour);
+	}
 	
 	/**
 	 * Deletes this query from cache.
@@ -295,11 +351,22 @@ public class Query {
 	public void delete() {
 		CacheAPI.deleteQuery(indicatorCode, countryCode);
 	}
- 
+	
+	/**
+	 * FOR TESTING PURPOSE ONLY 
+	 * Prints all information about the query.
+	 * 
+	 * @return indicatorCode, countryCode, startYear, endYear, queryDate, title, colour
+	 */
 	public String toString() {
-		return indicatorCode + " " + countryCode + " " + startYear + " " + endYear + " " + queryDate;
+		return indicatorCode + " " + countryCode + " " + startYear + " " + endYear + " " + queryDate + " " + title + " " + colour;
 	}
-
+	
+	/**
+	 * Compares Query objects to check if indicator and country code is the same.
+	 * 
+	 * @return {@code true} if query's indicator and country code is the same, and {@code false} otherwise.
+	 */
 	@Override
     public boolean equals(Object query) {
         return this.indicatorCode.equals(countryCode) && this.countryCode.equals(countryCode);
@@ -308,6 +375,8 @@ public class Query {
 //	 public static void main(String[] args) {
 //		 String date = "Mon Dec 12 01:22:00 GMT 2005";	 
 //		 System.out.println(convertToDate(date));
+//		 Query q = new Query("NY.GDP.MKTP.KD.ZG", "GB", 1990, 2001, new Date());
+//		 System.out.println(q); 
 //	 }
 
 }
