@@ -16,6 +16,8 @@ import javafx.scene.input.InputEvent;
 import main.java.api.Query;
 import main.java.api.CacheAPI;
 import java.io.IOException;
+import main.java.api.Indicator;
+import main.java.api.Country;
 
 /**
  * The controller of the graph view
@@ -91,6 +93,10 @@ public class GraphController {
 		 EventHandler<DeleteEvent> deleteGraphHandler = new EventHandler<DeleteEvent>() {
 		    public void handle(DeleteEvent event) {
 		    	System.out.println("DELETED");
+		    	System.out.println(Indicator.getCode(event.getIndicator()));
+		    	System.out.println(Country.getCode(event.getCountry()));
+
+		    	mainView.deleteGraph(new Query(Indicator.getCode(event.getIndicator()),Country.getCode(event.getCountry()),0,0,null));
 		        event.consume();
 		    }
 		  };

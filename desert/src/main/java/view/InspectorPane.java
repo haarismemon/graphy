@@ -96,7 +96,7 @@ public class InspectorPane extends BorderPane{
 		deleteButton = new Button("Delete");
 
 		deleteButton.setOnAction((event) -> {
-			deleteButtonAction.get().handle(new DeleteEvent());
+			deleteButtonAction.get().handle(new DeleteEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 		});	
 
 		deleteButton.getStyleClass().add("button");
