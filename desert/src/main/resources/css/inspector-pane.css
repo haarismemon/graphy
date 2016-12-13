@@ -84,3 +84,7 @@
     -fx-background-color: #EBEBEB;
     -fx-text-fill: #242424;
 }
+.toggle-button {
+	-fx-background-color: #DADADA;
+	-fx-border-radius: 4 0 0 4;
+}

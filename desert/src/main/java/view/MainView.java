@@ -66,7 +66,8 @@ public class MainView extends Stage {
 
 		// Set minimum size of the window
 		setMinHeight(650);
-		
+		setMinWidth(1200);
+
 		superContainer = new StackPane();
 		
 		container = new BorderPane();

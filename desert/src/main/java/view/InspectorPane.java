@@ -94,11 +94,11 @@ public class InspectorPane extends BorderPane{
 	private void drawWidgets() {
 		searchButton = new Button("Search");
 		searchButton.setPrefSize(300, 40);
-		searchButton.setStyle("-fx-base: #979797;");
+		searchButton.getStyleClass().add("toggle-button");
+		
 		infoButton = new Button("Information");
 		infoButton.setPrefSize(300, 40);
-		infoButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
-//		infoButton.setTextFill(Color.web("#000000"));
+		infoButton.getStyleClass().add("toggle-button");
 
 		buttonPane = new HBox();
 		buttonPane.setPrefHeight(60);
@@ -265,14 +265,9 @@ public class InspectorPane extends BorderPane{
 
 		optionPane.setPadding(new Insets(0,0,0,25));
 
-//		setTop(toggleButtons);
-
 		searchButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				searchButton.setStyle("-fx-base: #979797;");
-				infoButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
-//				infoButton.setTextFill(Color.web("#000000"));
 				inspectorContents.getChildren().clear();
 				inspectorContents.getChildren().add(optionPane);
 			}
@@ -283,7 +278,6 @@ public class InspectorPane extends BorderPane{
 			public void handle(ActionEvent event) {
 				infoButton.setStyle("-fx-base: #979797;");
 				searchButton.setStyle("-fx-text-fill: black; -fx-base: #cbcbcb;");
-//				searchButton.setTextFill(Color.web("#000000"));
 
 				inspectorContents.getChildren().clear();
 				Label titleLabel = new Label(indicatorComboBox.getSelectionModel().getSelectedItem());
