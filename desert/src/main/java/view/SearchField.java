@@ -2,6 +2,7 @@ package main.java.view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -24,6 +25,7 @@ public class SearchField extends BorderPane {
 
 	private ComboBox comboBox;
 	private MainView mainView;
+	private final TextField textField;
 
 	/**
 	 * Create a custom search field
@@ -41,7 +43,7 @@ public class SearchField extends BorderPane {
 			comboBox.getItems().add(s);
 		}
 
-		TextField textField = new TextField();
+		textField = new TextField();
 		textField.setPrefSize(540, 55);
 
 		Pane pane = new Pane(comboBox);
@@ -83,6 +85,7 @@ public class SearchField extends BorderPane {
 		comboBox.getEditor().setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
+				removeNotFound();
 				String s = comboBox.getEditor().getText();
 				if (s.equals("")) comboBox.hide();
 				else comboBox.show();
@@ -100,6 +103,7 @@ public class SearchField extends BorderPane {
 		textField.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
+				removeNotFound();
 				if (textField.getText().equals("")) {
 					comboBox.getEditor().clear();
 					pane.getChildren().remove(textField);
@@ -163,7 +167,16 @@ public class SearchField extends BorderPane {
 				};
 
 				mainView.selectGraphHandlers(selectGraphHandler);
+			} else {
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setTitle("Information Dialog");
+				alert.setHeaderText("Invalid Search ");
+				alert.setContentText("The search you have made does not return a result.");
+
+				alert.showAndWait();
 			}
+		} else {
+			setNotFound();
 		}
 	}
 
@@ -171,13 +184,15 @@ public class SearchField extends BorderPane {
 	 * Change search field style for not found queries
 	 */
 	public void setNotFound(){
-		getStyleClass().add("search-field-not-found");
+		textField.getStyleClass().add("search-field-not-found");
+		comboBox.getStyleClass().add("search-field-not-found");
 	}
 	
 	/**
 	 * Reset search field to normal mode
 	 */
 	public void removeNotFound(){
-		getStyleClass().remove("search-field-not-found");
+		textField.getStyleClass().remove("search-field-not-found");
+		comboBox.getStyleClass().remove("search-field-not-found");
 	}
 }

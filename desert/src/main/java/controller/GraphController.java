@@ -1,23 +1,12 @@
 package main.java.controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import main.java.graph.Graph;
 import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
 
-import java.util.HashMap;
-import java.util.Map;
-import javafx.event.EventHandler;
-import javafx.scene.input.InputEvent;
 import main.java.api.Query;
-import main.java.api.CacheAPI;
-import java.io.IOException;
-import main.java.api.Indicator;
-import main.java.api.Country;
 
 /**
  * The controller of the graph view
@@ -40,7 +29,8 @@ public class GraphController {
 		EventHandler<CreateEvent> addGrapEndler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
 		    	Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-		    	if(query != null){
+				System.out.println("Data: " + query.getData().isEmpty());
+				if(query != null && !query.getData().isEmpty()){
 					query.setColour(event.getColor());
 					String title = event.getTitle();
 		    		System.out.println(title.isEmpty());
@@ -49,7 +39,12 @@ public class GraphController {
 		    		}
 		    		mainView.addGraph(title,event.getGraphType(),query);
 		    	} else {
-		    		mainView.getSearchField().setNotFound();
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText("Invalid Search ");
+					alert.setContentText("The search you have made does not return a result.");
+
+					alert.showAndWait();
 				}
 
 		    	//UPDATE SELECTROS Select graph from the workspace
@@ -64,7 +59,7 @@ public class GraphController {
 		EventHandler<CreateEvent> updateGraphHandler = new EventHandler<CreateEvent>() {
 			public void handle(CreateEvent event) {
 				Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-				if(query != null) {
+				if(query != null && !query.getData().isEmpty()) {
 					String title = event.getTitle();
 					System.out.println(title.isEmpty());
 					if (title.isEmpty()) {
@@ -75,6 +70,13 @@ public class GraphController {
 
 
 					createEventHandler(mainView);
+				} else {
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText("Invalid Search ");
+					alert.setContentText("The search you have made does not return a result.");
+
+					alert.showAndWait();
 				}
 			}
 		};

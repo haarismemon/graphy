@@ -130,17 +130,20 @@ public class WorldBankAPI {
      * @param rawData	unprocessed requested data in JSON string format
      */
     private static void parse(Query query, String rawData) {
-        JSONArray array = new JSONArray(rawData).getJSONArray(1);
+        JSONArray originalArray = new JSONArray(rawData);
+        if(originalArray != null) {
+            JSONArray array = originalArray.getJSONArray(1);
 //        System.out.println("JSON array: " + array);
-        
-        for (int i = 0; i < array.length(); ++i) {
-            JSONObject object = array.getJSONObject(i);
-            try {
-                Integer year = Integer.parseInt(object.getString("date"));
-                Double value = Double.parseDouble(object.getString("value"));
-                query.addToYearValue(year, value);
-            } catch (JSONException e) {
-                // do nothing, the entry is not inserted into tree map
+
+            for (int i = 0; i < array.length(); ++i) {
+                JSONObject object = array.getJSONObject(i);
+                try {
+                    Integer year = Integer.parseInt(object.getString("date"));
+                    Double value = Double.parseDouble(object.getString("value"));
+                    query.addToYearValue(year, value);
+                } catch (JSONException e) {
+                    // do nothing, the entry is not inserted into tree map
+                }
             }
         }
     }
