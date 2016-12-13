@@ -14,6 +14,7 @@ import main.java.api.CacheAPI;
 import main.java.controller.DeleteCachedQuery;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import main.java.api.CacheAPI;
 import main.java.controller.CreateEvent;
 
 import java.util.List;
@@ -63,7 +64,11 @@ public class CachePane extends BorderPane {
 		buttonPane.setSpacing(60.0);
 		
 		Button clearCache = new Button("Clear cache history");
-		
+		clearCache.setOnAction((event) -> {
+			CacheAPI.clearCache();
+			listQueryItems();
+		});
+
 		clearCache.getStyleClass().add("button");
 		buttonPane.getChildren().add(clearCache);
 		setBottom(buttonPane);

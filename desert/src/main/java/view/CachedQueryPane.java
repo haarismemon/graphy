@@ -37,7 +37,7 @@ public class CachedQueryPane extends BorderPane {
 		super();
 		this.mainView = mainView;
 		this.query = q;
-		this.setMinWidth(300);
+		this.setMinWidth(250);
 		// setAlignment(Pos.CENTER);
 		getStylesheets().add("css/cache-query-pane.css");
 		getStyleClass().add("query-container");	
