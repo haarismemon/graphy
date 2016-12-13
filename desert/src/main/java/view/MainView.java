@@ -4,10 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import main.java.graph.Graph;
 import main.java.controller.GraphController;
@@ -137,9 +134,7 @@ public class MainView extends Stage {
 		container.setCenter(root);
 		
 		//Inspector
-		inspector = new InspectorPane();
-		inspector.setPrefWidth(300);
-		container.setRight(inspector);
+		newInspectorPane();
 
 		Scene scene = new Scene(superContainer);
 
@@ -273,5 +268,15 @@ public class MainView extends Stage {
 			graphs.add(indexOfOldGraph, centralGraph);
 			printGraphs();
 		}
+	}
+
+	public void hideInspectorPane() {
+		container.setRight(null);
+	}
+
+	public void newInspectorPane() {
+		inspector = new InspectorPane();
+		inspector.setPrefWidth(300);
+		container.setRight(inspector);
 	}
 }
