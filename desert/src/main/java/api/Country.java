@@ -22,6 +22,7 @@ public class Country {
      * @return 	2-letter country code or null if country not found
      */
 	public static String getCode(String countryName) {
+		if(countryName == null) return null;
 		if(countryName.toLowerCase().equals("world")) return "1W";
 		else {
 			for (String code : countries) {
@@ -39,6 +40,7 @@ public class Country {
      * @return 	country name or null if country not found
      */
 	static String getName(String countryCode) {
+		if(countryCode == null) return null;
 		if(countryCode.toLowerCase().equals("1w")) return "world";
 		else {
 			for (String code : countries) {
