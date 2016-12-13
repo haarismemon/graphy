@@ -22,11 +22,14 @@ public class Country {
      * @return 	2-letter country code or null if country not found
      */
 	public static String getCode(String countryName) {
-		for (String code : countries) {
-			if (countryName.toLowerCase().equals(new Locale("en", code).getDisplayCountry().toLowerCase())) 
-				return code;
+		if(countryName.toLowerCase().equals("world")) return "1W";
+		else {
+			for (String code : countries) {
+				if (countryName.toLowerCase().equals(new Locale("en", code).getDisplayCountry().toLowerCase()))
+					return code;
+			}
+			return null;
 		}
-		return null;
     }
 	
 	/**
@@ -36,11 +39,14 @@ public class Country {
      * @return 	country name or null if country not found
      */
 	static String getName(String countryCode) {
-		for (String code : countries) {
-			if (countryCode.toLowerCase().equals(code.toLowerCase())) 
-				return new Locale("en", code).getDisplayCountry();
+		if(countryCode.toLowerCase().equals("1w")) return "world";
+		else {
+			for (String code : countries) {
+				if (countryCode.toLowerCase().equals(code.toLowerCase()))
+					return new Locale("en", code).getDisplayCountry();
+			}
+			return null;
 		}
-		return null;
 	}
 
 	/**

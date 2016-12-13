@@ -246,7 +246,7 @@ public class CacheAPI {
                     line = line.replace(values[3], newEndYear);
                     line = line.replace(values[6], title);
                     line = line.replace(values[7], colour);
-                    System.out.println(line);
+//                    System.out.println(line);
                 }//TODO
                 writer1.println(line);
             }

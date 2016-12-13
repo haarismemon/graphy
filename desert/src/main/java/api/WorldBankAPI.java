@@ -90,6 +90,7 @@ public class WorldBankAPI {
                 CacheAPI.cacheQuery(query, response);
             } else {
                 System.out.println("=> Log.fetch: INVALID RETURNED JSON thus NOT CACHED");
+                return null;
             }
 
             return response;
@@ -130,6 +131,7 @@ public class WorldBankAPI {
      */
     private static void parse(Query query, String rawData) {
         JSONArray array = new JSONArray(rawData).getJSONArray(1);
+//        System.out.println("JSON array: " + array);
         
         for (int i = 0; i < array.length(); ++i) {
             JSONObject object = array.getJSONObject(i);
