@@ -7,11 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Cache management: add, update and delete queries.
@@ -203,7 +199,7 @@ public class CacheAPI {
     	str = str.substring(1, str.length() - 1);
         String[] pairs = str.split(",");
 
-        Map<Integer, Double> yearValue = new HashMap<>();               
+        Map<Integer, Double> yearValue = new LinkedHashMap<>();
 
         for (String pair : pairs) {
             String[] index = pair.split("=");

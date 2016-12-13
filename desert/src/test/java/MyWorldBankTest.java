@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
+//import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -46,11 +47,11 @@ public class MyWorldBankTest {
 
      @Test
      public void queryShouldReturnMap() {
-         Map unemploymentMap = new HashMap<Integer, Double>();
+         Map unemploymentMap = new TreeMap();
          unemploymentMap.put(2000, 9.5);
          assertEquals("Map returned should be {2000=9.5}", unemploymentMap, WorldBankAPI.query("unemployment total","brazil", 2000, 2000).getData());
 
-         Map gdpMap = new HashMap<Integer, Double>();
+         Map gdpMap = new TreeMap();
          gdpMap.put(1961, 10.275911554301);
          gdpMap.put(1962, 5.21605942017888);
          gdpMap.put(1963, 0.87467259240843);

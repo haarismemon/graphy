@@ -2,11 +2,7 @@ package main.java.api;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Allows to access to query data.
@@ -61,7 +57,7 @@ public class Query {
      * Map of pairs (year and value), containing all years for the query.
      * 
      */
-	private Map<Integer, Double> yearValue = new HashMap<>();
+	private Map<Integer, Double> yearValue = new TreeMap<>();
 	
 	/**
      * List of containing all invalid years for the query.
@@ -73,7 +69,7 @@ public class Query {
      * Map of pairs (year and value), containing requested year range for the query.
      * 
      */
-	private Map<Integer, Double> yearValueFiltered = new HashMap<>();
+	private Map<Integer, Double> yearValueFiltered = new TreeMap<>();
 	
 	/**
      * Creates a query object holding.
@@ -170,7 +166,7 @@ public class Query {
      */
     protected void filter() {
 
-        Map<Integer, Double> filteredMap = new HashMap<>();
+        Map<Integer, Double> filteredMap = new TreeMap<>();
         
         for (Integer yearKey : getRawData().keySet()) {
             //case in which both start and end year is given
@@ -258,7 +254,6 @@ public class Query {
 	 * Adds pair (year and value) to map, containing all years for the query.
 	 * 
 	 * @param year	key - specific year 
-	 * @param value	value - value that maps to the year
 	 */
 	protected void addInvalidYear(int year) {
 		invalidYears.add(year);
@@ -279,7 +274,7 @@ public class Query {
 	 * @return yearValue	map of filtered data containing pairs (year and value)
 	 * 						only requested year range
 	 */
-	private Map<Integer, Double> getData() {
+	public Map<Integer, Double> getData() {
 		return yearValueFiltered;
 	}
 	
@@ -331,7 +326,7 @@ public class Query {
 	 * Sets the colour of the line in the graph for the query.
 	 * 
 	 */
-	protected void setColour(String colour) {
+	public void setColour(String colour) {
 		this.colour = colour;
 	}
 	

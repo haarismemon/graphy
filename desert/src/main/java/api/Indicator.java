@@ -17,7 +17,7 @@ public class Indicator {
 	 */
 	private final static Map<String, String> indicatorsNameCode;
 	static {
-		indicatorsNameCode = new HashMap<>();
+		indicatorsNameCode = new TreeMap<>();
 		indicatorsNameCode.put("GDP", "NY.GDP.MKTP.KD.ZG");
 		indicatorsNameCode.put("GDP Growth", "NY.GDP.MKTP.CD");
 		indicatorsNameCode.put("GDP Per Capita", "NY.GDP.PCAP.CD");
@@ -39,7 +39,7 @@ public class Indicator {
 	 */
 	private final static Map<String, String> indicatorsNameUnit;
 	static {
-		indicatorsNameUnit = new HashMap<>();
+		indicatorsNameUnit = new TreeMap<>();
 		indicatorsNameUnit.put("GDP", "US Trillion Dollars ($)");
 		indicatorsNameUnit.put("GDP Growth", "Percentage (%)");
 		indicatorsNameUnit.put("GDP Per Capita", "US Trillion Dollars ($)");
@@ -61,7 +61,7 @@ public class Indicator {
 	 */
 	private final static Map<String, String> indicatorsNameInfo;
 	static {
-		indicatorsNameInfo = new HashMap<>();
+		indicatorsNameInfo = new TreeMap<>();
 
 		indicatorsNameInfo.put("GDP",
 				"(Unit 2)3.2.3\nGross domestic product (GDP) is the overall market value of all the goods/services a country produces. "
