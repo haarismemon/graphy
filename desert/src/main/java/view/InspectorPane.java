@@ -125,6 +125,8 @@ public class InspectorPane extends BorderPane{
 
 		deleteButton.setOnAction((event) -> {
 			deleteButtonAction.get().handle(new DeleteEvent(selectedGraph));
+			mainView.hideCachePane();
+			mainView.hideInspectorPane();
 		});
 
 		deleteButton.getStyleClass().add("button");
@@ -134,7 +136,7 @@ public class InspectorPane extends BorderPane{
 		createButton = new Button("Create");
 		//TODO need to change button action for create button and upate button
 		createButton.setOnAction((event) -> {
-			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
+//			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 			mainView.hideCachePane();
 			mainView.hideInspectorPane();
@@ -148,6 +150,7 @@ public class InspectorPane extends BorderPane{
 		updateButton.setOnAction((event) -> {
 			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
+			mainView.hideCachePane();
 			mainView.hideInspectorPane();
 		});
 		updateButton.getStyleClass().add("button");
@@ -479,7 +482,8 @@ public class InspectorPane extends BorderPane{
 	 * @param year - year to be displayed on the start year text field
 	 */
 	public void setStartYear(int year){
-		startYearComboBox.setText("" + year);
+		if(year == 0) startYearComboBox.clear();
+		else startYearComboBox.setText("" + year);
 	}
 
 	/**
@@ -494,7 +498,8 @@ public class InspectorPane extends BorderPane{
 	 * @param year - year to be displayed on the end year text field
 	 */
 	public void setEndYear(int year){
-		endYearComboBox.setText("" + year);
+		if(year == 0) endYearComboBox.clear();
+		else endYearComboBox.setText("" + year);
 	}
 
 	/**
