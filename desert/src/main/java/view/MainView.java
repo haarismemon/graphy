@@ -34,7 +34,7 @@ public class MainView extends Stage {
 	//Cache panel
 	private CachePane cachePane;
 	//Main graph + inspector container
-	private HBox container;
+	private BorderPane container;
 	//Initial message
 	private Label beginningLabel;
 	//Controller
@@ -69,7 +69,7 @@ public class MainView extends Stage {
 		
 		superContainer = new StackPane();
 		
-		container = new HBox();
+		container = new BorderPane();
 		container.setMinWidth(900);
 		superContainer.getChildren().add(container);
 		
@@ -132,12 +132,12 @@ public class MainView extends Stage {
 		
 		root.setBottom(bottomBar);
 		root.setMinWidth(900);
-		container.getChildren().add(root);
+		container.setCenter(root);
 		
 		//Inspector
 		inspector = new InspectorPane();
 		inspector.setPrefWidth(300);
-		container.getChildren().add(inspector);
+		container.setRight(inspector);
 
 		Scene scene = new Scene(superContainer);
 
