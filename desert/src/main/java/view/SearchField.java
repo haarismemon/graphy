@@ -208,8 +208,6 @@ public class SearchField extends BorderPane {
 
 				alert.showAndWait();
 			}
-		} else {
-			setNotFound();
 		}
 	}
 
