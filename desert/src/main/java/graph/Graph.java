@@ -19,6 +19,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import main.java.controller.SelectEvent;
 import main.java.view.MainView;
 
+/**
+ * This class represents a Graph object that stores the types of graphs, and information about the query.
+ */
 public class Graph {
 
     private LineChart lineChart;
@@ -30,12 +33,14 @@ public class Graph {
     private String graphType;
     private MainView mainView;
 
-    //Select graph action
+    /**
+     * Event handler for the select graph action
+     */
     private ObjectProperty<EventHandler<SelectEvent>> selectGraphAction = new SimpleObjectProperty<EventHandler<SelectEvent>>();
 
     /**
-     * Graph constructor: Creates the graph object that contains all three graphType of the same data.
-     * @param graphName
+     * Creates the graph object that contains all three graphType of the same data.
+     * @param graphName - Name of the type of graph
      */
     public Graph(MainView mainView, String graphName){
         this.mainView = mainView;
@@ -86,11 +91,19 @@ public class Graph {
         pieChart.setTitle(name);
     }
 
+    /**
+     * Sets the Y axis Label of the graph.
+     * @param unit - The unit label for the graph
+     */
     public void setYaxis(String unit){
         lineChart.getYAxis().setLabel(unit);
         barChart.getYAxis().setLabel(unit);
     }
 
+    /**
+     * Gets the title string of the graph
+     * @return the title string of the graph
+     */
     public String getTitle(){
         return title;
     }
@@ -132,6 +145,10 @@ public class Graph {
         pieChart.setLegendVisible(false);
     }
 
+    /**
+     * Change color of the graph visualisation
+     * @param colorCode - the hex code of the color to change to
+     */
     public void changeColor(String colorCode) {
         lineChart.setStyle("CHART_COLOR_1: " + colorCode +";");
         barChart.setStyle("CHART_COLOR_1: " + colorCode +";");
@@ -153,12 +170,16 @@ public class Graph {
         }
     }
 
+    /**
+     * Gets the graph type
+     * @return the graph type
+     */
     public String getGraphType(){
         return graphType;
     }
 
     /**
-     *returns a StackPane containing a one of three following graphs: LineGraph, BarGraph or PieChart
+     * returns a StackPane containing a one of three following graphs: LineGraph, BarGraph or PieChart
      * @return StackPane with graph
      */
     public StackPane getGraph(){
@@ -174,6 +195,10 @@ public class Graph {
         pieChart.getData().clear();
     }
 
+    /**
+     * Gets the query object that the graph represents
+     * @return the query object stored in the graph
+     */
     public Query getQuery(){
         return query;
     }
