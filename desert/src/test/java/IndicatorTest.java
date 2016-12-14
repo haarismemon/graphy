@@ -3,7 +3,6 @@ package test.java;
 import main.java.api.Indicator;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**

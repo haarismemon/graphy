@@ -81,18 +81,4 @@ public class InputAnalysisTest {
         assertEquals("Should return null", null, InputAnalysis.isValidCommand("How much money did I earn in 2005?"));
     }
 
-    // 		System.out.println(isValidCommand("gdp in brazil since 2004"));
-// 		System.out.println(isValidCommand("gdp growth in united kingdom till 2007"));
-// 		System.out.println(isValidCommand("gdp per capita in spain in 2006"));
-// 		System.out.println(isValidCommand("gdp per capita growth in italy"));
-// 		System.out.println(isValidCommand("consumer price inflation"));
-// 		System.out.println(isValidCommand("Hello my name is Haaris"));
-// 		System.out.println(isValidCommand("unemployment male in canada between 2010 and 2015"));
-// 		System.out.println(isValidCommand("unemployment young male in brazil between 2010 and 2015"));
-// 		System.out.println(isValidCommand("unemployment female in brazil between 2010 and 2015"));
-// 		System.out.println(isValidCommand("unemployment young female in brazil between 2010 and 2015"));
-// 		System.out.println(isValidCommand("gdp deflator inflation in brazil between 2010 and 2015"));
-// 		System.out.println(isValidCommand("current account balance in brazil between 2010 and 2015"));
-// 		System.out.println(isValidCommand("Current Account Balance Percent Of GDP in brazil between 2010 and 2015"));
-
 }
