@@ -35,6 +35,7 @@ public class Graph {
      */
     public Graph(MainView mainView, String graphName){
         this.mainView = mainView;
+ 
         lineChart = new LineChart(new NumberAxis(),new NumberAxis());
         lineChart.setLegendVisible(false);
         barChart = new BarChart(new CategoryAxis(),new NumberAxis());

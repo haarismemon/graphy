@@ -207,8 +207,15 @@ public class MainView extends Stage {
 		}
 
 		switch(getGraphNumber()){
-			case 0: root.setCenter(null); break;
-			case 1: root.setCenter(graphs.get(0).getGraph()); break;
+			case 0: root.setCenter(beginningLabel); 
+			break;
+			case 1: 
+				HBox graphC1 = new HBox();
+				graphC1.getStyleClass().add("graph-container");
+				graphC1.setAlignment(Pos.CENTER);
+				graphC1.getChildren().add(graphs.get(0).getGraph());
+				root.setCenter(graphC1); 
+			break;
 			case 2: 
 				HBox graphC2 = new HBox();
 				graphC2.setAlignment(Pos.CENTER);

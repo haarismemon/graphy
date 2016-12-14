@@ -6,7 +6,6 @@ import main.java.graph.Graph;
 import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
 import main.java.api.Query;
-
 import java.util.List;
 
 
@@ -133,15 +132,14 @@ public class GraphController {
 		if (invalidYears != null) {
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			alert.setTitle("Warning about missing years");
-			alert.setHeaderText("For query " + query.getIndicatorName() + " " + query.getCountryName()
-				+ " for range " + query.getStartYear() + " - " + query.getEndYear()
+			alert.setHeaderText("For query " + query.getIndicatorName() + " " + query.getCountryName() 
+				+ " for range " + query.getStartYear() + " - " + query.getEndYear() 
 				+ " ,there is no data for the following years in this range: ");
-			String s = "";
-			for(int i = 0; i < invalidYears.size(); ++i) {
-				s += invalidYears.get(i);
-				if(i + 1 != invalidYears.size()) s+= ", ";
+			String invalidYearsString = "";
+			for(int y : invalidYears) {
+				invalidYearsString = invalidYearsString + " " + y;
 			}
-			alert.setContentText(s);
+			alert.setContentText(invalidYearsString);
 			alert.showAndWait();
 		}
 	}
