@@ -140,7 +140,7 @@ public class MainView extends Stage {
 		//Inspector
 		//make new inspector pane and show it
 //		newInspectorPane(true);
-		showInspectorPane();
+//		showInspectorPane();
 
 		Scene scene = new Scene(superContainer);
 
