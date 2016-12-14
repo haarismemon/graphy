@@ -25,6 +25,8 @@ public class CachePane extends BorderPane {
 	//Queries container
 	private VBox container;
 	private MainView mainView;
+	private EventHandler<DeleteCachedQuery> deleteCacheHandler;
+	private EventHandler<CreateEvent> createCacheHandler;
 
 	public CachePane(MainView mainView){
 		super();
@@ -83,6 +85,7 @@ public class CachePane extends BorderPane {
 	}
 
 	public void setQueryHandlers(EventHandler<DeleteCachedQuery> handler){
+		deleteCacheHandler = handler;
 		for(Node q : container.getChildren()){
 			CachedQueryPane p = (CachedQueryPane)q;
 			p.deleteCachedQueryHandler(handler);
@@ -90,6 +93,7 @@ public class CachePane extends BorderPane {
 	}
 
 	public void setCreateQueryHandlers(EventHandler<CreateEvent> handler){
+		createCacheHandler = handler;
 		for(Node q : container.getChildren()){
 			CachedQueryPane p = (CachedQueryPane)q;
 			p.createCachedQueryButton(handler);
@@ -112,6 +116,8 @@ public class CachePane extends BorderPane {
 		if(listOfQueries != null) {
 			for(Query query : listOfQueries){
 				CachedQueryPane q = new CachedQueryPane(mainView, query);
+				q.deleteCachedQueryHandler(deleteCacheHandler);
+				q.createCachedQueryButton(createCacheHandler);
 				container.getChildren().add(q);
 			}
 		}

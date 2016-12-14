@@ -66,7 +66,7 @@ public class MainView extends Stage {
 		getIcons().add(new Image("/images/title-icon.png"));
 
 		// Set minimum size of the window
-		setMinHeight(650);
+		setMinHeight(670);
 		setMinWidth(1200);
 		superContainer = new StackPane();
 		

@@ -31,6 +31,8 @@ public class CachedQueryPane extends BorderPane {
 	//Create a new graph based on cached query
 	private ObjectProperty<EventHandler<CreateEvent>> createCachedQueryButton = new SimpleObjectProperty<EventHandler<CreateEvent>>();
 
+	private EventHandler<DeleteCachedQuery> deleteCachehandler;
+
 	private MainView mainView;
 	
 	public CachedQueryPane(MainView mainView, Query q){
