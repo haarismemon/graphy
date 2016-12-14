@@ -19,20 +19,28 @@ import java.util.List;
  */
 public class GraphController {
 
-	//View
+	/**
+	 * Represents the Main View Stage
+	 */
 	private MainView mainView;
 
+	/**
+	 * Constructs the graph controller that stores the main view stage, and assigns handlers
+	 * @param m
+	 */
 	public GraphController(MainView m){
 		mainView = m;
 		assignActionHandlers();
 	}
 
+	/**
+	 * Assigns the action handlers for creating, updating, and deleting graphs. and also deleting cache query.
+	 */
 	public void assignActionHandlers(){
 		//Add a new graph to the main view
-		EventHandler<CreateEvent> addGrapEndler = new EventHandler<CreateEvent>() {
+		EventHandler<CreateEvent> addGraphHandler = new EventHandler<CreateEvent>() {
 		    public void handle(CreateEvent event) {
 		    	Query query = WorldBankAPI.query(event.getIndicator(), event.getCountry(), Integer.parseInt(event.getStartYear()), Integer.parseInt(event.getEndYear()));
-				System.out.println("Data: " + query.getData().isEmpty());
 				if(query != null && !query.getData().isEmpty()){
 					query.setColour(event.getColor());
 					String title = event.getTitle();
@@ -60,7 +68,7 @@ public class GraphController {
 		    }
 		  };
 
-		 mainView.getInspectorPane().createButtonHandler(addGrapEndler);
+		 mainView.getInspectorPane().createButtonHandler(addGraphHandler);
 
 		EventHandler<CreateEvent> updateGraphHandler = new EventHandler<CreateEvent>() {
 			public void handle(CreateEvent event) {
@@ -126,9 +134,13 @@ public class GraphController {
 
 		 mainView.getCachePane().setQueryHandlers(deleteCachedQueryHandler);
 		 
-		 mainView.getCachePane().setCreateQueryHandlers(addGrapEndler);
+		 mainView.getCachePane().setCreateQueryHandlers(addGraphHandler);
 	}
 
+	/**
+	 * Creates the Alert dialog box if there are missing years in the query
+	 * @param query
+	 */
 	private void warningInvalidYears(Query query) {
 		List<Integer> invalidYears = query.getInvalidYears();
 		if (invalidYears != null) {
@@ -146,6 +158,10 @@ public class GraphController {
 		}
 	}
 
+	/**
+	 * Updates the inspector pane when a graph is selected in the main view.
+	 * @param currentMainView
+	 */
 	private void createEventHandler(MainView currentMainView) {
 		//UPDATE SELECTORS Select graph from the workspace
 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
