@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 import main.java.graph.Graph;
 import main.java.controller.GraphController;
 import main.java.api.Query;
@@ -62,11 +63,11 @@ public class MainView extends Stage {
 
 	public void drawWidgets() {
 		setTitle("Graphy");
+		getIcons().add(new Image("/images/title-icon.png"));
 
 		// Set minimum size of the window
 		setMinHeight(650);
 		setMinWidth(1200);
-
 		superContainer = new StackPane();
 		
 		container = new BorderPane();
