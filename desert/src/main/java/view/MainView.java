@@ -23,29 +23,52 @@ import main.java.controller.SelectEvent;
  * @author pietrocalzini
  * @author Haaris Memon
  */
-
 public class MainView extends Stage {
-	
-	//Main container 
+
+	/**
+	 * Main container
+	 */
 	private StackPane superContainer;
-	//Inspector panel
+	/**
+	 * Inspector panel
+	 */
 	private InspectorPane inspector;
-	//Cache panel
+	/**
+	 * Cache panel
+	 */
 	private CachePane cachePane;
-	//Main graph + inspector container
+	/**
+	 * Main graph + inspector container
+	 */
 	private BorderPane container;
-	//Initial message
+	/**
+	 * Initial message
+	 */
 	private Label beginningLabel;
-	//Controller
+	/**
+	 * Controller
+	 */
 	private GraphController controller;
-	//GraphContainer
+	/**
+	 * GraphContainer
+	 */
 	private GridPane graphContainer = new GridPane();
-	//Graph view
+	/**
+	 * Graph view
+	 */
 	private BorderPane root;
-	//List of al the graphs
+	/**
+	 * List of all the graphs
+	 */
 	private List<Graph> graphs = new ArrayList<Graph>();
+	/**
+	 * Search Field stored in the main view
+	 */
 	private SearchField searchField;
 
+	/**
+	 * Creates the Main View stage, and adds all components to the stage
+	 */
 	public MainView(){
 		super();
 		drawWidgets();
@@ -58,10 +81,12 @@ public class MainView extends Stage {
  	*/
 	public void assignController(GraphController controller){
 		this.controller = controller;
-//		System.out.println(controller);
 	}
 
-	public void drawWidgets() {
+	/**
+	 * Adds all components to the main view stage
+	 */
+	private void drawWidgets() {
 		setTitle("Graphy");
 		getIcons().add(new Image("/images/title-icon.png"));
 
@@ -112,8 +137,7 @@ public class MainView extends Stage {
 
 		graphContainer.setAlignment(Pos.CENTER);
 		graphContainer.getStyleClass().add("graph-container");
-//		root.setCenter(graphContainer);
-		
+
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
 		bottomBar.setAlignment(Pos.CENTER_RIGHT);
@@ -137,12 +161,9 @@ public class MainView extends Stage {
 		root.setMinWidth(900);
 		container.setCenter(root);
 
+		//Inspector
 		inspector = new InspectorPane(this);
 		inspector.setPrefWidth(300);
-		//Inspector
-		//make new inspector pane and show it
-//		newInspectorPane(true);
-//		showInspectorPane();
 
 		Scene scene = new Scene(superContainer);
 
@@ -181,14 +202,26 @@ public class MainView extends Stage {
 		}
 	}
 
+	/**
+	 * Gets the inspector pane object
+	 * @return inspector pane object in main view
+	 */
 	public InspectorPane getInspectorPane(){
 		return inspector;
 	}
 
+	/**
+	 * Gets the searchfield object
+	 * @return searchfield object in main view
+	 */
 	public SearchField getSearchField() {
 		return searchField;
 	}
 
+	/**
+	 * Gets the cache pane object
+	 * @return cache pane object in main view
+	 */
 	public CachePane getCachePane(){
 		return cachePane;
 	}
@@ -200,9 +233,10 @@ public class MainView extends Stage {
 		return graphs.size();
 	}
 
-	public void printGraphs(){
-		System.out.println(graphs.toString());
-
+	/**
+	 * Gets the list of graphs and displays the graphs on the main view
+	 */
+	private void printGraphs(){
 		//if when adding a graph, the graph container is not in root, add it to the center of root
 		if(!root.getCenter().equals(graphContainer)) {
 			root.setCenter(graphContainer);
@@ -257,6 +291,10 @@ public class MainView extends Stage {
 		}
 	}
 
+	/**
+	 * Deletes graph from the main view
+	 * @param g - graph object to delete from main view
+	 */
 	public void deleteGraph(Graph g){
 		graphs.remove(g);
 		printGraphs();
@@ -267,9 +305,9 @@ public class MainView extends Stage {
 
 	/**
 	 * Add a new graph in the graph area
-	 *@param graphName - the name of the graph
-	 *@param graphType - the type of the graph
-	 *@param query - the query representing the data to be plotted in the graph
+	 * @param graphName - the name of the graph
+	 * @param graphType - the type of the graph
+	 * @param query - the query representing the data to be plotted in the graph
 	 */
 	public void addGraph(String graphName, String graphType, Query query){
 		Graph centralGraph = new Graph(this, graphName);
@@ -284,12 +322,17 @@ public class MainView extends Stage {
 		printGraphs();
 	}
 
-	//Update a graph only in the range
+	/**
+	 * Updates a graph only in the range
+	 * @param g - graph object to update
+	 * @param q - use information from query object to update the graph
+	 * @param title - title of the graph name
+	 */
 	public void updateGraphRange(Graph g, Query q, String title){
 		Graph graph = graphs.get(graphs.indexOf(g));
 		graph.reset();
 		graph.setGraphName(title);
-		graph.addSeries("",q);
+		graph.addSeries("", q);
 		printGraphs();
 	}
 
@@ -301,7 +344,6 @@ public class MainView extends Stage {
 	 */
 	public void updateGraph(Graph oldGraph, String newGraphName, String newGraphType, Query newQuery, String color){
 		Graph centralGraph = new Graph(this, newGraphName);
-		// centralGraph.setYaxis(yAxis);
 		centralGraph.addSeries("My Series", newQuery);
 		centralGraph.switchGraph(newGraphType);
 		centralGraph.changeColor(color);
@@ -313,10 +355,24 @@ public class MainView extends Stage {
 		}
 	}
 
+	/**
+	 * Hides the inspector pane in the main view
+	 */
 	public void hideInspectorPane() {
 		container.setRight(null);
 	}
 
+	/**
+	 * Shows the inspector pane in the main view
+	 */
+	public void showInspectorPane() {
+		container.setRight(inspector);
+	}
+
+	/**
+	 * Creates a new inspector pane, when a new graph wants to be created
+	 * @param isAdd
+	 */
 	public void newInspectorPane(Boolean isAdd) {
 		List<ObjectProperty> listOfButtonActions = inspector.getButtonActions();
 		inspector = new InspectorPane(this);
@@ -327,15 +383,5 @@ public class MainView extends Stage {
 
 		inspector.setButtonActions(listOfButtonActions);
 
-//		inspector.clearStartYear();
-//		inspector.clearEndYear();
-//		inspector.setSelectedGraph(null);
-
-//		inspector.setAdd();
-
-	}
-
-	public void showInspectorPane() {
-		container.setRight(inspector);
 	}
 }

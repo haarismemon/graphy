@@ -19,17 +19,42 @@ import javafx.scene.control.Label;
 
 import java.util.List;
 
-
+/**
+ * This class represents the cached pane, containing all the cached queries
+ * @author pietrocalzini
+ * @author Haaris Memon
+ */
 public class CachePane extends BorderPane {
 
-	//Queries container
+	/**
+	 * Container that stores each cache query pane
+	 */
 	private VBox container;
+	/**
+	 * Stores the Main View stage
+	 */
 	private MainView mainView;
+	/**
+	 * the Event Handler for the deleting cache
+	 */
 	private EventHandler<DeleteCachedQuery> deleteCacheHandler;
+	/**
+	 * Create a new graph based on cached query
+	 */
 	private EventHandler<CreateEvent> createCacheHandler;
+	/**
+	 * Label to represent if there are no cached queries
+	 */
 	private Label noCachedQuery;
+	/**
+	 * ScrollPane that holds the list of cached queries
+	 */
 	private ScrollPane scrollContainer;
 
+	/**
+	 * Constructs a pane for a cached query
+	 * @param mainView - mainView where the cached pane is located
+	 */
 	public CachePane(MainView mainView){
 		super();
 		this.mainView = mainView;
@@ -39,8 +64,10 @@ public class CachePane extends BorderPane {
 		drawWidgets();
 	}
 
-	public void drawWidgets() {
-		
+	/**
+	 * Adds all the components to the cache pane
+	 */
+	private void drawWidgets() {
 		HBox topPane = new HBox();
 		topPane.getStyleClass().add("top-pane");
 		topPane.setAlignment(Pos.CENTER_RIGHT);
@@ -88,7 +115,10 @@ public class CachePane extends BorderPane {
 		
 	}
 
-	public void toggleNoCacheLabel(){
+	/**
+	 * Toggles displaying the no cache label in the container
+	 */
+	private void toggleNoCacheLabel(){
 		if(container.getChildren().size() == 0) {
 			container.alignmentProperty().setValue(Pos.CENTER);
 			noCachedQuery.setPadding(new Insets(220,0,0,55));
@@ -99,6 +129,10 @@ public class CachePane extends BorderPane {
 		}			
 	}
 
+	/**
+	 * Sets the query handlers to each cache query pane
+	 * @param handler the handler to set to the cache query pane
+	 */
 	public void setQueryHandlers(EventHandler<DeleteCachedQuery> handler){
 		deleteCacheHandler = handler;
 		for(Node q : container.getChildren()){
@@ -109,6 +143,9 @@ public class CachePane extends BorderPane {
 		}
 	}
 
+	/**
+	 * create handler to create cached query
+	 */
 	public void setCreateQueryHandlers(EventHandler<CreateEvent> handler){
 		createCacheHandler = handler;
 		for(Node q : container.getChildren()){
@@ -119,6 +156,10 @@ public class CachePane extends BorderPane {
 		}
 	}
 
+	/**
+	 * Removes the specific query cache from cache pane
+	 * @param query - the cached query to remove
+	 */
 	public void removeCachePane(Query query){
 		for(Node q : container.getChildren()){
 			CachedQueryPane p = (CachedQueryPane)q;
@@ -128,7 +169,10 @@ public class CachePane extends BorderPane {
 		}
 	}
 
-	public void listQueryItems(){
+	/**
+	 * Updates the list of cached queries in the cache pane
+	 */
+	void listQueryItems(){
 		container.getChildren().clear();
 		List<Query> listOfQueries = CacheAPI.listCache();
 		if(listOfQueries != null) {

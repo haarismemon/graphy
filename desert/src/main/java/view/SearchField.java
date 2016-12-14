@@ -8,7 +8,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
 import main.java.api.Indicator;
@@ -26,12 +25,22 @@ import java.util.List;
  */
 public class SearchField extends BorderPane {
 
+	/**
+	 * Represents the combobox to show suggestions to indicator name
+	 */
 	private ComboBox comboBox;
+	/**
+	 * Store the main view stage
+	 */
 	private MainView mainView;
+	/**
+	 * Represnts the textfield to search for query
+	 */
 	private final TextField textField;
 
 	/**
 	 * Create a custom search field
+	 * @param mainView - the main view stage where the searchfield is stored
 	 */
 	public SearchField(MainView mainView){
 		super();
@@ -46,7 +55,6 @@ public class SearchField extends BorderPane {
 			mainView.getCachePane().listQueryItems();
 			mainView.toggleCachePane();
 			mainView.getCachePane().listQueryItems();
-//			mainView.getCachePane().setQueryHandlers(mainView.getCachePane().getDeleteCacheHandler());
 		});
 		cacheClosePane.getChildren().add(cacheClose);
 		this.setLeft(cacheClosePane);
@@ -71,6 +79,7 @@ public class SearchField extends BorderPane {
 		textField.getStyleClass().add("search-field");
 		comboBox.getStyleClass().add("search-field");
 
+		//combobox event handler when enter or button clicked (search)
 		comboBox.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -100,6 +109,7 @@ public class SearchField extends BorderPane {
 			}
 		});
 
+		//combobox event handler when letters pressed (updates suggestions)
 		comboBox.getEditor().setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -118,6 +128,7 @@ public class SearchField extends BorderPane {
 			}
 		});
 
+		//textfield event handler when it becomes empty (go back to combobox)
 		textField.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -131,6 +142,7 @@ public class SearchField extends BorderPane {
 
 		});
 
+		//textfield event handler when enter or button clicked (search)
 		textField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -150,6 +162,10 @@ public class SearchField extends BorderPane {
 		
 	}
 
+	/**
+	 * Update combobox with new list of Indicator name suggestions
+	 * @param autocompleteIndicators - list of Indicator names that are suggestions of input
+	 */
 	private void updateComboBox(List<String> autocompleteIndicators) {
 		comboBox.getItems().clear();
 		for (String string : autocompleteIndicators) {
@@ -157,6 +173,10 @@ public class SearchField extends BorderPane {
 		}
 	}
 
+	/**
+	 * Creates query object and displays graph on the main view.
+	 * @param queryInfo - list of information about the query
+	 */
 	private void searchQuery(List<String> queryInfo) {
 		if(queryInfo != null) {
 			String indicatorName = queryInfo.get(0);
@@ -164,9 +184,7 @@ public class SearchField extends BorderPane {
 			if(countryName.equals("all")) countryName = "world";
 			int startYear = Integer.parseInt(queryInfo.get(2));
 			int endYear = Integer.parseInt(queryInfo.get(3));
-//			System.out.println(indicatorName + ", " + countryName + ", " + startYear + ", " + endYear);
 			Query queryResult = WorldBankAPI.query(indicatorName, countryName, startYear, endYear);
-//			System.out.println(queryResult);
 			if(queryResult != null && !queryResult.getData().isEmpty()){
 				mainView.addGraph(queryResult.getTitle(), "BarChart", queryResult);
 

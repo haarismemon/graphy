@@ -15,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.event.EventHandler;
 import javafx.beans.property.ObjectProperty;
@@ -38,66 +37,123 @@ import main.java.graph.Graph;
  * @author Haaris Memon
  */
 public class InspectorPane extends BorderPane{
-
+	/**
+	 * Stores the Main View stage
+	 */
 	private MainView mainView;
 
-	//Option Pane
+	/**
+	 * Option Pane
+	 */
 	private GridPane optionPane;
-	//Delete button
+	/**
+	 * Delete button
+	 */
 	private Button deleteButton;
-	//create button
+	/**
+	 * create button
+	 */
 	private Button createButton;
-	//Update button
+	/**
+	 * Update button
+	 */
 	private Button updateButton;
-	//search button
+	/**
+	 * search button
+	 */
 	private Button searchButton;
-	//information button
+	/**
+	 * information button
+	 */
 	private Button infoButton;
 
-	//List of supported graph types
+	/**
+	 * List of supported graph types
+	 */
 	final ObservableList<String> graphType = FXCollections.observableArrayList("Bar Chart","Pie Chart","Line Graph");
-	//List of supported graph colors and tints
+	/**
+	 * List of supported graph colors and tints
+	 */
 	final ObservableList<String> graphColors = FXCollections.observableArrayList("Red ","Blue","Yellow", "Orange", "Green", "Purple", "Black");
-	//List of all supoorted countries
+	/**
+	 * List of all supoorted countries
+	 */
 	final ObservableList<String> graphCountries = FXCollections.observableArrayList(Arrays.asList(Country.getAllNames()));
-	//List of all supported indicators (full names)
+	/**
+	 * List of all supported indicators (full names)
+	 */
 	final ObservableList<String> graphIndicators = FXCollections.observableArrayList(Arrays.asList(Indicator.getAllNames()));
 
-	//Graph title
+	/**
+	 * Graph title
+	 */
 	private TextField titleField;
-	//Indicator Names
+	/**
+	 * Indicator Names
+	 */
 	private ComboBox<String> indicatorComboBox;
-	//Countries
+	/**
+	 * Countries
+	 */
 	private ComboBox<String> countryComboBox;
-	//Graph types
+	/**
+	 * Graph types
+	 */
 	private ComboBox<String> graphTypeComboBox;
-	//Start year
+	/**
+	 * Start year
+	 */
 	private TextField startYearComboBox;
-	//End year
+	/**
+	 * End year
+	 */
 	private TextField endYearComboBox;
-	//Colors
+	/**
+	 * Colors
+	 */
 	private ComboBox<String> colorComboBox;
 
-	//Create a new graph action
+	/**
+	 * Create a new graph action
+	 */
 	private ObjectProperty<EventHandler<CreateEvent>> createButtonAction;
 
-	//Update graph action
+	/**
+	 * Update graph action
+	 */
 	private ObjectProperty<EventHandler<CreateEvent>> updateButtonAction;
 
-	//Delete graph action
+	/**
+	 * Delete graph action
+	 */
 	private ObjectProperty<EventHandler<DeleteEvent>> deleteButtonAction;
 
-	//The selected graph 
+	/**
+	 * The selected graph
+	 */
 	private Graph selectedGraph;
-	//panel of buttons for delete and create/update
+	/**
+	 * panel of buttons for delete and create/update
+	 */
 	private HBox buttonPane;
-	//pane that holds the inspector pane
+	/**
+	 * pane that holds the inspector pane
+	 */
 	private Pane inspectorContents;
+	/**
+	 * pane that holds the information pane
+	 */
 	private BorderPane informationPane;
 
-	//boolean that stores which state the InspectorPane is in.
+	/**
+	 * boolean that stores which state the InspectorPane is in.
+	 */
 	private boolean isSearch;
 
+	/**
+	 * Cretes an instructor pane which by default is on the search tab.
+	 * @param mainView
+	 */
 	public InspectorPane(MainView mainView){
 		super();
 		this.mainView = mainView;
@@ -112,6 +168,9 @@ public class InspectorPane extends BorderPane{
 		drawWidgets();
 	}
 
+	/**
+	 * Adds all components and panes to the inspector pane container
+	 */
 	private void drawWidgets() {
 		searchButton = new Button("Search");
 		searchButton.setPrefSize(300, 40);
@@ -142,7 +201,6 @@ public class InspectorPane extends BorderPane{
 		createButton = new Button("Create");
 		//TODO need to change button action for create button and upate button
 		createButton.setOnAction((event) -> {
-//			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			createButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 			mainView.hideCachePane();
 			mainView.hideInspectorPane();
@@ -154,7 +212,6 @@ public class InspectorPane extends BorderPane{
 
 		updateButton = new Button("Update");
 		updateButton.setOnAction((event) -> {
-//			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 			mainView.hideCachePane();
 			mainView.hideInspectorPane();
@@ -332,9 +389,8 @@ public class InspectorPane extends BorderPane{
 
 	/**
 	 * Takes a title and information of an Indicator and returns a pane with the information
-	 * @param title
-	 * @param information
-	 * @return
+	 * @param title - Title of the Indicator
+	 * @param information - Information of the Indicator
 	 */
 	public void putInformation(String title, String information) {
 		inspectorContents.getChildren().clear();
@@ -357,8 +413,6 @@ public class InspectorPane extends BorderPane{
 	 * Set the create button to UPDATE mode
 	 */
 	public void setUpdate(){
-//		System.out.println("CREATE");
-//		updateButton.setText("Update");
 		buttonPane.getChildren().clear();
 		buttonPane.getChildren().addAll(deleteButton, updateButton);
 	}
@@ -367,12 +421,12 @@ public class InspectorPane extends BorderPane{
 	 * Set the create button to CREATE mode
 	 */
 	public void setAdd(){
-//		updateButton.setText("Create");
 		buttonPane.getChildren().clear();
 		buttonPane.getChildren().addAll(deleteButton, createButton);
 	}
 
 	/**
+	 * Gets the title of the text field
 	 * @return the title of the text field
 	 */
 	public String getTitle(){
@@ -380,6 +434,7 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
+	 * Gets indicator represented in the graph
 	 * @return indicator represented in the graph
 	 */
 	public String getIndicator(){
@@ -387,6 +442,7 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
+	 * Gets the graph type of the currently shown graph
 	 * @return the graph type of the currently shown graph
 	 */
 	public String getGraphType(){
@@ -398,10 +454,18 @@ public class InspectorPane extends BorderPane{
 		}
 	}
 
+	/**
+	 * Gets a list of button actions for create, update and delete buttons
+	 * @return list of button actions
+	 */
 	public List<ObjectProperty> getButtonActions() {
 		return new ArrayList<>(Arrays.asList(createButtonAction, updateButtonAction, deleteButtonAction));
 	}
 
+	/**
+	 * Resets the list of button actions to each variable for button action
+	 * @param buttonActions list of button actions
+	 */
 	public void setButtonActions(List<ObjectProperty> buttonActions) {
 		if(buttonActions != null && !buttonActions.isEmpty()) {
 			createButtonAction = buttonActions.get(0);
@@ -419,6 +483,7 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
+	 * Gets the country represented in the graph
 	 * @return the country represented in the graph
 	 */
 	public String getCountry(){
@@ -426,7 +491,8 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
-	 * @return get the exadecimal value for the color of the graph
+	 * Gets the hexadecimal value for the color of the graph
+	 * @return the hexadecimal value for the color of the graph
 	 */
 	public String getColor(){
 		switch(colorComboBox.getSelectionModel().getSelectedItem().toString()) {
@@ -442,7 +508,8 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
-	 * @return get the start year of the graph
+	 * get the start year of the graph
+	 * @return the start year of the graph
 	 */
 	public String getStartYear(){
 		String startDateString = startYearComboBox.getText();
@@ -451,7 +518,8 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
-	 * @return get the start end of the graph
+	 * get the start end of the graph
+	 * @return the start end of the graph
 	 */
 	public String getEndYear(){
 		String endDateString = endYearComboBox.getText();
@@ -461,6 +529,7 @@ public class InspectorPane extends BorderPane{
 
 
 	/**
+	 * Gets the title of the text field
 	 * @return the title of the text field
 	 */
 	public void setTitle(String title){
@@ -469,7 +538,8 @@ public class InspectorPane extends BorderPane{
 
 
 	/**
-	 * @param indicator - indicator to tbe displayed in the indicator comboBox
+	 * Sets indicator to be displayed in the indicator comboBox
+	 * @param indicator - indicator to be displayed in the indicator comboBox
 	 */
 	public void setIndicator(String indicator){
 		indicatorComboBox.setValue(indicator);
@@ -477,7 +547,8 @@ public class InspectorPane extends BorderPane{
 
 
 	/**
-	 * @param country - country to be displaye in the country comboBox
+	 * Sets country to be displayed in the country comboBox
+	 * @param country - country to be displayed in the country comboBox
 	 */
 	public void setCountry(String country){
 		countryComboBox.setValue(country);
@@ -485,6 +556,7 @@ public class InspectorPane extends BorderPane{
 
 
 	/**
+	 * Sets color to be displayed on the color comboBox
 	 * @param color - color to be displayed on the color comboBox
 	 */
 	public void setColor(String color){
@@ -492,7 +564,8 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
-	 * @return the title of the text field
+	 * Sets the title of the text field
+	 * @param type - string title of type of graph
 	 */
 	public void setGraphType(String type){
 		switch(type) {
@@ -504,6 +577,7 @@ public class InspectorPane extends BorderPane{
 	}
 
 	/**
+	 * Sets year to be displayed on the start year text field
 	 * @param year - year to be displayed on the start year text field
 	 */
 	public void setStartYear(int year){
@@ -520,6 +594,7 @@ public class InspectorPane extends BorderPane{
 
 
 	/**
+	 * Sets the year to be displayed on the end year text field
 	 * @param year - year to be displayed on the end year text field
 	 */
 	public void setEndYear(int year){
