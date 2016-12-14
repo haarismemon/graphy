@@ -19,13 +19,15 @@ public class CacheAPI {
 	
 	/**
      * List of queries in memory cache.
-     *
      */
 	private static List<Query> memoryCache = new ArrayList<>();
+    /**
+     * File path directory for the cache txt file
+     */
+	private static String cacheFilePath = "cache.txt";
 
     /**
      * Adds a query to the list of memory cache.
-     *
      */
     protected static void addQuery(Query query) {
     	int size = memoryCache.size();
@@ -180,7 +182,7 @@ public class CacheAPI {
      * @return cache cache file or null if cache file does not exist
      */
     private static File getCacheFile() {
-        File cache = new File("cache.txt");
+        File cache = new File(cacheFilePath);
         if (!cache.exists() && !cache.isDirectory()) { // file does not exist i.e. no cached data
             System.out.println("=> Log.fetchOffline: NO CACHED DATA");
             return null;
@@ -245,7 +247,7 @@ public class CacheAPI {
      */
     public static void saveToFile() {
     	File cache = getCacheFile();
-    	if (cache == null) cache = new File("cache.txt");
+    	if (cache == null) cache = new File(cacheFilePath);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(cache))) {
             for (Query query : memoryCache) {
                 writer.write(query.toString());
