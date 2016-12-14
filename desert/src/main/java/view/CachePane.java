@@ -1,5 +1,6 @@
 package main.java.view;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -91,7 +92,11 @@ public class CachePane extends BorderPane {
 
 	public void toggleNoCacheLabel(){
 		if(container.getChildren().size() == 0) {
+			container.alignmentProperty().setValue(Pos.CENTER);
+			noCachedQuery.setPadding(new Insets(220,0,0,50));
+//			noCachedQuery.setAlignment(Pos.BOTTOM_CENTER);
 			container.getChildren().add(noCachedQuery);
+//			container.getChildren().add(new Label("Hello World"));
 		} else {
 			container.getChildren().remove(noCachedQuery);
 		}			

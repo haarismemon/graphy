@@ -49,6 +49,7 @@ public class CachedQueryPane extends BorderPane {
 		deleteButton = new Pane();
 		deleteButton.setOnMouseClicked((event) -> {
 			deleteCachedQueryAction.get().handle(new DeleteCachedQuery(query));
+			mainView.getCachePane().listQueryItems();
 		});	
 
 		deleteButton.getStyleClass().add("delete-query-button");
