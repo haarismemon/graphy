@@ -60,10 +60,6 @@ public class CachePane extends BorderPane {
 		//Display all the queries
 		listQueryItems();
 
-		noCachedQuery = new Label("There are no cached queries.");
-		//Add no query label is there are no cached queries
-		toggleNoCacheLabel();
-
 		scrollContainer.setContent(container);
 
 		setCenter(scrollContainer);
@@ -141,5 +137,10 @@ public class CachePane extends BorderPane {
 				container.getChildren().add(q);
 			}
 		}
+
+		noCachedQuery = new Label("There are no cached queries.");
+		noCachedQuery.setAlignment(Pos.CENTER);
+		//Add no query label is there are no cached queries
+		toggleNoCacheLabel();
 	}
 }
