@@ -35,12 +35,16 @@ public class Graph {
      */
     public Graph(MainView mainView, String graphName){
         this.mainView = mainView;
- 
         lineChart = new LineChart(new NumberAxis(),new NumberAxis());
         lineChart.setLegendVisible(false);
+        lineChart.setAnimated(false);
         barChart = new BarChart(new CategoryAxis(),new NumberAxis());
         barChart.setLegendVisible(false);
+        barChart.setAnimated(false);
         pieChart = new PieChart();
+        barChart.setLegendVisible(false);
+        barChart.setAnimated(false);
+
 
         NumberAxis xAxis = (NumberAxis)lineChart.getXAxis();
         NumberAxis yAxis = (NumberAxis)lineChart.getYAxis();
@@ -58,6 +62,7 @@ public class Graph {
 
         setGraphName(graphName);
         pane = new StackPane();
+        pane.getStylesheets().add("css/graph.css");
         pane.setOnMouseClicked((event) -> {
             System.out.println("ACTION: " + selectGraphAction);
             selectGraphAction.get().handle(new SelectEvent(this));
@@ -169,6 +174,7 @@ public void setYaxis(String unit){
     public void selectGraphHandler(EventHandler<SelectEvent> handler) {
         selectGraphAction.set(handler);
     }
+
     /**
      * HoverNode Class is class for the lineChart.
      * Creates Hovering Node to show the value of data on the graph rounded to two significant figure

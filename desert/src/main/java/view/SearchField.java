@@ -43,6 +43,7 @@ public class SearchField extends BorderPane {
 		cacheClose.getStyleClass().add("cache-button");
 
 		cacheClose.setOnMouseClicked((event) -> {
+			mainView.getCachePane().listQueryItems();
 			mainView.toggleCachePane();
 		});
 		cacheClosePane.getChildren().add(cacheClose);
