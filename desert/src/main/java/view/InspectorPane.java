@@ -322,7 +322,7 @@ public class InspectorPane extends BorderPane{
 				Label informationLabel = new Label(Indicator.getInfo(indicatorComboBox.getSelectionModel().getSelectedItem()));
 				informationLabel.setPrefWidth(280);
 				informationLabel.setWrapText(true);
-				informationLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px;");
+				informationLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16px;");
 				informationLabel.setPadding(new Insets(15,15,15,30));
 				BorderPane pane = new BorderPane();
 				pane.setTop(titleLabel);
