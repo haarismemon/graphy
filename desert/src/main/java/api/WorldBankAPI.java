@@ -47,18 +47,18 @@ public class WorldBankAPI {
      * @return URL     link to request data from api.worldbank.org
      */
     private static URL buildURL(Query query) {
-        URL assemledURL = null;
+        URL assembledURL = null;
         String url = "http://api.worldbank.org/countries/";
         //TODO this should be part of country indicator? world == 1w
         if (query.getCountryCode() == null) url += "1W";
         else url += query.getCountryCode();
         url += "/indicators/" + query.getIndicatorCode() + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
         try { 
-            assemledURL = new URL(url); 
+            assembledURL = new URL(url);
         } catch (IOException e) {
         	System.out.println("=> Log.buildURL: " + e);
         }
-        return assemledURL;
+        return assembledURL;
     }
     
     /**
@@ -74,7 +74,7 @@ public class WorldBankAPI {
             String response = reader.readLine();
             reader.close();
             
-            if (isResponseValid(response)) { // cache only valid response
+            if (isResponseValid(response)) { // cache only valid responses
             	Query q = parseJsonToMap(query, response);
             	CacheAPI.addQuery(query);
             	return q;
@@ -93,7 +93,7 @@ public class WorldBankAPI {
      * @return {@code true} if the response is valid, and {@code false} otherwise.
      */
     private static boolean isResponseValid(String response) {
-        //TODO more checks?
+
         if (!response.contains("parameter value is not valid")) {
         	return true;
         } else {
@@ -143,8 +143,8 @@ public class WorldBankAPI {
                 Double value = Double.parseDouble(object.getString("value"));
                 query.addYearValue(year, value);
             } catch (JSONException e) {
+                //if the value for the year is invalid, the year is added to list of invalid years
             	query.addInvalidYear(year);
-            	System.out.println("=> Log.parseJsonToMap: " + e + " VALUE IS NULL, YEAR " + year + " !ONLY! ADDED TO MAP OF INVALID YEARS");
             }
         }
         return query;

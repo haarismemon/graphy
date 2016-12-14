@@ -17,13 +17,13 @@ import main.java.api.Country;
  */
 public class InputAnalysis {
 	
-	//the complete list of all indicators in the applicaiton
+	//the complete list of all indicators in the application
 	final static String[] indicators = Indicator.getAllNames();
 	
 	//the complete list of all the countries
 	final static String[] countries = Country.getAllNames();
 
-	//list of words to ignore in the input string
+	//Commonly used conjunctives that can be removed to improve run time.
 	static String[] toIgnore = new String[]{
 			"in", "between", "from", "since", "at", "-", "to", "till"
 	};
@@ -45,7 +45,7 @@ public class InputAnalysis {
      * @return List of Strings with query information. [Indicator Name, Country Name, Start Year, End Year]
      */
 	public static List<String> isValidCommand(String input){
-		String indicator = "";
+		String indicator;
 		String country;
 
 		//input invalid if it is null
@@ -61,7 +61,7 @@ public class InputAnalysis {
 		//set the country name to 'all' to represent the world
 		if(country == null) country = "all";
 
-		//gets the dats in the input string
+		//gets the dates in the input string
 		int[] dates = getDates(words);
 
 		//if the indicator is not null, the input is valid
