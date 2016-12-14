@@ -9,6 +9,7 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import main.java.api.Indicator;
 import main.java.api.Query;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -102,7 +103,7 @@ public void setYaxis(String unit){
         System.out.println("query color: " + query.getColour());
 
         Map<Integer, Double> series = query.getData();
-        System.out.println(series);
+//        System.out.println(series);
         XYChart.Series line = new XYChart.Series();
         XYChart.Series bar = new XYChart.Series();
         line.setName(seriesName);
@@ -118,7 +119,9 @@ public void setYaxis(String unit){
         }
 
         lineChart.getData().add(line);
+        lineChart.getYAxis().setLabel(Indicator.getUnit(query.getIndicatorName()));
         barChart.getData().add(bar);
+        barChart.getYAxis().setLabel(Indicator.getUnit(query.getIndicatorName()));
         pieChart.getData().add(new PieChart.Data(seriesName,last));
     }
 
