@@ -275,7 +275,11 @@ public class MainView extends Stage {
 		// centralGraph.setYaxis(yAxis);
 		centralGraph.addSeries("My Series", query);
 		centralGraph.switchGraph(graphType);
-		graphs.add(centralGraph);
+		if(graphs.size() < 4){
+			graphs.add(centralGraph);
+		} else {
+			graphs.set(graphs.size() % 4,centralGraph);
+		}
 		printGraphs();
 	}
 
