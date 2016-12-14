@@ -187,7 +187,7 @@ public class InspectorPane extends BorderPane{
 		optionPane.add(titleBox,0,1);
 
 		VBox indicatorBox = new VBox();
-		Label indicatorLabel = new Label("Indicator");
+		Label indicatorLabel = new Label("Indicator *");
 		indicatorLabel.getStyleClass().add("title-label");
 		indicatorBox.getChildren().add(indicatorLabel);
 		indicatorComboBox = new ComboBox<String>(graphIndicators);
@@ -197,7 +197,7 @@ public class InspectorPane extends BorderPane{
 		optionPane.add(indicatorBox,0,2);
 
 		VBox countryBox = new VBox();
-		Label countryLabel = new Label("Country");
+		Label countryLabel = new Label("Country *");
 		countryLabel.getStyleClass().add("title-label");
 		countryBox.getChildren().add(countryLabel);
 		countryComboBox = new ComboBox<String>(graphCountries);
@@ -207,7 +207,7 @@ public class InspectorPane extends BorderPane{
 		optionPane.add(countryBox,0,3);
 
 		VBox graphTypeBox = new VBox();
-		Label graphTypeLabel = new Label("Graph Type");
+		Label graphTypeLabel = new Label("Graph Type *");
 		graphTypeLabel.getStyleClass().add("title-label");
 		graphTypeBox.getChildren().add(graphTypeLabel);
 		graphTypeComboBox = new ComboBox<String>(graphType);
@@ -247,7 +247,7 @@ public class InspectorPane extends BorderPane{
 		optionPane.add(yearBox,0,5);
 
 		VBox colorBox = new VBox();
-		Label colorLabel = new Label("Color");
+		Label colorLabel = new Label("Color *");
 		colorLabel.getStyleClass().add("title-label");
 		colorBox.getChildren().add(colorLabel);
 		colorComboBox = new ComboBox<String>(graphColors);
