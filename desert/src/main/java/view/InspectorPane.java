@@ -112,6 +112,7 @@ public class InspectorPane extends BorderPane{
 		searchButton = new Button("Search");
 		searchButton.setPrefSize(300, 40);
 		searchButton.getStyleClass().add("toggle-button");
+		searchButton.getStyleClass().add("toggle-button-selected");
 		
 		infoButton = new Button("Information");
 		infoButton.setPrefSize(300, 40);
