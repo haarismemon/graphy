@@ -90,7 +90,7 @@ public class MainView extends Stage {
 		HBox topBar = new HBox();
 		topBar.setStyle("-fx-padding: 30 0 0 0;");
 		topBar.setAlignment(Pos.BASELINE_CENTER);
-		topBar.setPrefHeight(80);
+		topBar.setPrefHeight(100);
 		
 		//Add search field to the view
 		searchField = new SearchField(this);
