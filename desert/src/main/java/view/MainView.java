@@ -48,7 +48,6 @@ public class MainView extends Stage {
 
 	public MainView(){
 		super();
-		setMaximized(true);
 		drawWidgets();
 	}
 
@@ -67,8 +66,9 @@ public class MainView extends Stage {
 		getIcons().add(new Image("/images/title-icon.png"));
 
 		// Set minimum size of the window
-		setMinHeight(670);
-		setMinWidth(1200);
+		setMinHeight(1000);
+		setMinWidth(1400);
+		setMaximized(true);
 		superContainer = new StackPane();
 		
 		container = new BorderPane();

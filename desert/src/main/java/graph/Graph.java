@@ -3,6 +3,9 @@ package main.java.graph;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Map;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.chart.*;
@@ -65,7 +68,6 @@ public class Graph {
         pane = new StackPane();
         pane.getStylesheets().add("css/graph.css");
         pane.setOnMouseClicked((event) -> {
-//            System.out.println("ACTION: " + selectGraphAction);
             selectGraphAction.get().handle(new SelectEvent(this));
             mainView.showInspectorPane();
         }); 
@@ -83,10 +85,12 @@ public class Graph {
         barChart.setTitle(name);
         pieChart.setTitle(name);
     }
-public void setYaxis(String unit){
-    lineChart.getYAxis().setLabel(unit);
-    barChart.getYAxis().setLabel(unit);
-}
+
+    public void setYaxis(String unit){
+        lineChart.getYAxis().setLabel(unit);
+        barChart.getYAxis().setLabel(unit);
+    }
+
     public String getTitle(){
         return title;
     }
@@ -100,29 +104,32 @@ public void setYaxis(String unit){
         this.query = query;
 
         changeColor(query.getColour());
-        System.out.println("query color: " + query.getColour());
 
         Map<Integer, Double> series = query.getData();
-//        System.out.println(series);
         XYChart.Series line = new XYChart.Series();
         XYChart.Series bar = new XYChart.Series();
         line.setName(seriesName);
         bar.setName(seriesName);
 
         Double last = 0d;
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         for(Map.Entry<Integer,Double> entry:series.entrySet()){
             XYChart.Data data = new XYChart.Data(entry.getKey(),entry.getValue());
             data.setNode(new HoverNode(entry.getValue(),this.lineChart.getData().size()));
             line.getData().add(data);
             bar.getData().add(new XYChart.Data(""+entry.getKey(),entry.getValue()));
+            PieChart.Data pieData = new PieChart.Data("" + entry.getKey(), entry.getValue());
+            pieChartData.add(pieData);
             last = entry.getValue();
         }
+        pieChart.setData(pieChartData);
+
 
         lineChart.getData().add(line);
         lineChart.getYAxis().setLabel(Indicator.getUnit(query.getIndicatorName()));
         barChart.getData().add(bar);
         barChart.getYAxis().setLabel(Indicator.getUnit(query.getIndicatorName()));
-        pieChart.getData().add(new PieChart.Data(seriesName,last));
+        pieChart.setLegendVisible(false);
     }
 
     public void changeColor(String colorCode) {
