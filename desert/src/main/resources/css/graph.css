@@ -1,9 +1,18 @@
 .chart-plot-background {
     -fx-background-color: none;
 }
+
 .chart {
     -fx-padding: 10px;
 }
+
 .chart-content {
     -fx-padding: 15px;
+}
+
+.chart-title {
+	 -fx-background-image:url('/images/graph-selected.png');
+  	 -fx-background-repeat: no-repeat;
+  	 -fx-background-position: left 30 center;
+  	 -fx-padding: 0 0 0 45;
 }

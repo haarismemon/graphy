@@ -39,7 +39,7 @@ public class CachedQueryPane extends BorderPane {
 		super();
 		this.mainView = mainView;
 		this.query = q;
-		this.setMinWidth(250);
+		this.setMinWidth(275);
 		// setAlignment(Pos.CENTER);
 		getStylesheets().add("css/cache-query-pane.css");
 		getStyleClass().add("query-container");	
@@ -64,7 +64,7 @@ public class CachedQueryPane extends BorderPane {
 		});
 
 		String cachedStringIndicator = (q.getIndicatorName() + " in " + q.getCountryName());
-
+		if(cachedStringIndicator.length() > 37) cachedStringIndicator = cachedStringIndicator.substring(0,37); 
 		String cachedStringYear = (q.getStartYear() +  " - " + q.getEndYear());
 
 		indicatorInfo = new Label(cachedStringIndicator);

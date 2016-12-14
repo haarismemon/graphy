@@ -91,9 +91,11 @@ public class CachePane extends BorderPane {
 
 	public void toggleNoCacheLabel(){
 		if(container.getChildren().size() == 0) {
+			container.setAlignment(Pos.CENTER);
 			container.getChildren().add(noCachedQuery);
 		} else {
 			container.getChildren().remove(noCachedQuery);
+			container.setAlignment(Pos.CENTER);
 		}			
 	}
 
