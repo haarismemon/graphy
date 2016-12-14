@@ -45,6 +45,8 @@ public class SearchField extends BorderPane {
 		cacheClose.setOnMouseClicked((event) -> {
 			mainView.getCachePane().listQueryItems();
 			mainView.toggleCachePane();
+			mainView.getCachePane().listQueryItems();
+//			mainView.getCachePane().setQueryHandlers(mainView.getCachePane().getDeleteCacheHandler());
 		});
 		cacheClosePane.getChildren().add(cacheClose);
 		this.setLeft(cacheClosePane);
@@ -183,6 +185,21 @@ public class SearchField extends BorderPane {
 				};
 
 				mainView.selectGraphHandlers(selectGraphHandler);
+
+				List<Integer> invalidYears = queryResult.getInvalidYears();
+				if (invalidYears != null) {
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Warning about missing years");
+					alert.setHeaderText("For query " + queryResult.getIndicatorName() + " " + queryResult.getCountryName()
+							+ " for range " + queryResult.getStartYear() + " - " + queryResult.getEndYear()
+							+ " ,there is no data for the following years in this range: ");
+					String invalidYearsString = "";
+					for(int y : invalidYears) {
+						invalidYearsString = invalidYearsString + " " + y;
+					}
+					alert.setContentText(invalidYearsString);
+					alert.showAndWait();
+				}
 			} else {
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setTitle("Information Dialog");
