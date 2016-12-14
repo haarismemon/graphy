@@ -105,7 +105,7 @@ public class MainView extends Stage {
 		//Label displayed when the application is launched and no graphs are shown
 		beginningLabel = new Label("Start searching for one indicator or add a new graph");
 		beginningLabel.getStyleClass().add("beginning-label");
-		graphSpace.getChildren().add(	beginningLabel);
+		graphSpace.getChildren().add(beginningLabel);
 		root.setCenter(graphSpace);
 
 		graphContainer.setAlignment(Pos.CENTER);

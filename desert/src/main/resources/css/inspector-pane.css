@@ -45,13 +45,15 @@
 }
 
 .backButton {
-	-fx-background-image: url(/images/back.png);
-	-fx-background-position: center center;
-	-fx-background-repeat: no-repeat;  
-	-fx-background-color: transparent;
-	-fx-background-size: contain;
-	-fx-padding: 10;
-	-fx-pref-width: 10;
+	 -fx-background-image: url(/images/back.png);
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;  
+    -fx-background-color: transparent;
+    -fx-background-size: 50%;
+    -fx-pref-width: 50;
+    -fx-max-width: 50;
+    -fx-pref-height: 50;
+    -fx-max-height: 50;
 }
 
 .topPanel {

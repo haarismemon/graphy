@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -160,10 +161,14 @@ public class InspectorPane extends BorderPane{
 		HBox toggleButtons = new HBox(searchButton, infoButton);
 
 		BorderPane topPane = new BorderPane();
-		Button backButton = new Button();
+
+		BorderPane topContainer = new BorderPane();
+		Pane backButton = new Pane();
+		topContainer.setLeft(backButton);
 		backButton.getStyleClass().add("backButton");
-		topPane.setTop(backButton);
+		topPane.setTop(topContainer);
 		topPane.setCenter(toggleButtons);
+
 		setTop(topPane);
 
 		optionPane = new GridPane();
@@ -284,9 +289,10 @@ public class InspectorPane extends BorderPane{
 
 		optionPane.setPadding(new Insets(0,0,0,25));
 
-		backButton.setOnAction(new EventHandler<ActionEvent>() {
+		
+		backButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(ActionEvent event) {
+			public void handle(MouseEvent event) {
 				mainView.hideInspectorPane();
 			}
 		});
