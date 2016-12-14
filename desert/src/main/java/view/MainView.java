@@ -105,12 +105,12 @@ public class MainView extends Stage {
 		//Label displayed when the application is launched and no graphs are shown
 		beginningLabel = new Label("Start searching for one indicator or add a new graph");
 		beginningLabel.getStyleClass().add("beginning-label");
-		graphSpace.getChildren().add(beginningLabel);
+		graphSpace.getChildren().add(	beginningLabel);
 		root.setCenter(graphSpace);
 
 		graphContainer.setAlignment(Pos.CENTER);
 		graphContainer.getStyleClass().add("graph-container");
-		root.setCenter(graphContainer);
+//		root.setCenter(graphContainer);
 		
 		// Bottom bar containing 'add' button
 		HBox bottomBar = new HBox();
@@ -200,6 +200,12 @@ public class MainView extends Stage {
 
 	public void printGraphs(){
 		System.out.println(graphs.toString());
+
+		//if when adding a graph, the graph container is not in root, add it to the center of root
+		if(!root.getCenter().equals(graphContainer)) {
+			root.setCenter(graphContainer);
+		}
+
 		switch(getGraphNumber()){
 			case 0: root.setCenter(null); break;
 			case 1: root.setCenter(graphs.get(0).getGraph()); break;
@@ -245,6 +251,9 @@ public class MainView extends Stage {
 	public void deleteGraph(Graph g){
 		graphs.remove(g);
 		printGraphs();
+		if(root.getCenter() == null) {
+			root.setCenter(beginningLabel);
+		}
 	}
 
 	/**
