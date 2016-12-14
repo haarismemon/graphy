@@ -49,7 +49,6 @@ public class WorldBankAPI {
     private static URL buildURL(Query query) {
         URL assembledURL = null;
         String url = "http://api.worldbank.org/countries/";
-        //TODO this should be part of country indicator? world == 1w
         if (query.getCountryCode() == null) url += "1W";
         else url += query.getCountryCode();
         url += "/indicators/" + query.getIndicatorCode() + "?format=json&per_page=250"; // data per page increased to insure all data is in one page
@@ -114,13 +113,16 @@ public class WorldBankAPI {
         int endYear = query.getEndYear();
         if (((startYear < 1960 || startYear > currentYear) && query.getStartYear() != 0)
                 || ((endYear < 1960 || endYear > currentYear) && endYear != 0)) {
-        	System.out.println("=> Log.isValid: INVALID YEAR RANGE");
+            //if the start or end year is out of range and is not 0, then query is invalid
+            System.out.println("=> Log.isValid: INVALID YEAR RANGE");
             return false;
         } else if (query.getIndicatorCode() == null || query.getCountryCode() == null) {
-        	System.out.println("=> Log.isValid: NO INDICTOR OR COUNTRY PRESENT AS SET TO NULL");
+            //if the indicator or country code is invalid, then query is invalid
+        	System.out.println("=> Log.isValid: NO INDICATOR OR COUNTRY PRESENT AS SET TO NULL");
             return false;
         } else if (query.getIndicatorCode().equals("") || query.getCountryCode().equals("")) {
-        	System.out.println("=> Log.isValid: NO INDICTOR OR COUNTRY PRESENT AS FIELDS ARE EMPTY");
+            //if the indicator or country code is empty string, then query is invalid
+        	System.out.println("=> Log.isValid: NO INDICATOR OR COUNTRY PRESENT AS FIELDS ARE EMPTY");
             return false;
         }
         return true;
@@ -139,6 +141,7 @@ public class WorldBankAPI {
             JSONObject object = array.getJSONObject(i);
             Integer year = null;
             try {
+                //convert year and value, add to map
                 year = Integer.parseInt(object.getString("date"));
                 Double value = Double.parseDouble(object.getString("value"));
                 query.addYearValue(year, value);
@@ -176,7 +179,6 @@ public class WorldBankAPI {
     public static Query query(String indicatorName, String countryName, int startYear, int endYear) {
         Query query = new Query(Indicator.getCode(indicatorName), Country.getCode(countryName), startYear, endYear, new Date());
         
-        // TODO TEMP SAVE TO FILE MUST BE DONE ON PROGRAM CLOSE
         Query q = process(query);
         return q;
     }
@@ -198,16 +200,5 @@ public class WorldBankAPI {
             return false;
         }
     }
-
-//     public static void main(String[] args) {
-//     	CacheAPI.loadFromFile();
-//     	query("GDP", "France", 1980, 2005);
-// //    	query("GDP", "Latvia", 1980, 2005);
-// //    	query("GDP", "Italy", 1980, 2005);
-//     	for (Query q : CacheAPI.listCache()) {
-//     		System.out.println(q);
-//     	}
-
-//     }
 
 }

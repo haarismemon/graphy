@@ -4,8 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * Gives access to indicator name, code 
- * and list of valid indicators codes, units and descriptions.
+ * Gives access to indicator name, code and list of valid indicators codes, units and descriptions.
  *
  * @author Haaris Memon
  */

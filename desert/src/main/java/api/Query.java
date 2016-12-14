@@ -345,7 +345,7 @@ public class Query {
 	 * @param endYear	end year to update
 	 * @param title		title to set/update
 	 * @param colour	colour to set/update
-	 * @return the new list containing only required year range
+	 * @return the Query with new year range, title and color
 	 */
 	public Query getNewRange(int startYear, int endYear, String title, String colour) {
 		setStartYear(startYear); setEndYear(endYear); setTitle(title); setColour(colour);

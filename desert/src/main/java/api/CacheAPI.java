@@ -19,7 +19,7 @@ public class CacheAPI {
 	
 	/**
      * List of queries in memory cache.
-     * 
+     *
      */
 	private static List<Query> memoryCache = new ArrayList<>();
 
@@ -34,13 +34,15 @@ public class CacheAPI {
     	}
     	memoryCache.add(query);
     }
-    
+
     /**
      * Updates a query in the list of queries in the memory cache.
      *
+     * @param query - The query object that needs to updated
      */
     protected static void updateQuery(Query query) {
     	for (Query q : memoryCache) {
+    	    //update the query if it is in the list of memory cached queries
             if (q.equals(query)) {
             	int index = memoryCache.indexOf(q);
             	memoryCache.remove(q);
@@ -60,6 +62,7 @@ public class CacheAPI {
      */
     private static boolean isPresent(Query query) {
         for (Query q : memoryCache) {
+            //checks if the query is in the list of memory cached queries
         	if (q.equals(query)) {
                 return true;
             }
@@ -108,12 +111,12 @@ public class CacheAPI {
      */
     protected static void deleteQuery(Query query) {
         for (Query q : memoryCache) {
+            //removes the query if it is in the list of memory cached queries
             if (q.equals(query)) {
             	memoryCache.remove(q);
                 return;
             }
         }
-        // TODO
         System.out.println("//////// QUERY NOT FOUND");
     }
     
@@ -144,8 +147,6 @@ public class CacheAPI {
                 deleteOutdatedQuery(query);
                 return true;
         	} else {
-        		//TODO
-        		System.out.println("//////////!!!!!!!!!!! INFORM THE USER !!!!!!!!!!!!\\\\\\\\\\\\");
                 System.out.println("=> Log.fetchOffline: CONNECTION IS !!NOT!! PRESENT SO USE OUTDATED QUERY i.e. QUERY FROM NOT THE SAME MONTH");
         	}
         }
@@ -161,6 +162,7 @@ public class CacheAPI {
     protected static Query fetchOffline(Query query) {
     	for (Query q : memoryCache) {
             if (q.equals(query)) {
+                //if found query is not expired then return query from cache
             	if (!isExpired(q)) {
             		q.setStartYear(query.getStartYear());
                 	q.setEndYear(query.getEndYear());
@@ -168,7 +170,6 @@ public class CacheAPI {
             	}
             }
         }
-        // TODO
         System.out.println("//////// QUERY NOT FOUND OR DELETED BECAUSE OUTDATED");
     	return null;
     }
@@ -191,8 +192,8 @@ public class CacheAPI {
      * Parses String from cache file to query's map (yearValue) of not filtered data
      * i.e. all years for this (indicator and country)
      *
-     * @param  query object holding details about query made by the user
-     * @return query object holding data with unprocessed year range
+     * @param mapInString - Map holding details about query made by the user
+     * @return Map that holds data with unprocessed year range
      */
     private static Map<Integer, Double> parseStringToMap(String mapInString) {
     	String str = mapInString;
