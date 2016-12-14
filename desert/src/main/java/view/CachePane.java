@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import main.java.api.CacheAPI;
 import main.java.controller.CreateEvent;
+import javafx.scene.control.Label;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class CachePane extends BorderPane {
 	private MainView mainView;
 	private EventHandler<DeleteCachedQuery> deleteCacheHandler;
 	private EventHandler<CreateEvent> createCacheHandler;
+	private Label noCachedQuery;
+	private ScrollPane scrollContainer;
 
 	public CachePane(MainView mainView){
 		super();
@@ -47,7 +50,8 @@ public class CachePane extends BorderPane {
 		topPane.getChildren().add(backButton);
 		setTop(topPane);
 		
-		ScrollPane scrollContainer = new ScrollPane();
+
+		scrollContainer = new ScrollPane();
 
 		container = new VBox(12);
 		container.getStyleClass().add("query-container");
@@ -55,8 +59,13 @@ public class CachePane extends BorderPane {
 
 		//Display all the queries
 		listQueryItems();
-		
+
+		noCachedQuery = new Label("There are no cached queries.");
+		//Add no query label is there are no cached queries
+		toggleNoCacheLabel();
+
 		scrollContainer.setContent(container);
+
 		setCenter(scrollContainer);
 		
 		//Bottom pane
@@ -84,19 +93,31 @@ public class CachePane extends BorderPane {
 		
 	}
 
+	public void toggleNoCacheLabel(){
+		if(container.getChildren().size() == 0) {
+			container.getChildren().add(noCachedQuery);
+		} else {
+			container.getChildren().remove(noCachedQuery);
+		}			
+	}
+
 	public void setQueryHandlers(EventHandler<DeleteCachedQuery> handler){
 		deleteCacheHandler = handler;
 		for(Node q : container.getChildren()){
-			CachedQueryPane p = (CachedQueryPane)q;
-			p.deleteCachedQueryHandler(handler);
+			if(q instanceof CachedQueryPane){
+				CachedQueryPane p = (CachedQueryPane)q;
+				p.deleteCachedQueryHandler(handler);
+			}
 		}
 	}
 
 	public void setCreateQueryHandlers(EventHandler<CreateEvent> handler){
 		createCacheHandler = handler;
 		for(Node q : container.getChildren()){
-			CachedQueryPane p = (CachedQueryPane)q;
-			p.createCachedQueryButton(handler);
+			if(q instanceof CachedQueryPane){
+				CachedQueryPane p = (CachedQueryPane)q;
+				p.createCachedQueryButton(handler);
+			}
 		}
 	}
 
@@ -110,7 +131,6 @@ public class CachePane extends BorderPane {
 	}
 
 	public void listQueryItems(){
-		container.getChildren().clear();
 		container.getChildren().clear();
 		List<Query> listOfQueries = CacheAPI.listCache();
 		if(listOfQueries != null) {
