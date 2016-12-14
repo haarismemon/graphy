@@ -9,13 +9,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import main.java.view.CachedQueryPane;
 import main.java.api.Query;
 import main.java.api.CacheAPI;
 import main.java.controller.DeleteCachedQuery;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import main.java.api.CacheAPI;
 import main.java.controller.CreateEvent;
 import javafx.scene.control.Label;
 
@@ -93,12 +91,11 @@ public class CachePane extends BorderPane {
 	public void toggleNoCacheLabel(){
 		if(container.getChildren().size() == 0) {
 			container.alignmentProperty().setValue(Pos.CENTER);
-			noCachedQuery.setPadding(new Insets(220,0,0,50));
-//			noCachedQuery.setAlignment(Pos.BOTTOM_CENTER);
+			noCachedQuery.setPadding(new Insets(220,0,0,55));
 			container.getChildren().add(noCachedQuery);
-//			container.getChildren().add(new Label("Hello World"));
 		} else {
 			container.getChildren().remove(noCachedQuery);
+			container.setAlignment(Pos.CENTER);
 		}			
 	}
 
