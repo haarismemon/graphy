@@ -48,6 +48,7 @@ public class MainView extends Stage {
 
 	public MainView(){
 		super();
+		setMaximized(true);
 		drawWidgets();
 	}
 
