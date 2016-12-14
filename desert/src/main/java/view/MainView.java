@@ -146,7 +146,7 @@ public class MainView extends Stage {
 		Scene scene = new Scene(superContainer);
 
 		setScene(scene);
-		setResizable(true);
+		// setResizable(true);
 	}
 	
 	public void start(){
