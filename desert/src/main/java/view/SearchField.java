@@ -167,7 +167,7 @@ public class SearchField extends BorderPane {
 //			System.out.println(indicatorName + ", " + countryName + ", " + startYear + ", " + endYear);
 			Query queryResult = WorldBankAPI.query(indicatorName, countryName, startYear, endYear);
 //			System.out.println(queryResult);
-			if(queryResult != null){
+			if(queryResult != null && !queryResult.getData().isEmpty()){
 				mainView.addGraph(queryResult.getTitle(), "BarChart", queryResult);
 
 				EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
