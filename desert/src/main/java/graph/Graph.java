@@ -65,7 +65,7 @@ public class Graph {
         pane = new StackPane();
         pane.getStylesheets().add("css/graph.css");
         pane.setOnMouseClicked((event) -> {
-            System.out.println("ACTION: " + selectGraphAction);
+//            System.out.println("ACTION: " + selectGraphAction);
             selectGraphAction.get().handle(new SelectEvent(this));
             mainView.showInspectorPane();
         }); 

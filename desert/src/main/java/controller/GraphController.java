@@ -2,7 +2,9 @@ package main.java.controller;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import main.java.api.Indicator;
 import main.java.graph.Graph;
+import main.java.view.InspectorPane;
 import main.java.view.MainView;
 import main.java.api.WorldBankAPI;
 import main.java.api.Query;
@@ -148,14 +150,19 @@ public class GraphController {
 		//UPDATE SELECTORS Select graph from the workspace
 		EventHandler<SelectEvent> selectGraphHandler = new EventHandler<SelectEvent>() {
 			public void handle(SelectEvent event) {
-				currentMainView.getInspectorPane().setTitle(event.getGraph().getTitle());
-				currentMainView.getInspectorPane().setIndicator(event.getGraph().getQuery().getIndicatorName());
-				currentMainView.getInspectorPane().setCountry(event.getGraph().getQuery().getCountryName());
-				currentMainView.getInspectorPane().setGraphType(event.getGraph().getGraphType());
-				currentMainView.getInspectorPane().setStartYear(event.getGraph().getQuery().getStartYear());
-				currentMainView.getInspectorPane().setEndYear(event.getGraph().getQuery().getEndYear());
-				currentMainView.getInspectorPane().setUpdate();
-				currentMainView.getInspectorPane().setSelectedGraph(event.getGraph());
+				InspectorPane inspectorPane = currentMainView.getInspectorPane();
+				inspectorPane.setTitle(event.getGraph().getTitle());
+				String indicatorName = event.getGraph().getQuery().getIndicatorName();
+				inspectorPane.setIndicator(indicatorName);
+				inspectorPane.setCountry(event.getGraph().getQuery().getCountryName());
+				inspectorPane.setGraphType(event.getGraph().getGraphType());
+				inspectorPane.setStartYear(event.getGraph().getQuery().getStartYear());
+				inspectorPane.setEndYear(event.getGraph().getQuery().getEndYear());
+				inspectorPane.setUpdate();
+				inspectorPane.setSelectedGraph(event.getGraph());
+				if(!inspectorPane.isSearch()) {
+					inspectorPane.putInformation(indicatorName, Indicator.getInfo(indicatorName));
+				}
 				event.consume();
 			}
 		};

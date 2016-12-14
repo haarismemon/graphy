@@ -93,6 +93,10 @@ public class InspectorPane extends BorderPane{
 	private HBox buttonPane;
 	//pane that holds the inspector pane
 	private Pane inspectorContents;
+	private BorderPane informationPane;
+
+	//boolean that stores which state the InspectorPane is in.
+	private boolean isSearch;
 
 	public InspectorPane(MainView mainView){
 		super();
@@ -113,7 +117,7 @@ public class InspectorPane extends BorderPane{
 		searchButton.setPrefSize(300, 40);
 		searchButton.getStyleClass().add("toggle-button");
 		searchButton.getStyleClass().add("toggle-button-selected");
-		
+		isSearch = true;
 		infoButton = new Button("Information");
 		infoButton.setPrefSize(300, 40);
 		infoButton.getStyleClass().add("toggle-button");
@@ -150,7 +154,7 @@ public class InspectorPane extends BorderPane{
 
 		updateButton = new Button("Update");
 		updateButton.setOnAction((event) -> {
-			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
+//			System.out.println(getTitle() + ". " + getIndicator() + ". " + getCountry()  + ". " +getGraphType() + ". " + getColor() + ". " + getStartYear() + ". " + getEndYear());
 			updateButtonAction.get().handle(new CreateEvent(getTitle(), getIndicator(), getCountry() ,getGraphType(), getColor(), getStartYear(), getEndYear()));
 			mainView.hideCachePane();
 			mainView.hideInspectorPane();
@@ -305,7 +309,7 @@ public class InspectorPane extends BorderPane{
 				inspectorContents.getChildren().add(optionPane);
 				searchButton.getStyleClass().add("toggle-button-selected");
 				infoButton.getStyleClass().remove("toggle-button-selected");
-
+				isSearch = true;
 			}
 		});
 
@@ -315,33 +319,39 @@ public class InspectorPane extends BorderPane{
 				infoButton.getStyleClass().add("toggle-button-selected");
 				searchButton.getStyleClass().remove("toggle-button-selected");
 
-				inspectorContents.getChildren().clear();
-				Label titleLabel = new Label(indicatorComboBox.getSelectionModel().getSelectedItem());
-				titleLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px; -fx-font-weight: 800");
-				titleLabel.setPadding(new Insets(15,15,0,30));
-
-				Label informationLabel = new Label(Indicator.getInfo(indicatorComboBox.getSelectionModel().getSelectedItem()));
-				informationLabel.setPrefWidth(280);
-				informationLabel.setWrapText(true);
-				informationLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16px;");
-				informationLabel.setPadding(new Insets(15,15,15,30));
-				BorderPane pane = new BorderPane();
-				pane.setTop(titleLabel);
-				pane.setCenter(informationLabel);
-				inspectorContents.getChildren().add(pane);
+				String indicatorName = indicatorComboBox.getSelectionModel().getSelectedItem();
+				putInformation(indicatorName, Indicator.getInfo(indicatorName));
+				isSearch = false;
 			}
 		});
 
+
 		setCenter(inspectorContents);
-
-
 		setBottom(buttonPane);
 	}
 
-//	private Pane putInformation(String information) {
-//		Pane pane = new Pane(new Label(information));
-//		return pane;
-//	}
+	/**
+	 * Takes a title and information of an Indicator and returns a pane with the information
+	 * @param title
+	 * @param information
+	 * @return
+	 */
+	public void putInformation(String title, String information) {
+		inspectorContents.getChildren().clear();
+		Label titleLabel = new Label(title);
+		titleLabel.setStyle("-fx-text-fill: black; -fx-font-size: 18px; -fx-font-weight: 800");
+		titleLabel.setPadding(new Insets(15,15,0,30));
+
+		Label informationLabel = new Label(information);
+		informationLabel.setPrefWidth(280);
+		informationLabel.setWrapText(true);
+		informationLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16px;");
+		informationLabel.setPadding(new Insets(15,15,15,30));
+		informationPane = new BorderPane();
+		informationPane.setTop(titleLabel);
+		informationPane.setCenter(informationLabel);
+		inspectorContents.getChildren().add(informationPane);
+	}
 
 	/**
 	 * Set the create button to UPDATE mode
@@ -398,6 +408,14 @@ public class InspectorPane extends BorderPane{
 			updateButtonAction = buttonActions.get(1);
 			deleteButtonAction = buttonActions.get(2);
 		}
+	}
+
+	/**
+	 * Gets the current state of the Inspector Pane whether it is in search or information state.
+	 * @return true if it is in search state, or false if in information state
+	 */
+	public boolean isSearch() {
+		return isSearch;
 	}
 
 	/**
